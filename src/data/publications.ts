@@ -84,6 +84,7 @@ export const publications: Pub[] = [
     role: 'Author',
     summary:
       'Robustness to spurious group correlations via ordered risk and confidence regularization. Workshop on Spurious Correlations, Invariance and Stability (ICML 2022).',
+    url: 'https://openreview.net/forum?id=okCTFCRavwh',
   },
   {
     key: 'vade',
@@ -94,5 +95,6 @@ export const publications: Pub[] = [
     role: 'Author',
     summary:
       'Deep variational clustering (VaDE) over sequences for credit-card delinquency prediction. IEEE Intl. Conference on Systems, Man, and Cybernetics.',
+    url: 'https://ieeexplore.ieee.org/document/9659039',
   },
 ];
