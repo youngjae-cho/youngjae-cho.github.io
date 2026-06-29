@@ -1,0 +1,81 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Ledger from '../components/Ledger.astro';
+import PubCard from '../components/PubCard.astro';
+import { publications } from '../data/publications';
+import { projects } from '../data/projects';
+import { work, education } from '../data/cv';
+
+const homePubs = publications.filter((p) => p.home);
+---
+<Base>
+  <Hero />
+  <Ledger />
+  <main class="wrap">
+    <!-- SELECTED RESEARCH -->
+    <section class="block" id="research">
+      <div class="head">
+        <div class="eyebrow">Selected Research</div>
+        <h2>Where reliability comes from — noisy preferences, scarce labels, shifting distributions.</h2>
+        <p>A throughline runs through the work: <em>local geometry</em> — sharpness, curvature, anchors — as a practical proxy for when a model can be trusted.</p>
+        <a class="section-link" href="/publications">All publications <span class="arr">→</span></a>
+      </div>
+      <div class="grid">
+        {homePubs.map((p) => <PubCard pub={p} />)}
+      </div>
+    </section>
+
+    <!-- ENGINEERING -->
+    <section class="block" id="engineering">
+      <div class="head">
+        <div class="eyebrow">Engineering &amp; Production</div>
+        <h2>Four systems, owned end-to-end.</h2>
+        <p>Across Pyler and Aiv — the method, the training and inference efficiency, the serving stack, and the proof each one moved the metric.</p>
+        <a class="section-link" href="/projects">Full case studies <span class="arr">→</span></a>
+      </div>
+      <div class="grid">
+        {projects.map((p) => (
+          <a class="card" href={`/projects#${p.key}`}>
+            <div class="card-top">
+              {p.tags.map((t) => <span class={t.win ? 'badge win' : 'badge alt'}>{t.label}</span>)}
+            </div>
+            <h3 set:html={p.titleHtml}></h3>
+            <p>{p.blurb}</p>
+            <span class="more">Case study <span class="arr">→</span></span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section class="block" id="experience">
+      <div class="head">
+        <div class="eyebrow">Experience &amp; Education</div>
+        <h2>From an industrial-engineering lab to production ML.</h2>
+        <a class="section-link" href="/cv">Full CV <span class="arr">→</span></a>
+      </div>
+      <div class="tl">
+        {work.map((j) => (
+          <div class="row">
+            <div class="when">{j.start} — {j.end}</div>
+            <div class="what">
+              <h4>{j.role}</h4>
+              <div class="org">{j.org}{j.note ? ` · ${j.note}` : ''}</div>
+              <p>{j.highlights[0]}</p>
+            </div>
+          </div>
+        ))}
+        {education.map((e) => (
+          <div class="row">
+            <div class="when">{e.start} — {e.end}</div>
+            <div class="what">
+              <h4>{e.degree}</h4>
+              <div class="org">{e.org}{e.note ? ` · ${e.note}` : ''}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+</Base>

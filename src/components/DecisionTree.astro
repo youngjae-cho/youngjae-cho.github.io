@@ -1,0 +1,48 @@
+---
+// Signature visual for the auto-labeling case: a gated severity ladder → 0/1/3/5.
+---
+<svg class="tree" viewBox="0 0 248 286" role="img" aria-label="Per-category decision tree: a signal check, then an exemption gate, then a severity ladder producing scores 0, 1, 3, or 5.">
+  <path d="M30 32 V58 M30 84 V110 M30 136 V162 M30 188 V214 M30 240 V260" stroke="var(--line)" stroke-width="1.5" fill="none" />
+  <g stroke="var(--line)" stroke-width="1.5">
+    <line x1="122" y1="19" x2="178" y2="19" />
+    <line x1="122" y1="71" x2="178" y2="71" />
+    <line x1="122" y1="123" x2="178" y2="123" />
+    <line x1="122" y1="175" x2="178" y2="175" />
+    <line x1="122" y1="227" x2="178" y2="227" />
+  </g>
+  <g>
+    <rect x="4" y="6" width="118" height="26" rx="6" fill="var(--panel)" stroke="var(--line)" />
+    <text x="63" y="22" text-anchor="middle" font-size="8.5" fill="var(--ink-2)">category signal?</text>
+    <rect x="4" y="58" width="118" height="26" rx="6" fill="var(--panel)" stroke="var(--line)" />
+    <text x="63" y="74" text-anchor="middle" font-size="8.5" fill="var(--ink-2)">exemption gate?</text>
+    <rect x="4" y="110" width="118" height="26" rx="6" fill="var(--panel)" stroke="var(--line)" />
+    <text x="63" y="126" text-anchor="middle" font-size="8.5" fill="var(--ink-2)">severe?</text>
+    <rect x="4" y="162" width="118" height="26" rx="6" fill="var(--panel)" stroke="var(--line)" />
+    <text x="63" y="178" text-anchor="middle" font-size="8.5" fill="var(--ink-2)">meaningful?</text>
+    <rect x="4" y="214" width="118" height="26" rx="6" fill="var(--panel)" stroke="var(--line)" />
+    <text x="63" y="230" text-anchor="middle" font-size="8.5" fill="var(--ink-2)">weak?</text>
+  </g>
+  <g font-size="6.5" fill="var(--ink-3)" text-anchor="middle">
+    <text x="150" y="14">no signal</text>
+    <text x="150" y="66">exempt</text>
+    <text x="150" y="118">severe</text>
+    <text x="150" y="170">meaningful</text>
+    <text x="150" y="222">weak</text>
+    <text x="58" y="274" text-anchor="start">else</text>
+  </g>
+  <g>
+    <rect x="178" y="8" width="42" height="22" rx="5" fill="none" stroke="var(--line)" />
+    <text x="199" y="23" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink-3)">0</text>
+    <rect x="178" y="60" width="42" height="22" rx="5" fill="none" stroke="var(--line)" />
+    <text x="199" y="75" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink-3)">0</text>
+    <rect x="178" y="112" width="42" height="22" rx="5" fill="rgba(169,112,26,.10)" stroke="var(--gold)" />
+    <text x="199" y="127" text-anchor="middle" font-size="12" font-weight="700" fill="var(--gold)">5</text>
+    <rect x="178" y="164" width="42" height="22" rx="5" fill="var(--accent-soft)" stroke="var(--accent)" />
+    <text x="199" y="179" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent-ink)">3</text>
+    <rect x="178" y="216" width="42" height="22" rx="5" fill="none" stroke="var(--ink-2)" />
+    <text x="199" y="231" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink-2)">1</text>
+    <rect x="9" y="260" width="42" height="22" rx="5" fill="none" stroke="var(--line)" />
+    <text x="30" y="275" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink-3)">0</text>
+  </g>
+</svg>
+<p class="tree-cap">Signal check → exemption gate → severity ladder. Every score traces to a path.</p>

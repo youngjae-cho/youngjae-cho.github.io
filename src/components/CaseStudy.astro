@@ -1,0 +1,32 @@
+---
+import type { Project } from '../data/projects';
+import DecisionTree from './DecisionTree.astro';
+import GapDiagram from './GapDiagram.astro';
+interface Props { project: Project; }
+const { project: p } = Astro.props;
+---
+<article class="case" id={p.key}>
+  <div class="case-grid">
+    <div class="case-meta">
+      {p.tags.length === 1 ? (
+        <span class="badge alt">{p.tags[0].label}</span>
+      ) : (
+        <div class="case-tags">
+          {p.tags.map((t) => <span class={t.win ? 'badge win' : 'badge alt'}>{t.label}</span>)}
+        </div>
+      )}
+      <h3 set:html={p.titleHtml}></h3>
+      <p class="prob" set:html={p.problemHtml}></p>
+      {p.visual === 'tree' && <DecisionTree />}
+      {p.visual === 'gap' && <GapDiagram />}
+      <p class="result" set:html={p.resultHtml}></p>
+    </div>
+    <div class="case-body">
+      <span class="micro-label">{p.micro}</span>
+      <ul class="approach">
+        {p.approachHtml.map((li) => <li set:html={li}></li>)}
+      </ul>
+      <div class="chips">{p.chips.map((c) => <span class="chip">{c}</span>)}</div>
+    </div>
+  </div>
+</article>

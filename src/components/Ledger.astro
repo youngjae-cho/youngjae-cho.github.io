@@ -1,0 +1,19 @@
+---
+const stats = [
+  { n: '06', k: 'Papers' },
+  { n: '04', k: 'First-author' },
+  { n: "ICML ’23", k: '+ AAAI ’24' },
+  { n: 'Winner', k: 'NVIDIA Hackathon ’26', win: true },
+  { n: '6+ yrs', k: 'ML research' },
+];
+---
+<div class="ledger">
+  <div class="ledger-in">
+    {stats.map((s) => (
+      <div class="stat">
+        <span class={s.win ? 'n win' : 'n'}>{s.n}</span>
+        <span class="k">{s.k}</span>
+      </div>
+    ))}
+  </div>
+</div>

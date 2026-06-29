@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import { basics, work, education, skills } from '../data/cv';
+---
+<Base title="CV — Youngjae Cho" active="cv">
+  <main class="wrap">
+    <header class="page-head">
+      <div class="eyebrow">Curriculum Vitae</div>
+      <h1>{basics.name}</h1>
+      <p class="intro">{basics.summary}</p>
+      <div class="links" style="margin-top:22px">
+        <a href={`mailto:${basics.email}`}><span class="dot"></span>{basics.email}</a>
+        <a href={basics.pdf}><span class="dot"></span>Download PDF</a>
+        <a href="https://github.com/youngjae-cho"><span class="dot"></span>GitHub</a>
+        <a href="https://www.linkedin.com/in/offonoff/"><span class="dot"></span>LinkedIn</a>
+      </div>
+    </header>
+
+    <section class="block">
+      <div class="head"><div class="eyebrow">Experience</div></div>
+      <div class="tl">
+        {work.map((j) => (
+          <div class="row">
+            <div class="when">{j.start} — {j.end}</div>
+            <div class="what">
+              <h4>{j.role}</h4>
+              <div class="org">{j.org}{j.note ? ` · ${j.note}` : ''}</div>
+              <ul>{j.highlights.map((h) => <li>{h}</li>)}</ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="head"><div class="eyebrow">Education</div></div>
+      <div class="tl">
+        {education.map((e) => (
+          <div class="row">
+            <div class="when">{e.start} — {e.end}</div>
+            <div class="what">
+              <h4>{e.degree}</h4>
+              <div class="org">{e.org}{e.note ? ` · ${e.note}` : ''}</div>
+              {e.detail && <p>{e.detail}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="head"><div class="eyebrow">Skills</div></div>
+      <div class="skills">
+        {skills.map((s) => (
+          <div class="skill">
+            <h4>{s.name}</h4>
+            <div class="chips">{s.items.map((i) => <span class="chip">{i}</span>)}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+</Base>

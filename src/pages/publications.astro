@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import PubCard from '../components/PubCard.astro';
+import { publications } from '../data/publications';
+
+const pubs = [...publications].sort((a, b) => b.date.localeCompare(a.date));
+---
+<Base title="Publications — Youngjae Cho" active="publications">
+  <main class="wrap">
+    <header class="page-head">
+      <div class="eyebrow">Publications</div>
+      <h1>Publications</h1>
+      <p class="intro">Peer-reviewed and preprint work on alignment, robustness, active learning, and industrial vision — six papers, four first-author (incl. one co-first), spanning ICML, AAAI, and arXiv.</p>
+    </header>
+    <section class="block" style="border-bottom:0">
+      <div class="grid">
+        {pubs.map((p) => <PubCard pub={p} />)}
+      </div>
+    </section>
+  </main>
+</Base>

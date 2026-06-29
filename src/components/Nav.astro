@@ -1,0 +1,20 @@
+---
+interface Props { active?: string; }
+const { active } = Astro.props;
+const links = [
+  { href: '/publications', label: 'publications', key: 'publications' },
+  { href: '/projects', label: 'projects', key: 'projects' },
+];
+---
+<nav>
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="mono-mark">YC</span><span>Youngjae&nbsp;Cho</span></a>
+    <div class="nav-links">
+      {links.map((l) => (
+        <a href={l.href} class={active === l.key ? 'active' : undefined}>{l.label}</a>
+      ))}
+      <a href="/#contact">contact</a>
+    </div>
+    <a class="nav-cv" href="/cv">CV ↓</a>
+  </div>
+</nav>

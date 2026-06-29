@@ -1,0 +1,118 @@
+---
+// Hero with the loss-landscape contour canvas — the page's thesis visual.
+---
+<header class="hero" id="top">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="hero-in">
+    <div class="eyebrow">ML Research Engineer · Trustworthy &amp; Robust ML</div>
+    <h1>Youngjae<br />Cho</h1>
+    <p class="thesis">I build learning systems that <b>don't fall apart</b> when supervision gets messy.</p>
+    <p class="lede">Research on alignment, robustness, and optimization geometry — and the pipelines that ship it. From proofs to TensorRT serving.</p>
+    <p class="affil">ML Research Scientist @ <a href="https://pyler.tech/">Pyler</a> &nbsp;·&nbsp; ex-Aiv &nbsp;·&nbsp; M.S./B.S. <a href="https://www.kaist.ac.kr/">KAIST</a>, advised by <a href="https://scholar.google.com/citations?user=23AxIc0AAAAJ">Il-Chul Moon</a></p>
+    <div class="links">
+      <a href="mailto:leon5760@gmail.com"><span class="dot"></span>Email</a>
+      <a href="https://github.com/youngjae-cho"><span class="dot"></span>GitHub</a>
+      <a href="#"><span class="dot"></span>Scholar</a>
+      <a href="https://www.linkedin.com/in/offonoff/"><span class="dot"></span>LinkedIn</a>
+      <a href="/cv"><span class="dot"></span>CV</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Loss-landscape contour field with a descending "anchor" — references the
+  // sharpness/geometry thread in the research (GAPO, SAAL). Reduced-motion safe.
+  function initField() {
+    const cv = document.getElementById('field') as HTMLCanvasElement | null;
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    if (!ctx) return;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let W = 0, H = 0, DPR = 1, cx = 0, cy = 0;
+    let trail: number[][] = [];
+
+    function resize() {
+      const r = cv!.parentElement!.getBoundingClientRect();
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      W = r.width; H = r.height;
+      cv!.width = Math.round(W * DPR); cv!.height = Math.round(H * DPR);
+      cv!.style.width = W + 'px'; cv!.style.height = H + 'px';
+      ctx!.setTransform(DPR, 0, 0, DPR, 0, 0);
+      cx = W * 0.74; cy = H * 0.46;
+    }
+
+    function contour(level: number, t: number) {
+      const baseR = 22 + level * 29;
+      const segs = 110;
+      ctx!.beginPath();
+      for (let i = 0; i <= segs; i++) {
+        const a = (i / segs) * Math.PI * 2;
+        const warp = 1
+          + 0.13 * Math.sin(a * 3 + level * 0.45 + t * 0.00026)
+          + 0.07 * Math.sin(a * 5 - level * 0.3 - t * 0.00017)
+          + 0.045 * Math.sin(a * 2 + t * 0.0004);
+        const rr = baseR * warp;
+        const x = cx + Math.cos(a) * rr * 1.18;
+        const y = cy + Math.sin(a) * rr * 0.92;
+        if (i === 0) ctx!.moveTo(x, y); else ctx!.lineTo(x, y);
+      }
+      ctx!.closePath();
+      ctx!.stroke();
+    }
+
+    function rings(t: number) {
+      for (let L = 1; L <= 9; L++) {
+        const inner = L <= 3;
+        ctx!.strokeStyle = inner ? 'rgba(31,79,224,0.30)' : 'rgba(70,86,107,0.16)';
+        ctx!.lineWidth = inner ? 1.1 : 1;
+        contour(L, t);
+      }
+    }
+
+    function draw(t: number) {
+      ctx!.clearRect(0, 0, W, H);
+      rings(t);
+      const period = 15000;
+      const ph = (t % period) / period;
+      const ang = ph * Math.PI * 6 + 0.6;
+      const rad = (1 - ph) * 250 + 6;
+      const mx = cx + Math.cos(ang) * rad * 1.18;
+      const my = cy + Math.sin(ang) * rad * 0.92;
+      trail.push([mx, my]); if (trail.length > 46) trail.shift();
+      for (let k = 1; k < trail.length; k++) {
+        const alpha = (k / trail.length) * 0.5;
+        ctx!.strokeStyle = 'rgba(31,79,224,' + alpha.toFixed(3) + ')';
+        ctx!.lineWidth = 1.4;
+        ctx!.beginPath(); ctx!.moveTo(trail[k - 1][0], trail[k - 1][1]); ctx!.lineTo(trail[k][0], trail[k][1]); ctx!.stroke();
+      }
+      ctx!.beginPath(); ctx!.arc(mx, my, 4.5, 0, Math.PI * 2);
+      ctx!.fillStyle = '#1f4fe0'; ctx!.fill();
+      ctx!.beginPath(); ctx!.arc(mx, my, 9, 0, Math.PI * 2);
+      ctx!.strokeStyle = 'rgba(31,79,224,0.4)'; ctx!.lineWidth = 1.2; ctx!.stroke();
+    }
+
+    function staticDraw() {
+      ctx!.clearRect(0, 0, W, H);
+      rings(3000);
+      ctx!.beginPath(); ctx!.arc(cx, cy, 4.5, 0, Math.PI * 2);
+      ctx!.fillStyle = '#1f4fe0'; ctx!.fill();
+    }
+
+    let raf = 0, start: number | null = null;
+    function loop(ts: number) {
+      if (start === null) start = ts;
+      draw(ts - start);
+      raf = requestAnimationFrame(loop);
+    }
+    function boot() {
+      resize();
+      if (raf) cancelAnimationFrame(raf);
+      if (reduce) { staticDraw(); }
+      else { start = null; raf = requestAnimationFrame(loop); }
+    }
+    let rt: number;
+    window.addEventListener('resize', () => { clearTimeout(rt); rt = window.setTimeout(boot, 150); });
+    boot();
+  }
+  initField();
+</script>

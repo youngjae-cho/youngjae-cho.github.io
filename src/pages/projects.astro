@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import CaseStudy from '../components/CaseStudy.astro';
+import { projects } from '../data/projects';
+---
+<Base title="Projects — Youngjae Cho" active="projects">
+  <main class="wrap">
+    <header class="page-head">
+      <div class="eyebrow">Engineering &amp; Production</div>
+      <h1>Projects</h1>
+      <p class="intro">Four systems I took from method to production across Pyler and Aiv — the method, the training and inference efficiency, the serving stack, and the proof each one moved the metric.</p>
+    </header>
+    <section class="block" style="border-bottom:0">
+      <div class="cases">
+        {projects.map((p) => <CaseStudy project={p} />)}
+      </div>
+    </section>
+  </main>
+</Base>
