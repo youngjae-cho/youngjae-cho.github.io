@@ -20,16 +20,31 @@
 // true of BOTH jobs, rather than promoting one project's constraint.
 const top = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness' };
 const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training · inference · serving' };
-const right = { id: 'CASPER·3', fn: 'Product', sub: 'Ownership · measured impact' };
+const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system design' };
 ---
 <div class="magi" aria-label="Three sides of the work: research, engineering, product">
   <div class="magi-bar">
     <span class="magi-code">CODE:751</span>
+    {/* Seoul time, not the viewer's — the nav already says SEOUL · KR, and a
+        local clock there would contradict it. Filled in on the client; the
+        dashes are what a static build can honestly render. */}
+    <span class="magi-clock" id="magi-clock">KST --:--:--</span>
     <span class="magi-rule"></span>
     <span class="magi-word">MAGI SYSTEM</span>
   </div>
 
   <div class="magi-tri">
+    {/* The three pairwise links. Drawn under the plates and deliberately
+        overshooting into them, so only the segments crossing open black show
+        and the endpoints never need to land pixel-exact.
+        preserveAspectRatio="none" keeps the coordinates in plain percentages;
+        non-scaling-stroke keeps the line 1px through the distortion. */}
+    <svg class="magi-edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="44" y1="32" x2="22" y2="68" vector-effect="non-scaling-stroke" />
+      <line x1="56" y1="32" x2="78" y2="68" vector-effect="non-scaling-stroke" />
+      <line x1="26" y1="82" x2="74" y2="82" vector-effect="non-scaling-stroke" />
+    </svg>
+
     <div class="plate p-top">
       <span class="p-id">{top.id}</span>
       <span class="p-fn">{top.fn}</span>
@@ -57,3 +72,20 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Ownership · measured impa
     <span class="ms-val">3/3 Approved</span>
   </div>
 </div>
+
+<script>
+  // Seoul wall-clock in the MAGI bar. Intl does the zone, so this stays correct
+  // wherever the page is opened from and needs no offset arithmetic.
+  function initMagiClock() {
+    const el = document.getElementById('magi-clock');
+    if (!el) return;
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Seoul',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+    });
+    const tick = () => { el.textContent = 'KST ' + fmt.format(new Date()); };
+    tick();
+    setInterval(tick, 1000);
+  }
+  initMagiClock();
+</script>
