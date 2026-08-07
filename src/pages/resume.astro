@@ -110,16 +110,23 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   .resume-actions{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:76px 0 26px}
   .ra-links{display:flex;flex-wrap:wrap;gap:9px}
   .ra-btn{
-    font-family:var(--mono);font-size:.76rem;letter-spacing:.03em;
-    border:1.5px solid var(--ink);border-radius:8px;padding:8px 14px;
-    background:transparent;color:var(--ink);cursor:pointer;
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+    border:1.5px solid var(--accent);padding:8px 15px;
+    background:var(--accent-soft);color:var(--accent);cursor:pointer;
     transition:background .2s,color .2s;
+    clip-path:polygon(0 0,100% 0,100% 64%,92% 100%,0 100%);
   }
-  .ra-btn:hover{background:var(--ink);color:var(--paper)}
-  .ra-btn.alt{border-color:var(--line);color:var(--ink-2);text-decoration:none;display:inline-flex;align-items:center}
+  .ra-btn:hover{background:var(--accent);color:#06080b}
+  .ra-btn.alt{border-color:var(--line);color:var(--ink-2);background:transparent;text-decoration:none;display:inline-flex;align-items:center}
   .ra-btn.alt:hover{border-color:var(--accent);color:var(--accent-ink);background:transparent}
 
-  .sheet{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:44px 46px}
+  .sheet{position:relative;background:var(--card);border:1px solid var(--line);padding:44px 46px}
+  .sheet::before,.sheet::after{
+    content:"";position:absolute;width:11px;height:11px;pointer-events:none;
+    border-color:var(--accent);opacity:.7;
+  }
+  .sheet::before{top:-1px;left:-1px;border-top:1.5px solid;border-left:1.5px solid}
+  .sheet::after{bottom:-1px;right:-1px;border-bottom:1.5px solid;border-right:1.5px solid}
   @media(max-width:620px){.sheet{padding:28px 22px}}
   .sheet-head h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;margin:0;line-height:1.1}
   .sheet-head .role{margin:4px 0 0;font-family:var(--mono);font-size:.84rem;color:var(--accent-ink);letter-spacing:.04em}
@@ -155,14 +162,28 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   .rs-skills dt{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;color:var(--ink-3);text-transform:uppercase}
   .rs-skills dd{margin:0;font-size:.9rem;color:var(--ink-2);line-height:1.5}
 
-  /* ---- print: the sheet is the page ---- */
+  /* ---- print: the sheet is the page ----
+     The site theme is a dark console; paper is the opposite. Everything that
+     makes the screen version work — near-white ink, the CRT scanline overlay,
+     amber-on-black — has to be inverted or removed here, or the printout is
+     blank white-on-white with scanlines over it. */
   @media print{
     @page{size:A4;margin:13mm 14mm}
-    html,body{background:#fff !important}
+    html,body{background:#fff !important;color:#14181d !important}
+    .crt{display:none !important}
     nav,footer,.resume-actions{display:none !important}
     .resume{padding:0}
     .wrap{max-width:none;padding:0}
-    .sheet{border:0;border-radius:0;padding:0;background:#fff}
+    .sheet{border:0;padding:0;background:#fff}
+    .sheet::before,.sheet::after{display:none}
+    /* Re-ink for paper: near-black body, mid-grey secondary, dark amber accent. */
+    .sheet,.sheet *{color:#14181d !important}
+    .sheet-head .contact,.rs-detail,.rs-item ul li,.rs-authors,.rs-skills dd{color:#3d444d !important}
+    .rs h2,.rs-when,.rs-skills dt{color:#6b7480 !important}
+    .sheet-head .role,.rs-note,.rs-venue{color:#8a5a08 !important}
+    .rs-authors b{color:#14181d !important}
+    .rs-item ul li::before{background:#8a5a08 !important}
+    .rs,.sheet-head{border-color:#d5dae0 !important}
     .sheet-head h1{font-size:20pt}
     .sheet-head .role{font-size:9pt}
     .sheet-head .contact{font-size:8pt}
