@@ -2,12 +2,16 @@
 // MAGI triptych in triangle formation — two nodes abreast, the third centred
 // below, linked. Styling follows the reference display: plates filled with
 // signal colour and the lettering punched out in black, corners raked.
-// CASPER stands apart as the cold outlined plate, as it does on screen.
+// CASPER is set apart by colour rather than by an outline — the reference draws
+// it as an outlined box, but that made it read as a different kind of object
+// instead of the third member of a set.
 //
-// Three nodes, one operator — the modes the work actually runs in.
+// Three nodes, one operator — the modes the work actually runs in. Keep the
+// sub-lines true of BOTH jobs; don't promote a single project's constraint
+// (e.g. the single-GPU diffusion budget at Aiv) into a general descriptor.
 const top = [
   { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness · optimization geometry' },
-  { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training & inference efficiency, one-GPU budget' },
+  { id: 'BALTHASAR·2', fn: 'Engineering', sub: '12B post-training · training & inference efficiency' },
 ];
 const casper = { id: 'CASPER·3', fn: 'Serving', sub: 'TensorRT · Triton · vLLM in production' };
 ---

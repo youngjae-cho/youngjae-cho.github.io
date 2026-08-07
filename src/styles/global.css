@@ -204,10 +204,12 @@ nav{
 .plate.fill .p-id{color:rgba(0,0,0,.6)}
 .plate.fill .p-fn{color:var(--punch)}
 .plate.fill .p-sub{color:rgba(0,0,0,.74)}
-.plate.cold{background:transparent;border:1.5px solid var(--cyan)}
-.plate.cold .p-id{color:var(--cyan);opacity:.75}
-.plate.cold .p-fn{color:var(--cyan)}
-.plate.cold .p-sub{color:rgba(42,212,255,.66)}
+/* Same treatment as the other two — filled, text punched out. Set apart by
+   colour alone, so the three still read as one set. */
+.plate.cold{background:var(--cyan)}
+.plate.cold .p-id{color:rgba(0,0,0,.6)}
+.plate.cold .p-fn{color:var(--punch)}
+.plate.cold .p-sub{color:rgba(0,0,0,.74)}
 .plate:hover{filter:brightness(1.14)}
 .plate.casper{grid-column:1 / -1;justify-self:center;width:min(100%,74%)}
 @media(max-width:420px){.plate.casper{width:100%}}
