@@ -23,7 +23,6 @@
   --nominal:#00e83c;      /* structural green — grids, lines, OK states */
   --nominal-dim:rgba(0,232,60,.34);
   --alert:#ff1d0d;
-  --cyan:#2ad4ff;         /* the cold outlined plate in the reference */
   --punch:#000000;        /* text punched out of a filled plate */
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Monaco,"Cascadia Code","Roboto Mono",monospace;
@@ -165,7 +164,8 @@ nav{
   max-width:22ch;letter-spacing:-.008em;
 }
 .thesis b{color:var(--accent);font-weight:650}
-.lede{margin-top:20px;max-width:52ch;color:var(--ink-2);font-size:1.02rem}
+.lede{margin-top:18px;max-width:52ch;color:var(--ink-2);font-size:.98rem}
+.lede b{color:var(--accent-ink);font-weight:650}
 .affil{margin-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-2);letter-spacing:.02em}
 .affil a{color:var(--ink);border-bottom:1px solid var(--line)}
 .affil a:hover{border-color:var(--accent);color:var(--accent-ink)}
@@ -195,40 +195,37 @@ nav{
    Corners are raked with clip-path rather than skewX, so the plate angles but
    the lettering stays level — as it does on the reference. */
 .magi-tri{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* All three plates are identical — peers, not a hierarchy. */
 .plate{
   padding:10px 14px 12px;display:flex;flex-direction:column;gap:1px;
+  background:var(--accent);
   clip-path:polygon(0 0,100% 0,100% 74%,89% 100%,0 100%);
   transition:filter .2s;
 }
-.plate.fill{background:var(--accent)}
-.plate.fill .p-id{color:rgba(0,0,0,.6)}
-.plate.fill .p-fn{color:var(--punch)}
-.plate.fill .p-sub{color:rgba(0,0,0,.74)}
-/* Same treatment as the other two — filled, text punched out. Set apart by
-   colour alone, so the three still read as one set. */
-.plate.cold{background:var(--cyan)}
-.plate.cold .p-id{color:rgba(0,0,0,.6)}
-.plate.cold .p-fn{color:var(--punch)}
-.plate.cold .p-sub{color:rgba(0,0,0,.74)}
+.plate .p-id{color:rgba(0,0,0,.6)}
+.plate .p-fn{color:var(--punch)}
+.plate .p-sub{color:rgba(0,0,0,.74)}
 .plate:hover{filter:brightness(1.14)}
-.plate.casper{grid-column:1 / -1;justify-self:center;width:min(100%,74%)}
-@media(max-width:420px){.plate.casper{width:100%}}
+.plate.apex{grid-column:1 / -1;justify-self:center;width:min(100%,74%)}
+@media(max-width:420px){.plate.apex{width:100%}}
 .p-id{font-size:.58rem;letter-spacing:.18em;font-weight:700}
 .p-fn{font-size:.94rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;line-height:1.25}
 .p-sub{font-size:.58rem;letter-spacing:.03em;line-height:1.45;margin-top:3px}
 
-/* The link that makes it read as a formation, not a list. */
+/* The tie that makes it read as a formation, not a list. A bus, not an arrow:
+   these are peers, so nothing about it should suggest direction of flow.
+   Drops from the apex, then spans out to the pair below. */
 .magi-link{
   grid-column:1 / -1;height:15px;position:relative;
 }
 .magi-link::before{
-  content:"";position:absolute;left:25%;right:25%;top:0;
-  height:7px;border-left:1px solid var(--nominal);border-right:1px solid var(--nominal);
-  border-bottom:1px solid var(--nominal);opacity:.55;
+  content:"";position:absolute;left:50%;top:0;width:1px;height:7px;
+  background:var(--nominal);opacity:.55;
 }
 .magi-link::after{
-  content:"";position:absolute;left:50%;top:7px;width:1px;height:8px;
-  background:var(--nominal);opacity:.55;
+  content:"";position:absolute;left:25%;right:25%;top:7px;height:8px;
+  border-top:1px solid var(--nominal);border-left:1px solid var(--nominal);
+  border-right:1px solid var(--nominal);opacity:.55;
 }
 
 .magi-status{

@@ -11,14 +11,9 @@ npm run build    # static build → ./dist
 npm run preview  # preview the production build
 ```
 
-## Two documents, two audiences
+## The résumé
 
-Deliberately split, so neither has to do the other's job:
-
-| | What | Where |
-|---|------|-------|
-| **Résumé** | 1 page. The recruiter entry point. Print-friendly — "Print / Save as PDF" on the page produces the PDF. | `/resume` (`src/pages/resume.astro`) |
-| **Research portfolio** | 12 pages. For the hiring manager who's already interested. | `public/youngjae-cho-research-portfolio.pdf` |
+`/resume` (`src/pages/resume.astro`) is a ~2-page, print-friendly sheet — the recruiter entry point. "Print / Save as PDF" on the page produces the PDF; there is no checked-in PDF to keep in sync.
 
 `/cv` redirects to `/resume` (see `astro.config.mjs`) so old links keep working.
 

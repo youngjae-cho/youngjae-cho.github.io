@@ -7,9 +7,10 @@ import { publications } from '../data/publications';
 import { projects } from '../data/projects';
 import { work } from '../data/cv';
 
-// The home page is a trailer, not the catalogue: one feature plus two, and the
-// two systems that carry the most weight. Everything else lives one click away.
-const homePubs = publications.filter((p) => p.home).slice(0, 3);
+// The home page is a trailer, not the catalogue. Research gets the larger
+// share of it deliberately — every home-flagged paper shows, against the two
+// systems that carry the most weight. The rest is one click away.
+const homePubs = publications.filter((p) => p.home);
 const homeProjects = projects.slice(0, 2);
 ---
 <Base>
@@ -21,7 +22,7 @@ const homeProjects = projects.slice(0, 2);
       <div class="head">
         <div class="eyebrow">Selected Research</div>
         <h2>Robust learning when supervision is noisy, scarce, or shifting.</h2>
-        <p>That's the throughline — the failure mode each paper attacks. The methods vary: <em>optimization geometry</em> for noisy preferences, <em>acquisition</em> for scarce labels, <em>Bayesian priors</em> for shift, <em>generative synthesis</em> for scarce anomalies.</p>
+        <p>Six papers, four first-author, one theme: the failure mode each one attacks. The methods vary — <em>optimization geometry</em> for noisy preferences, <em>acquisition</em> for scarce labels, <em>Bayesian priors</em> for shift, <em>generative synthesis</em> for scarce anomalies — but the question doesn't.</p>
         <a class="section-link" href="/publications">All publications <span class="arr">→</span></a>
       </div>
       <div class="grid">

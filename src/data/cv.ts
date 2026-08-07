@@ -12,10 +12,8 @@ export const basics = {
     'I design learning methods for noisy, scarce, and shifting supervision — and ship them to production.',
   // Longer form, for the resume header.
   summaryLong:
-    'ML Research Engineer working on robust learning under imperfect supervision. First-author work at ICML and AAAI; currently owning LLM/VLM auto-labeling, preference alignment, and the serving stack behind them at Pyler.',
+    'ML Research Engineer working on robust learning under imperfect supervision — six papers, four first-author, including ICML 2023 and AAAI 2024. Currently on preference alignment at Pyler, alongside the LLM/VLM auto-labeling system and RL post-training framework I own there.',
   resume: '/resume',
-  portfolio: '/youngjae-cho-research-portfolio.pdf',
-  portfolioPages: 12,
   links: {
     github: 'https://github.com/youngjae-cho',
     linkedin: 'https://www.linkedin.com/in/offonoff/',
@@ -43,7 +41,7 @@ export const work: Job[] = [
     highlights: [
       'Own the LLM/VLM auto-labeling system for content-safety scoring (5 categories × severity): mined the implicit decision tree from 299K VLM reasoning traces and turned it into auditable, tree-structured prompts — macro F1 0.777 → 0.857 (precision +0.103, recall +0.050), replacing labeling logic that lived unwritten in each labeler\'s head',
       'First-author alignment research (GAPO) — geometric anchoring for preference optimization robust to noisy labels, +3.6pp AlpacaEval 2.0 LC over SimPO',
-      'Winner — NVIDIA Nemotron Hackathon, Track B (Domain-Specialized Model), 2026: implemented SimPO on Megatron-Bridge for Nemotron-Nano-12B-VL, post-training the framework did not support',
+      'Winner — NVIDIA Nemotron Hackathon, Track B (Domain-Specialized Model), 2026: built the RL post-training framework for Nemotron-Nano-12B-VL, an architecture no existing RL framework supported — added the RL layer (rollout, loss, training loop) onto Megatron-Bridge with SimPO as the objective, and open-sourced it',
       'Built the LLM benchmarking CLI and pluggable engine abstraction (vLLM / Hugging Face / synthetic CI fallback) the team evaluates on',
     ],
   },
@@ -91,7 +89,7 @@ export interface SkillGroup { name: string; items: string[]; }
 
 export const skills: SkillGroup[] = [
   { name: 'Research & Modeling', items: ['PyTorch', 'Hugging Face', 'TensorFlow', 'JAX'] },
-  { name: 'Post-training & Alignment', items: ['SimPO / DPO', 'Megatron-Bridge', 'RLHF pipelines', 'Preference data design'] },
+  { name: 'Post-training & Alignment', items: ['SimPO / DPO', 'RL frameworks (Megatron-Bridge, Nemo-RL)', 'Preference data design'] },
   { name: 'Optimization & Serving', items: ['TensorRT', 'ONNX', 'Triton Inference Server', 'vLLM', 'Flash Attention', 'DeepSpeed', 'CUDA Graphs'] },
   { name: 'Domains', items: ['Robust learning under noisy supervision', 'LLM/VLM auto-labeling', 'Vision-Language', 'Active learning', 'Diffusion / anomaly detection'] },
 ];

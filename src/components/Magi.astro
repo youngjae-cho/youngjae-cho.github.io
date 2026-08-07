@@ -1,21 +1,27 @@
 ---
-// MAGI triptych in triangle formation — two nodes abreast, the third centred
-// below, linked. Styling follows the reference display: plates filled with
-// signal colour and the lettering punched out in black, corners raked.
-// CASPER is set apart by colour rather than by an outline — the reference draws
-// it as an outlined box, but that made it read as a different kind of object
-// instead of the third member of a set.
+// MAGI triptych in triangle formation — one node at the apex, two abreast
+// below, tied by a bus rather than an arrow. The three are independent
+// domains, not stages of a pipeline: a 2-over-1 stack read as
+// research → engineering → serving, which is the wrong claim. Research takes
+// the apex.
 //
-// Three nodes, one operator — the modes the work actually runs in. Keep the
-// sub-lines true of BOTH jobs; don't promote a single project's constraint
-// (e.g. the single-GPU diffusion budget at Aiv) into a general descriptor.
-const top = [
-  { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness · optimization geometry' },
+// Styling follows the reference display: plates filled with signal colour and
+// the lettering punched out in black, corners raked. All three share one
+// colour — they're peers, and any differentiation implied a hierarchy that
+// isn't there.
+//
+// Keep the sub-lines true of BOTH jobs; don't promote a single project's
+// constraint or model size into a general descriptor.
+const apex = {
+  id: 'MELCHIOR·1', fn: 'Research',
+  sub: 'Alignment · robustness · learning under imperfect supervision',
+};
+const base = [
   { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training & inference efficiency · pipelines · tooling' },
+  { id: 'CASPER·3', fn: 'Serving', sub: 'TensorRT · Triton · vLLM in production' },
 ];
-const casper = { id: 'CASPER·3', fn: 'Serving', sub: 'TensorRT · Triton · vLLM in production' };
 ---
-<div class="magi" aria-label="Three modes of work: research, engineering, serving">
+<div class="magi" aria-label="Three independent domains: research, engineering, serving">
   <div class="magi-bar">
     <span class="magi-code">CODE:751</span>
     <span class="magi-rule"></span>
@@ -23,19 +29,19 @@ const casper = { id: 'CASPER·3', fn: 'Serving', sub: 'TensorRT · Triton · vLL
   </div>
 
   <div class="magi-tri">
-    {top.map((n) => (
-      <div class="plate fill">
+    <div class="plate apex">
+      <span class="p-id">{apex.id}</span>
+      <span class="p-fn">{apex.fn}</span>
+      <span class="p-sub">{apex.sub}</span>
+    </div>
+    <div class="magi-link" aria-hidden="true"></div>
+    {base.map((n) => (
+      <div class="plate">
         <span class="p-id">{n.id}</span>
         <span class="p-fn">{n.fn}</span>
         <span class="p-sub">{n.sub}</span>
       </div>
     ))}
-    <div class="magi-link" aria-hidden="true"></div>
-    <div class="plate cold casper">
-      <span class="p-id">{casper.id}</span>
-      <span class="p-fn">{casper.fn}</span>
-      <span class="p-sub">{casper.sub}</span>
-    </div>
   </div>
 
   <div class="magi-status">

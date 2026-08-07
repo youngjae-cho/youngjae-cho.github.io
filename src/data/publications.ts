@@ -1,7 +1,7 @@
 // Publications. `home: true` surfaces it in "Selected Research" on the home page;
 // /publications lists all.
 //
-// Metadata rule — keep these three in lockstep with the resume and the portfolio PDF:
+// Metadata rule — keep these three in lockstep everywhere they surface:
 //   venue   the canonical venue string, e.g. "ICML 2023", "arXiv 2026"
 //   status  'Published' | 'Preprint' | 'Workshop'   (never invent a review status)
 //   date    YYYY-MM, used for ordering only
