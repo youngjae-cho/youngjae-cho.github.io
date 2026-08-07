@@ -7,18 +7,14 @@ import Magi from './Magi.astro';
   <div class="hero-in">
     <div class="hero-left">
       <img class="avatar" src="/images/profile.png" alt="Youngjae Cho" width="112" height="112" />
-      <div class="eyebrow">ML Research Engineer · Trustworthy &amp; Robust ML</div>
+      <div class="eyebrow">ML Research Engineer</div>
       <h1>Youngjae<br />Cho</h1>
       <p class="thesis">I design learning methods for <b>noisy, scarce, and shifting supervision</b> — and ship them to production.</p>
-      <p class="lede">First-author work at ICML and AAAI, then the pipelines that put it on a real line: auto-labeling, preference alignment, TensorRT serving.</p>
-      <p class="affil">Research Scientist @ <a href="https://pyler.tech/">Pyler</a> &nbsp;·&nbsp; ex-Aiv &nbsp;·&nbsp; M.S./B.S. <a href="https://www.kaist.ac.kr/">KAIST</a>, advised by <a href="https://scholar.google.com/citations?user=23AxIc0AAAAJ">Il-Chul Moon</a></p>
+      <p class="affil">Research Scientist @ <a href="https://pyler.tech/">Pyler</a> &nbsp;·&nbsp; ex-Aiv &nbsp;·&nbsp; M.S./B.S. <a href="https://www.kaist.ac.kr/">KAIST</a></p>
       <div class="links">
         <a class="primary" href="/resume"><span class="dot"></span>Résumé</a>
-        <a href="/youngjae-cho-research-portfolio.pdf"><span class="dot"></span>Research portfolio (PDF)</a>
+        <a href="/youngjae-cho-research-portfolio.pdf"><span class="dot"></span>Portfolio PDF</a>
         <a href="mailto:leon5760@gmail.com"><span class="dot"></span>Email</a>
-        <a href="https://github.com/youngjae-cho"><span class="dot"></span>GitHub</a>
-        <a href="https://scholar.google.com/citations?user=nAER4OcAAAAJ"><span class="dot"></span>Scholar</a>
-        <a href="https://www.linkedin.com/in/offonoff/"><span class="dot"></span>LinkedIn</a>
       </div>
     </div>
     <div class="hero-right">
@@ -49,30 +45,47 @@ import Magi from './Magi.astro';
       cx = W * 0.74; cy = H * 0.46;
     }
 
+    // Radar grid: concentric rings plus radial spokes, drawn thin in structural
+    // green — the reference's defence-plot look. The rings still carry the
+    // original meaning (a loss landscape), just with the warp dialled right down
+    // so they read as instrument graticule rather than terrain.
     function contour(level: number, t: number) {
       const baseR = 22 + level * 29;
-      const segs = 110;
+      const segs = 120;
       ctx!.beginPath();
       for (let i = 0; i <= segs; i++) {
         const a = (i / segs) * Math.PI * 2;
         const warp = 1
-          + 0.13 * Math.sin(a * 3 + level * 0.45 + t * 0.00026)
-          + 0.07 * Math.sin(a * 5 - level * 0.3 - t * 0.00017)
-          + 0.045 * Math.sin(a * 2 + t * 0.0004);
+          + 0.035 * Math.sin(a * 3 + level * 0.45 + t * 0.00026)
+          + 0.02 * Math.sin(a * 5 - level * 0.3 - t * 0.00017);
         const rr = baseR * warp;
-        const x = cx + Math.cos(a) * rr * 1.18;
-        const y = cy + Math.sin(a) * rr * 0.92;
+        const x = cx + Math.cos(a) * rr * 1.14;
+        const y = cy + Math.sin(a) * rr * 0.94;
         if (i === 0) ctx!.moveTo(x, y); else ctx!.lineTo(x, y);
       }
       ctx!.closePath();
       ctx!.stroke();
     }
 
+    function spokes() {
+      const R = 22 + 9 * 29;
+      ctx!.strokeStyle = 'rgba(0,232,60,0.13)';
+      ctx!.lineWidth = 1;
+      for (let k = 0; k < 12; k++) {
+        const a = (k / 12) * Math.PI * 2;
+        ctx!.beginPath();
+        ctx!.moveTo(cx, cy);
+        ctx!.lineTo(cx + Math.cos(a) * R * 1.14, cy + Math.sin(a) * R * 0.94);
+        ctx!.stroke();
+      }
+    }
+
     function rings(t: number) {
+      spokes();
       for (let L = 1; L <= 9; L++) {
         const inner = L <= 3;
-        ctx!.strokeStyle = inner ? 'rgba(255,144,22,0.38)' : 'rgba(120,140,165,0.15)';
-        ctx!.lineWidth = inner ? 1.1 : 1;
+        ctx!.strokeStyle = inner ? 'rgba(0,232,60,0.30)' : 'rgba(0,232,60,0.15)';
+        ctx!.lineWidth = 1;
         contour(L, t);
       }
     }
@@ -89,21 +102,21 @@ import Magi from './Magi.astro';
       trail.push([mx, my]); if (trail.length > 46) trail.shift();
       for (let k = 1; k < trail.length; k++) {
         const alpha = (k / trail.length) * 0.55;
-        ctx!.strokeStyle = 'rgba(255,144,22,' + alpha.toFixed(3) + ')';
+        ctx!.strokeStyle = 'rgba(255,59,0,' + alpha.toFixed(3) + ')';
         ctx!.lineWidth = 1.4;
         ctx!.beginPath(); ctx!.moveTo(trail[k - 1][0], trail[k - 1][1]); ctx!.lineTo(trail[k][0], trail[k][1]); ctx!.stroke();
       }
       ctx!.beginPath(); ctx!.arc(mx, my, 4.5, 0, Math.PI * 2);
-      ctx!.fillStyle = '#ff9016'; ctx!.fill();
+      ctx!.fillStyle = '#ff3b00'; ctx!.fill();
       ctx!.beginPath(); ctx!.arc(mx, my, 9, 0, Math.PI * 2);
-      ctx!.strokeStyle = 'rgba(255,144,22,0.45)'; ctx!.lineWidth = 1.2; ctx!.stroke();
+      ctx!.strokeStyle = 'rgba(255,59,0,0.55)'; ctx!.lineWidth = 1.2; ctx!.stroke();
     }
 
     function staticDraw() {
       ctx!.clearRect(0, 0, W, H);
       rings(3000);
       ctx!.beginPath(); ctx!.arc(cx, cy, 4.5, 0, Math.PI * 2);
-      ctx!.fillStyle = '#ff9016'; ctx!.fill();
+      ctx!.fillStyle = '#ff3b00'; ctx!.fill();
     }
 
     let raf = 0, start: number | null = null;

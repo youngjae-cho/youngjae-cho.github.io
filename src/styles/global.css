@@ -1,26 +1,33 @@
 /* ============================================================
-   MAGI terminal theme — dark readout console.
-   Palette: near-black ground, amber signal, green nominal, red alert.
-   Everything is angular: no border-radius, corner ticks instead.
+   MAGI system display.
+   Rules taken from the real thing: pure black ground, fully-saturated
+   RGB primaries, no midtones in the chrome. Signal elements are FILLED
+   plates with black text punched out of them — not outlined boxes.
+   Flat only: no gradients, no blur, no rounded corners, no shadows.
+   Long-form copy is the one exception; it stays legible grey.
    ============================================================ */
 :root{
-  --paper:#06080b;        /* console ground — near black, cool bias */
-  --panel:#0b0f14;
-  --card:#0d1219;
-  --card-2:#101822;
-  --ink:#e6ecf4;          /* readout text */
-  --ink-2:#94a4b8;        /* secondary */
-  --ink-3:#5f7085;        /* label / muted */
-  --line:#1c2733;
-  --line-2:#141c25;
-  --accent:#ff9016;       /* MAGI amber — the signal */
-  --accent-ink:#ffb257;
-  --accent-soft:rgba(255,144,22,.09);
-  --gold:#ffd166;         /* award / score 5 */
-  --nominal:#35d07f;      /* status OK */
-  --alert:#ff4438;        /* status alert */
+  --paper:#000000;        /* pure black. the reference has no other ground */
+  --panel:#050505;
+  --card:#080808;
+  --card-2:#0e0e0e;
+  --ink:#f2f4f6;          /* body copy — the one concession to legibility */
+  --ink-2:#9aa3ac;
+  --ink-3:#6a737c;
+  --line:#26170c;         /* structure lines read as dim accent, not grey */
+  --line-2:#171717;
+  --accent:#ff3b00;       /* MAGI red-orange — the primary signal */
+  --accent-ink:#ff7a2f;
+  --accent-soft:rgba(255,59,0,.12);
+  --gold:#ffb000;         /* award / emphasis */
+  --nominal:#00e83c;      /* structural green — grids, lines, OK states */
+  --nominal-dim:rgba(0,232,60,.34);
+  --alert:#ff1d0d;
+  --cyan:#2ad4ff;         /* the cold outlined plate in the reference */
+  --punch:#000000;        /* text punched out of a filled plate */
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Monaco,"Cascadia Code","Roboto Mono",monospace;
+  --skew:-9deg;           /* the reference's plate rake */
   --maxw:1120px;
 }
 
@@ -73,17 +80,20 @@ img{max-width:100%;display:block}
 .ticked::before{top:-1px;left:-1px;border-top:1.5px solid;border-left:1.5px solid}
 .ticked::after{bottom:-1px;right:-1px;border-bottom:1.5px solid;border-right:1.5px solid}
 
-/* ---- eyebrow / mono label layer ---- */
+/* ---- eyebrow: a label plate with the text punched out of filled colour.
+   The plate's trailing edge is raked via clip-path rather than skewX, so the
+   plate rakes but the lettering stays level — as it does on the reference. ---- */
 .eyebrow{
   font-family:var(--mono);
-  font-size:.7rem;
-  letter-spacing:.24em;
+  font-size:.66rem;
+  letter-spacing:.2em;
   text-transform:uppercase;
-  color:var(--accent);
-  display:flex;align-items:center;gap:.7em;
+  color:var(--punch);
+  background:var(--accent);
+  display:inline-block;width:fit-content;align-self:flex-start;
+  padding:5px 20px 5px 12px;font-weight:800;line-height:1.5;
+  clip-path:polygon(0 0,100% 0,calc(100% - 11px) 100%,0 100%);
 }
-.eyebrow::before{content:"\25a0";color:var(--accent);font-size:.66em;line-height:1}
-.eyebrow::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line) 0%,transparent 100%);max-width:180px}
 
 /* ===== NAV — console status bar ===== */
 nav{
@@ -171,63 +181,90 @@ nav{
 .links a:hover{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft)}
 .links a .dot{width:5px;height:5px;background:var(--accent);flex:none}
 
-/* ===== MAGI triptych ===== */
-.magi{
-  border:1px solid var(--line);background:rgba(11,15,20,.72);
-  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
-  padding:0;font-family:var(--mono);
+/* ===== MAGI triptych — raked plates, text punched out of filled colour ===== */
+.magi{font-family:var(--mono);background:var(--paper);padding:2px 0 0}
+.magi-bar{
+  display:flex;align-items:center;gap:12px;margin-bottom:14px;
+  font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;
 }
-.magi-head{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 13px;border-bottom:1px solid var(--line);
-  font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
-}
-.magi-head .sp{flex:1}
-.magi-head .code{color:var(--ink-3);letter-spacing:.14em}
-.magi-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:16px 13px 6px}
-.magi-node{
-  border:1.5px solid var(--accent);background:var(--accent-soft);
-  padding:11px 12px 12px;display:flex;flex-direction:column;gap:3px;
-  clip-path:polygon(0 0,100% 0,100% 76%,80% 100%,0 100%);
-  transition:background .25s;
-}
-.magi-node:hover{background:rgba(255,144,22,.16)}
-.magi-node.casper{grid-column:1 / -1;justify-self:center;width:min(100%,60%)}
-@media(max-width:420px){.magi-node.casper{width:100%}}
-.magi-node .id{font-size:.62rem;letter-spacing:.16em;color:var(--accent);text-transform:uppercase}
-.magi-node .fn{font-size:.86rem;font-weight:700;letter-spacing:.06em;color:var(--ink);text-transform:uppercase}
-.magi-node .sub{font-size:.62rem;letter-spacing:.05em;color:var(--ink-3);line-height:1.45}
-.magi-foot{
-  display:flex;align-items:center;gap:10px;margin:10px 13px 0;
-  padding:9px 0 11px;border-top:1px solid var(--line-2);
-  font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
-}
-.magi-foot .sp{flex:1;border-bottom:1px dotted var(--line);margin-bottom:3px}
-.magi-foot .ok{color:var(--nominal)}
-.magi-foot .ok::before{content:"\25cf";margin-right:6px;font-size:.8em}
-@media (prefers-reduced-motion:no-preference){
-  .magi-foot .ok::before{animation:blip 2.4s steps(1) infinite}
-}
-@keyframes blip{0%,72%{opacity:1}76%,100%{opacity:.25}}
+.magi-code{color:var(--accent);font-weight:700}
+.magi-rule{flex:1;height:1px;background:var(--nominal);opacity:.5}
+.magi-word{color:var(--nominal);font-weight:700;letter-spacing:.42em}
 
-/* ===== LEDGER — readout strip ===== */
-.ledger{border-bottom:1px solid var(--line);background:var(--panel)}
+/* Triangle formation: two nodes abreast, the third centred below and linked.
+   Corners are raked with clip-path rather than skewX, so the plate angles but
+   the lettering stays level — as it does on the reference. */
+.magi-tri{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plate{
+  padding:10px 14px 12px;display:flex;flex-direction:column;gap:1px;
+  clip-path:polygon(0 0,100% 0,100% 74%,89% 100%,0 100%);
+  transition:filter .2s;
+}
+.plate.fill{background:var(--accent)}
+.plate.fill .p-id{color:rgba(0,0,0,.6)}
+.plate.fill .p-fn{color:var(--punch)}
+.plate.fill .p-sub{color:rgba(0,0,0,.74)}
+.plate.cold{background:transparent;border:1.5px solid var(--cyan)}
+.plate.cold .p-id{color:var(--cyan);opacity:.75}
+.plate.cold .p-fn{color:var(--cyan)}
+.plate.cold .p-sub{color:rgba(42,212,255,.66)}
+.plate:hover{filter:brightness(1.14)}
+.plate.casper{grid-column:1 / -1;justify-self:center;width:min(100%,74%)}
+@media(max-width:420px){.plate.casper{width:100%}}
+.p-id{font-size:.58rem;letter-spacing:.18em;font-weight:700}
+.p-fn{font-size:.94rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;line-height:1.25}
+.p-sub{font-size:.58rem;letter-spacing:.03em;line-height:1.45;margin-top:3px}
+
+/* The link that makes it read as a formation, not a list. */
+.magi-link{
+  grid-column:1 / -1;height:15px;position:relative;
+}
+.magi-link::before{
+  content:"";position:absolute;left:25%;right:25%;top:0;
+  height:7px;border-left:1px solid var(--nominal);border-right:1px solid var(--nominal);
+  border-bottom:1px solid var(--nominal);opacity:.55;
+}
+.magi-link::after{
+  content:"";position:absolute;left:50%;top:7px;width:1px;height:8px;
+  background:var(--nominal);opacity:.55;
+}
+
+.magi-status{
+  display:flex;align-items:center;gap:11px;margin-top:14px;
+  font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--nominal);
+}
+.ms-dots{flex:1;height:0;border-bottom:1px dashed var(--nominal);opacity:.42}
+.ms-val{font-weight:700}
+.ms-val::before{content:"\25a0";margin-right:7px;font-size:.85em}
+@media (prefers-reduced-motion:no-preference){
+  .ms-val::before{animation:blip 2.4s steps(1) infinite}
+}
+@keyframes blip{0%,72%{opacity:1}76%,100%{opacity:.2}}
+
+/* ===== LEDGER — the numbered diamond rack ===== */
+.ledger{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper)}
 .ledger-in{
-  max-width:var(--maxw);margin:0 auto;padding:0 28px;
-  display:flex;flex-wrap:wrap;font-family:var(--mono);
+  max-width:var(--maxw);margin:0 auto;padding:26px 28px;
+  display:flex;flex-wrap:wrap;gap:14px 10px;font-family:var(--mono);
 }
 .stat{
-  flex:1 1 0;min-width:128px;padding:20px 24px;
-  border-left:1px solid var(--line);
-  display:flex;flex-direction:column;gap:5px;position:relative;
+  flex:1 1 0;min-width:150px;
+  display:flex;align-items:center;gap:13px;
 }
-.stat::before{content:"";position:absolute;left:-1px;top:0;width:1px;height:12px;background:var(--accent)}
-.stat:first-child{border-left:0;padding-left:0}
-.stat:first-child::before{display:none}
-.stat .n{font-size:1.45rem;font-weight:700;letter-spacing:.01em;font-variant-numeric:tabular-nums;color:var(--accent)}
-.stat .n.win{color:var(--gold)}
-.stat .k{font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
-@media(max-width:620px){.stat{flex-basis:42%;border-left:0;padding-left:0}.stat::before{display:none}}
+/* Rotated square, filled — the reference's numbered blocks. Note the usable
+   width is NOT the diagonal: a horizontal band of text height h through the
+   centre only clears (diagonal - 2h), so the type has to stay small. */
+.stat .n{
+  flex:none;display:grid;place-items:center;
+  width:58px;height:58px;transform:rotate(45deg);
+  background:var(--accent);color:var(--punch);
+  font-size:.58rem;font-weight:800;letter-spacing:0;
+  font-variant-numeric:tabular-nums;
+}
+.stat .n > span{transform:rotate(-45deg);display:block;white-space:nowrap;line-height:1}
+.stat .n.win{background:var(--gold)}
+.stat .k{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--nominal);line-height:1.55;max-width:19ch}
+@media(max-width:620px){.stat{flex-basis:46%;min-width:0}.stat .n{width:50px;height:50px;font-size:.52rem}}
 
 /* ===== generic section ===== */
 section.block{padding:70px 0;border-bottom:1px solid var(--line)}
@@ -264,12 +301,14 @@ section.block{padding:70px 0;border-bottom:1px solid var(--line)}
 .card:hover::before,.card:hover::after{opacity:1}
 .card.feature{grid-column:1 / -1}
 .card-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+/* Signal badges are filled plates with the label punched out in black — the
+   reference never outlines a status block. Muted ones stay outlined. */
 .badge{
-  font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;
-  border:1px solid var(--accent);color:var(--accent);background:var(--accent-soft);
-  padding:4px 9px;font-weight:600;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+  background:var(--accent);color:var(--punch);border:0;
+  padding:4px 10px;font-weight:800;
 }
-.badge.alt{border-color:var(--line);color:var(--ink-2);background:transparent}
+.badge.alt{background:transparent;border:1px solid var(--nominal);color:var(--nominal);font-weight:600}
 .role-tag{font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-left:auto}
 .role-tag.first{color:var(--gold)}
 .card h3{font-size:1.28rem;font-weight:700;letter-spacing:-.015em;line-height:1.2;margin:0}
@@ -312,7 +351,7 @@ section.block{padding:70px 0;border-bottom:1px solid var(--line)}
 .tree-cap{font-family:var(--mono);font-size:.65rem;color:var(--ink-3);line-height:1.5;letter-spacing:.02em;margin:0}
 .case-meta > .badge{align-self:flex-start}
 .case-tags{display:flex;flex-wrap:wrap;gap:7px}
-.badge.win{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.08);font-weight:600}
+.badge.win{background:var(--gold);color:var(--punch);border:0;font-weight:800}
 .gap{display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:.7rem;margin:2px 0}
 .gap-row{display:flex;align-items:center;gap:9px;padding:8px 11px;line-height:1.4}
 .gap-row .mk{font-weight:700;flex:none}

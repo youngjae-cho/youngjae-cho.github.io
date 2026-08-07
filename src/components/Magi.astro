@@ -1,30 +1,42 @@
 ---
-// MAGI triptych — the hero's console panel. Three nodes, one operator:
-// the three modes the work actually runs in (theory → build → ship).
-const nodes = [
-  { id: 'MELCHIOR-1', fn: 'Research', sub: 'Alignment · robustness · optimization geometry' },
-  { id: 'BALTHASAR-2', fn: 'Engineering', sub: 'Training & inference efficiency at one-GPU budget' },
-  { id: 'CASPER-3', fn: 'Serving', sub: 'TensorRT · Triton · vLLM in production', casper: true },
+// MAGI triptych in triangle formation — two nodes abreast, the third centred
+// below, linked. Styling follows the reference display: plates filled with
+// signal colour and the lettering punched out in black, corners raked.
+// CASPER stands apart as the cold outlined plate, as it does on screen.
+//
+// Three nodes, one operator — the modes the work actually runs in.
+const top = [
+  { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness · optimization geometry' },
+  { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training & inference efficiency, one-GPU budget' },
 ];
+const casper = { id: 'CASPER·3', fn: 'Serving', sub: 'TensorRT · Triton · vLLM in production' };
 ---
-<div class="magi ticked" aria-label="Three modes of work: research, engineering, serving">
-  <div class="magi-head">
-    <span>MAGI</span>
-    <span class="sp"></span>
-    <span class="code">CODE:751</span>
+<div class="magi" aria-label="Three modes of work: research, engineering, serving">
+  <div class="magi-bar">
+    <span class="magi-code">CODE:751</span>
+    <span class="magi-rule"></span>
+    <span class="magi-word">MAGI</span>
   </div>
-  <div class="magi-grid">
-    {nodes.map((n) => (
-      <div class={n.casper ? 'magi-node casper' : 'magi-node'}>
-        <span class="id">{n.id}</span>
-        <span class="fn">{n.fn}</span>
-        <span class="sub">{n.sub}</span>
+
+  <div class="magi-tri">
+    {top.map((n) => (
+      <div class="plate fill">
+        <span class="p-id">{n.id}</span>
+        <span class="p-fn">{n.fn}</span>
+        <span class="p-sub">{n.sub}</span>
       </div>
     ))}
+    <div class="magi-link" aria-hidden="true"></div>
+    <div class="plate cold casper">
+      <span class="p-id">{casper.id}</span>
+      <span class="p-fn">{casper.fn}</span>
+      <span class="p-sub">{casper.sub}</span>
+    </div>
   </div>
-  <div class="magi-foot">
-    <span>Deliberation</span>
-    <span class="sp"></span>
-    <span class="ok">3/3 Approved</span>
+
+  <div class="magi-status">
+    <span class="ms-lbl">Deliberation</span>
+    <span class="ms-dots"></span>
+    <span class="ms-val">3/3 Approved</span>
   </div>
 </div>

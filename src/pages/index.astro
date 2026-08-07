@@ -5,9 +5,12 @@ import Ledger from '../components/Ledger.astro';
 import PubCard from '../components/PubCard.astro';
 import { publications } from '../data/publications';
 import { projects } from '../data/projects';
-import { work, education } from '../data/cv';
+import { work } from '../data/cv';
 
-const homePubs = publications.filter((p) => p.home);
+// The home page is a trailer, not the catalogue: one feature plus two, and the
+// two systems that carry the most weight. Everything else lives one click away.
+const homePubs = publications.filter((p) => p.home).slice(0, 3);
+const homeProjects = projects.slice(0, 2);
 ---
 <Base>
   <Hero />
@@ -22,7 +25,7 @@ const homePubs = publications.filter((p) => p.home);
         <a class="section-link" href="/publications">All publications <span class="arr">→</span></a>
       </div>
       <div class="grid">
-        {homePubs.map((p) => <PubCard pub={p} />)}
+        {homePubs.map((p) => <PubCard pub={p} compact />)}
       </div>
     </section>
 
@@ -31,11 +34,11 @@ const homePubs = publications.filter((p) => p.home);
       <div class="head">
         <div class="eyebrow">Engineering &amp; Production</div>
         <h2>And then I ship it.</h2>
-        <p>Four systems across Pyler and Aiv — what the problem was, what was mine, and what moved. Two run in production; one is the research method behind a deployed detector; one won an NVIDIA hackathon track.</p>
+        <p>The two that carry the most weight — the auto-labeling system I own, and the post-training that won an NVIDIA hackathon track. Two more from Aiv on the case-studies page.</p>
         <a class="section-link" href="/projects">Full case studies <span class="arr">→</span></a>
       </div>
       <div class="grid">
-        {projects.map((p) => (
+        {homeProjects.map((p) => (
           <a class="card" href={`/projects#${p.key}`}>
             <div class="card-top">
               {p.tags.map((t) => <span class={t.win ? 'badge win' : 'badge alt'}>{t.label}</span>)}
@@ -66,15 +69,13 @@ const homePubs = publications.filter((p) => p.home);
             </div>
           </div>
         ))}
-        {education.map((e) => (
-          <div class="row">
-            <div class="when">{e.start} — {e.end}</div>
-            <div class="what">
-              <h4>{e.degree}</h4>
-              <div class="org">{e.org}{e.note ? ` · ${e.note}` : ''}</div>
-            </div>
+        <div class="row">
+          <div class="when">2017 — 2024</div>
+          <div class="what">
+            <h4>B.S. &amp; M.S., Industrial &amp; Systems Engineering</h4>
+            <div class="org">KAIST · advised by Il-Chul Moon</div>
           </div>
-        ))}
+        </div>
       </div>
     </section>
   </main>

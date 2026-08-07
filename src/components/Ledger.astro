@@ -1,10 +1,11 @@
 ---
-// Verification signals, first screen. Peer review on the left, shipped impact on the right.
+// Verification signals, first screen — four, not five. Peer review on the left,
+// shipped impact on the right. The value sits in a rotated plate; the inner
+// span counter-rotates so the text stays level.
 const stats = [
-  { n: '06', k: 'Papers' },
-  { n: '04', k: 'First-author' },
+  { n: '06', k: 'Papers · 4 first-author' },
   { n: "ICML ’23", k: '+ AAAI ’24' },
-  { n: 'Winner', k: 'NVIDIA Nemotron ’26', win: true },
+  { n: 'WIN', k: 'NVIDIA Nemotron ’26', win: true },
   { n: '+0.080', k: 'Auto-label macro F1' },
 ];
 ---
@@ -12,7 +13,7 @@ const stats = [
   <div class="ledger-in">
     {stats.map((s) => (
       <div class="stat">
-        <span class={s.win ? 'n win' : 'n'}>{s.n}</span>
+        <span class={s.win ? 'n win' : 'n'}><span>{s.n}</span></span>
         <span class="k">{s.k}</span>
       </div>
     ))}

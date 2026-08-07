@@ -1,7 +1,9 @@
 ---
 import type { Pub } from '../data/publications';
-interface Props { pub: Pub; }
-const { pub } = Astro.props;
+// `compact` drops the author list — used on the home page, where the full
+// listing is a click away and the density isn't worth it.
+interface Props { pub: Pub; compact?: boolean; }
+const { pub, compact = false } = Astro.props;
 
 // Author lists are stored with **markers** around my name — render them bold.
 const authorsHtml = pub.authors.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -22,7 +24,7 @@ const authorsHtml = pub.authors.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
     )}
   </div>
   <h3>{pub.acronym && <span class="acro">{pub.acronym}</span>}{pub.acronym ? ' — ' : ''}{pub.title}</h3>
-  <p class="authors" set:html={authorsHtml}></p>
+  {!compact && <p class="authors" set:html={authorsHtml}></p>}
   {pub.supervision && <span class="supervision">{pub.supervision}</span>}
   <p set:html={pub.summary}></p>
   {pub.chips && (
