@@ -206,27 +206,22 @@ nav{
 .plate .p-fn{color:var(--punch)}
 .plate .p-sub{color:rgba(0,0,0,.74)}
 .plate:hover{filter:brightness(1.14)}
-.plate.apex{grid-column:1 / -1;justify-self:center;width:min(100%,74%)}
+/* The apex is a vertex, not a header — same width as the two below it, so the
+   three read as equal points of a triangle. calc matches the grid track width. */
+.plate.apex{grid-column:1 / -1;justify-self:center;width:calc((100% - 10px) / 2)}
 @media(max-width:420px){.plate.apex{width:100%}}
 .p-id{font-size:.58rem;letter-spacing:.18em;font-weight:700}
 .p-fn{font-size:.94rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;line-height:1.25}
 .p-sub{font-size:.58rem;letter-spacing:.03em;line-height:1.45;margin-top:3px}
 
-/* The tie that makes it read as a formation, not a list. A bus, not an arrow:
-   these are peers, so nothing about it should suggest direction of flow.
-   Drops from the apex, then spans out to the pair below. */
-.magi-link{
-  grid-column:1 / -1;height:15px;position:relative;
+/* The triangle's edges. Two sides run from the apex down to each base vertex
+   and the base closes them — a closed figure, not a tree dropping to a row.
+   No arrowheads: these are peers, so nothing should suggest a flow direction. */
+.magi-edges{
+  grid-column:1 / -1;width:100%;height:30px;display:block;
+  stroke:var(--nominal);stroke-width:1;opacity:.55;
 }
-.magi-link::before{
-  content:"";position:absolute;left:50%;top:0;width:1px;height:7px;
-  background:var(--nominal);opacity:.55;
-}
-.magi-link::after{
-  content:"";position:absolute;left:25%;right:25%;top:7px;height:8px;
-  border-top:1px solid var(--nominal);border-left:1px solid var(--nominal);
-  border-right:1px solid var(--nominal);opacity:.55;
-}
+@media(max-width:420px){.magi-edges{height:22px}}
 
 .magi-status{
   display:flex;align-items:center;gap:11px;margin-top:14px;

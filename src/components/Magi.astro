@@ -34,7 +34,14 @@ const base = [
       <span class="p-fn">{apex.fn}</span>
       <span class="p-sub">{apex.sub}</span>
     </div>
-    <div class="magi-link" aria-hidden="true"></div>
+    {/* The triangle's own edges: two sides meeting at the apex, plus the base
+        that closes it. preserveAspectRatio="none" lets the coordinates stay in
+        plain percentages; non-scaling-stroke keeps the line 1px through it. */}
+    <svg class="magi-edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="50" y1="2" x2="25" y2="98" vector-effect="non-scaling-stroke" />
+      <line x1="50" y1="2" x2="75" y2="98" vector-effect="non-scaling-stroke" />
+      <line x1="25" y1="98" x2="75" y2="98" vector-effect="non-scaling-stroke" />
+    </svg>
     {base.map((n) => (
       <div class="plate">
         <span class="p-id">{n.id}</span>
