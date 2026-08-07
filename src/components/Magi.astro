@@ -4,18 +4,25 @@
 // of them. The triangle is the ARRANGEMENT — nothing draws its edges. An
 // earlier pass drew the sides in and it just looked like an org chart.
 //
-// Research takes the top point. The three are independent domains, not stages
-// of a pipeline, so nothing here implies a direction of flow.
+// In the show the MAGI are three personalities of one person, not three stages
+// of a process — so these have to be three genuinely different voices. An
+// earlier cut used Research / Engineering / Serving, but serving is a subset of
+// engineering; it wasn't a third voice, just the second one again. The three
+// questions asked of any piece of work are: is it true, does it run, does it
+// matter. Research, Engineering, Product.
+//
+// Research takes the top point. Nothing implies a direction of flow — they
+// deliberate, they don't hand off.
 //
 // Plates are filled with signal colour and the lettering punched out in black,
 // with the inner edge of each lower plate raked toward the centre. Sub-lines
 // stay to a single tag pair so all three plates keep the same mass — and stay
 // true of BOTH jobs, rather than promoting one project's constraint.
 const top = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness' };
-const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Efficiency · pipelines' };
-const right = { id: 'CASPER·3', fn: 'Serving', sub: 'TensorRT · Triton' };
+const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training · inference · serving' };
+const right = { id: 'CASPER·3', fn: 'Product', sub: 'Ownership · measured impact' };
 ---
-<div class="magi" aria-label="Three independent domains: research, engineering, serving">
+<div class="magi" aria-label="Three sides of the work: research, engineering, product">
   <div class="magi-bar">
     <span class="magi-code">CODE:751</span>
     <span class="magi-rule"></span>
