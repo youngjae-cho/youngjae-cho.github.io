@@ -1,0 +1,30 @@
+---
+// MAGI triptych — the hero's console panel. Three nodes, one operator:
+// the three modes the work actually runs in (theory → build → ship).
+const nodes = [
+  { id: 'MELCHIOR-1', fn: 'Research', sub: 'Alignment · robustness · optimization geometry' },
+  { id: 'BALTHASAR-2', fn: 'Engineering', sub: 'Training & inference efficiency at one-GPU budget' },
+  { id: 'CASPER-3', fn: 'Serving', sub: 'TensorRT · Triton · vLLM in production', casper: true },
+];
+---
+<div class="magi ticked" aria-label="Three modes of work: research, engineering, serving">
+  <div class="magi-head">
+    <span>MAGI</span>
+    <span class="sp"></span>
+    <span class="code">CODE:751</span>
+  </div>
+  <div class="magi-grid">
+    {nodes.map((n) => (
+      <div class={n.casper ? 'magi-node casper' : 'magi-node'}>
+        <span class="id">{n.id}</span>
+        <span class="fn">{n.fn}</span>
+        <span class="sub">{n.sub}</span>
+      </div>
+    ))}
+  </div>
+  <div class="magi-foot">
+    <span>Deliberation</span>
+    <span class="sp"></span>
+    <span class="ok">3/3 Approved</span>
+  </div>
+</div>
