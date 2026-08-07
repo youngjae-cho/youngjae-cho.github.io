@@ -19,6 +19,7 @@ const { project: p } = Astro.props;
       <p class="prob" set:html={p.problemHtml}></p>
       {p.visual === 'tree' && <DecisionTree />}
       {p.visual === 'gap' && <GapDiagram />}
+      {p.ownershipHtml && <p class="ownership" set:html={p.ownershipHtml}></p>}
       <p class="result" set:html={p.resultHtml}></p>
     </div>
     <div class="case-body">

@@ -2,6 +2,9 @@
 import type { Pub } from '../data/publications';
 interface Props { pub: Pub; }
 const { pub } = Astro.props;
+
+// Author lists are stored with **markers** around my name — render them bold.
+const authorsHtml = pub.authors.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 ---
 <article class={pub.featured ? 'card feature' : 'card'}>
   {pub.featured && (
@@ -13,11 +16,14 @@ const { pub } = Astro.props;
   )}
   <div class="card-top">
     <span class={pub.venueAlt ? 'badge alt' : 'badge'}>{pub.venue}</span>
+    <span class="status">{pub.status}</span>
     {pub.role && (
       <span class={pub.roleFirst ? 'role-tag first' : 'role-tag'}>{pub.roleFirst ? '★ ' : ''}{pub.role}</span>
     )}
   </div>
   <h3>{pub.acronym && <span class="acro">{pub.acronym}</span>}{pub.acronym ? ' — ' : ''}{pub.title}</h3>
+  <p class="authors" set:html={authorsHtml}></p>
+  {pub.supervision && <span class="supervision">{pub.supervision}</span>}
   <p set:html={pub.summary}></p>
   {pub.chips && (
     <div class="chips">{pub.chips.map((c) => <span class="chip" set:html={c}></span>)}</div>

@@ -11,6 +11,17 @@ npm run build    # static build → ./dist
 npm run preview  # preview the production build
 ```
 
+## Two documents, two audiences
+
+Deliberately split, so neither has to do the other's job:
+
+| | What | Where |
+|---|------|-------|
+| **Résumé** | 1 page. The recruiter entry point. Print-friendly — "Print / Save as PDF" on the page produces the PDF. | `/resume` (`src/pages/resume.astro`) |
+| **Research portfolio** | 12 pages. For the hiring manager who's already interested. | `public/youngjae-cho-research-portfolio.pdf` |
+
+`/cv` redirects to `/resume` (see `astro.config.mjs`) so old links keep working.
+
 ## Editing content
 
 All content lives in plain data files — no framework knowledge needed:
@@ -19,17 +30,23 @@ All content lives in plain data files — no framework knowledge needed:
 |------|------|
 | Publications | `src/data/publications.ts` — add an object; `home: true` surfaces it on the homepage |
 | Projects / case studies | `src/data/projects.ts` |
-| CV (experience, education, skills) | `src/data/cv.ts` |
+| Experience, education, skills, awards | `src/data/cv.ts` |
 | Hero headline / links | `src/components/Hero.astro` |
 | Stats strip | `src/components/Ledger.astro` |
 | Footer / contact | `src/components/Footer.astro` |
 
 Design tokens (colors, type, spacing) are all in `src/styles/global.css`.
 
-### Things to fill in
+### Rules that keep this honest
 
-- **Profile / CV PDF** — replace `public/youngjae-cho-cv.pdf` (currently a placeholder copy of the portfolio deck).
-- **Google Scholar** — set the real URL in `src/components/Hero.astro` and `src/components/Footer.astro` (currently `#`).
+- **The résumé is generated from the same data files as the site.** Never hand-edit `/resume` content — edit `src/data/*.ts` and both update. This is what stops the site and the PDF from drifting.
+- **Publication metadata is one fact in one place.** Each entry carries `venue` + `status` (`Published` | `Preprint` | `Workshop`). Don't invent a review status. When a paper is accepted, change `venue` and `status` together, and promote it in `src/components/Ledger.astro`.
+- **Keep credit legible.** Case studies carry `ownershipHtml` — what was the team's vs. what was mine. Team awards say so.
+- **Author lists** wrap Youngjae's name in `**markers**`; `*` marks equal contribution.
+
+### Mirrors to update by hand
+
+The LaTeX résumé at `~/resume/resume.tex` is a separate source. If you change experience or awards here, change it there too — or drop it in favour of `/resume`.
 
 ## Deploy (GitHub Pages)
 
