@@ -1,53 +1,47 @@
 ---
-// MAGI triptych in triangle formation — one node at the apex, two abreast
-// below, tied by a bus rather than an arrow. The three are independent
-// domains, not stages of a pipeline: a 2-over-1 stack read as
-// research → engineering → serving, which is the wrong claim. Research takes
-// the apex.
+// MAGI system panel, laid out like the reference display: three heavy plates
+// placed at the points of a triangle with the MAGI wordmark held in the middle
+// of them. The triangle is the ARRANGEMENT — nothing draws its edges. An
+// earlier pass drew the sides in and it just looked like an org chart.
 //
-// Styling follows the reference display: plates filled with signal colour and
-// the lettering punched out in black, corners raked. All three share one
-// colour — they're peers, and any differentiation implied a hierarchy that
-// isn't there.
+// Research takes the top point. The three are independent domains, not stages
+// of a pipeline, so nothing here implies a direction of flow.
 //
-// Sub-lines are a tag pair, not a description — keep them to one line each so
-// the three plates stay the same height and the triangle reads cleanly. And
-// keep them true of BOTH jobs: don't promote a single project's constraint or
-// model size into a general descriptor.
-const apex = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness' };
-const base = [
-  { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Efficiency · pipelines' },
-  { id: 'CASPER·3', fn: 'Serving', sub: 'TensorRT · Triton · vLLM' },
-];
+// Plates are filled with signal colour and the lettering punched out in black,
+// with the inner edge of each lower plate raked toward the centre. Sub-lines
+// stay to a single tag pair so all three plates keep the same mass — and stay
+// true of BOTH jobs, rather than promoting one project's constraint.
+const top = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness' };
+const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Efficiency · pipelines' };
+const right = { id: 'CASPER·3', fn: 'Serving', sub: 'TensorRT · Triton' };
 ---
 <div class="magi" aria-label="Three independent domains: research, engineering, serving">
   <div class="magi-bar">
     <span class="magi-code">CODE:751</span>
     <span class="magi-rule"></span>
-    <span class="magi-word">MAGI</span>
+    <span class="magi-word">MAGI SYSTEM</span>
   </div>
 
   <div class="magi-tri">
-    <div class="plate apex">
-      <span class="p-id">{apex.id}</span>
-      <span class="p-fn">{apex.fn}</span>
-      <span class="p-sub">{apex.sub}</span>
+    <div class="plate p-top">
+      <span class="p-id">{top.id}</span>
+      <span class="p-fn">{top.fn}</span>
+      <span class="p-sub">{top.sub}</span>
     </div>
-    {/* The triangle's own edges: two sides meeting at the apex, plus the base
-        that closes it. preserveAspectRatio="none" lets the coordinates stay in
-        plain percentages; non-scaling-stroke keeps the line 1px through it. */}
-    <svg class="magi-edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <line x1="50" y1="2" x2="25" y2="98" vector-effect="non-scaling-stroke" />
-      <line x1="50" y1="2" x2="75" y2="98" vector-effect="non-scaling-stroke" />
-      <line x1="25" y1="98" x2="75" y2="98" vector-effect="non-scaling-stroke" />
-    </svg>
-    {base.map((n) => (
-      <div class="plate">
-        <span class="p-id">{n.id}</span>
-        <span class="p-fn">{n.fn}</span>
-        <span class="p-sub">{n.sub}</span>
-      </div>
-    ))}
+
+    <div class="plate p-left">
+      <span class="p-id">{left.id}</span>
+      <span class="p-fn">{left.fn}</span>
+      <span class="p-sub">{left.sub}</span>
+    </div>
+
+    <div class="magi-core" aria-hidden="true">MAGI</div>
+
+    <div class="plate p-right">
+      <span class="p-id">{right.id}</span>
+      <span class="p-fn">{right.fn}</span>
+      <span class="p-sub">{right.sub}</span>
+    </div>
   </div>
 
   <div class="magi-status">

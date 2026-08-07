@@ -143,9 +143,12 @@ nav{
 }
 .hero-in{
   position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:76px 28px 64px;
-  display:grid;grid-template-columns:1fr 384px;gap:56px;align-items:center;
+  /* The MAGI panel needs real width — the triangle arrangement collapses into
+     three stacked bricks below roughly 440px. */
+  display:grid;grid-template-columns:1fr 470px;gap:48px;align-items:center;
 }
-@media(max-width:960px){.hero-in{grid-template-columns:1fr;gap:44px;padding-top:60px}}
+@media(max-width:1040px){.hero-in{grid-template-columns:1fr;gap:44px;padding-top:60px}}
+@media(max-width:1040px){.hero-right{max-width:470px}}
 .avatar{
   width:112px;height:112px;object-fit:cover;object-position:50% 28%;
   border:1.5px solid var(--accent);margin-bottom:22px;background:var(--panel);display:block;
@@ -191,37 +194,63 @@ nav{
 .magi-rule{flex:1;height:1px;background:var(--nominal);opacity:.5}
 .magi-word{color:var(--nominal);font-weight:700;letter-spacing:.42em}
 
-/* Triangle formation: two nodes abreast, the third centred below and linked.
-   Corners are raked with clip-path rather than skewX, so the plate angles but
-   the lettering stays level — as it does on the reference. */
-.magi-tri{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-/* All three plates are identical — peers, not a hierarchy. */
+/* Triangle by ARRANGEMENT, not by drawn edges: one plate at the top point, two
+   below holding the MAGI wordmark between them. Corners are raked with
+   clip-path rather than skewX, so plates angle but lettering stays level. */
+.magi-tri{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:12px 10px;
+  align-items:stretch;
+}
+/* All three plates are identical in treatment — peers, not a hierarchy. */
 .plate{
-  padding:10px 14px 12px;display:flex;flex-direction:column;gap:1px;
+  padding:11px 15px 13px;display:flex;flex-direction:column;gap:1px;
   background:var(--accent);
-  clip-path:polygon(0 0,100% 0,100% 74%,89% 100%,0 100%);
   transition:filter .2s;
 }
 .plate .p-id{color:rgba(0,0,0,.6)}
 .plate .p-fn{color:var(--punch)}
 .plate .p-sub{color:rgba(0,0,0,.74)}
 .plate:hover{filter:brightness(1.14)}
-/* The apex is a vertex, not a header — same width as the two below it, so the
-   three read as equal points of a triangle. calc matches the grid track width. */
-.plate.apex{grid-column:1 / -1;justify-self:center;width:calc((100% - 10px) / 2)}
-@media(max-width:420px){.plate.apex{width:100%}}
 .p-id{font-size:.58rem;letter-spacing:.18em;font-weight:700}
-.p-fn{font-size:.94rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;line-height:1.25}
+.p-fn{font-size:1rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;line-height:1.25}
 .p-sub{font-size:.58rem;letter-spacing:.03em;line-height:1.45;margin-top:3px}
 
-/* The triangle's edges. Two sides run from the apex down to each base vertex
-   and the base closes them — a closed figure, not a tree dropping to a row.
-   No arrowheads: these are peers, so nothing should suggest a flow direction. */
-.magi-edges{
-  grid-column:1 / -1;width:100%;height:30px;display:block;
-  stroke:var(--nominal);stroke-width:1;opacity:.55;
+/* Top point: centred over the pair, widening downward toward them. */
+.plate.p-top{
+  grid-column:1 / -1;justify-self:center;width:min(100%,68%);
+  clip-path:polygon(7% 0,93% 0,100% 100%,0 100%);
+  padding-left:22px;padding-right:22px;
 }
-@media(max-width:420px){.magi-edges{height:22px}}
+/* Lower points: each rakes its INNER edge toward the centre, so the pair leans
+   in on the wordmark instead of sitting as two parallel bricks. */
+.plate.p-left{
+  grid-column:1 / 2;
+  clip-path:polygon(0 0,100% 0,84% 100%,0 100%);
+  padding-right:30px;
+}
+.plate.p-right{
+  grid-column:3 / 4;
+  clip-path:polygon(0 0,100% 0,100% 100%,16% 100%);
+  padding-left:30px;
+}
+/* The wordmark the three are arranged around. */
+.magi-core{
+  grid-column:2 / 3;display:grid;place-items:center;
+  font-size:.86rem;font-weight:800;letter-spacing:.3em;
+  color:var(--nominal);padding:0 4px;white-space:nowrap;
+}
+
+/* Stack below the breakpoint — the triangle needs width to read. */
+@media(max-width:520px){
+  .magi-tri{grid-template-columns:1fr;gap:8px}
+  .plate.p-top,.plate.p-left,.plate.p-right{
+    grid-column:1 / -1;width:100%;clip-path:polygon(0 0,100% 0,100% 74%,89% 100%,0 100%);
+    padding-left:15px;padding-right:15px;
+  }
+  .magi-core{grid-column:1 / -1;padding:2px 0}
+}
 
 .magi-status{
   display:flex;align-items:center;gap:11px;margin-top:14px;
