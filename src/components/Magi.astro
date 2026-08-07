@@ -10,15 +10,14 @@
 // colour — they're peers, and any differentiation implied a hierarchy that
 // isn't there.
 //
-// Keep the sub-lines true of BOTH jobs; don't promote a single project's
-// constraint or model size into a general descriptor.
-const apex = {
-  id: 'MELCHIOR·1', fn: 'Research',
-  sub: 'Alignment · robustness · learning under imperfect supervision',
-};
+// Sub-lines are a tag pair, not a description — keep them to one line each so
+// the three plates stay the same height and the triangle reads cleanly. And
+// keep them true of BOTH jobs: don't promote a single project's constraint or
+// model size into a general descriptor.
+const apex = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness' };
 const base = [
-  { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training & inference efficiency · pipelines · tooling' },
-  { id: 'CASPER·3', fn: 'Serving', sub: 'TensorRT · Triton · vLLM in production' },
+  { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Efficiency · pipelines' },
+  { id: 'CASPER·3', fn: 'Serving', sub: 'TensorRT · Triton · vLLM' },
 ];
 ---
 <div class="magi" aria-label="Three independent domains: research, engineering, serving">
