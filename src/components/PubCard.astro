@@ -25,7 +25,7 @@ const authorsHtml = pub.authors.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   </div>
   <h3>{pub.acronym && <span class="acro">{pub.acronym}</span>}{pub.acronym ? ' — ' : ''}{pub.title}</h3>
   {!compact && <p class="authors" set:html={authorsHtml}></p>}
-  {pub.supervision && <span class="supervision">{pub.supervision}</span>}
+  {pub.angle && <span class="angle">{pub.angle}</span>}
   <p set:html={pub.summary}></p>
   {pub.chips && (
     <div class="chips">{pub.chips.map((c) => <span class="chip" set:html={c}></span>)}</div>
