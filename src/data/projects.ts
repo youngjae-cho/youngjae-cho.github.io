@@ -56,6 +56,22 @@ export const projects: Project[] = [
     chips: ['RL framework', 'SimPO', 'Megatron-Bridge', 'Nemotron-Nano-12B-VL', 'Open source'],
   },
   {
+    key: 'serving',
+    tags: [{ label: 'Pyler · Serving · Content Safety' }],
+    titleHtml: `Config-Driven <span class="acro">Model Serving</span>`,
+    blurb: `Rebuilt the serving layer under the moderation stack so putting a new model in front of traffic is a config change.`,
+    problemHtml: `A moderation request doesn't hit one model — it walks a chain of them, and each stage's decision logic lived in the serving layer. Swapping in a better model meant another strategy class, another batch path, another set of thresholds. The model was the cheap part.`,
+    ownershipHtml: `Mine: the new inference path end to end, and the config and validation layers around it — inside a serving stack the team runs together.`,
+    resultHtml: `A model swap is now a checkpoint plus a config edit — the serving code doesn't move, and what a replica is running is queryable.`,
+    micro: 'My contribution',
+    approachHtml: [
+      `<b>Shipped a new inference route end to end.</b> A classification task type through the shared model gateway — <span class="m">schema, strategy, batching, ingress, tracing</span> — so a light classifier could replace a heavier multi-model stage.`,
+      `<b>Moved the decision policy out of serving code.</b> A flag on the model config picks the mode; calibrated thresholds ride <em>inside</em> the checkpoint as a <span class="m">policy config</span>. One artifact, several behaviors, no strategy class holding a number.`,
+      `<b>Made the config verifiable from outside.</b> Model names are validated as an <span class="m">endpoint contract</span>, and every replica announces its flags at startup — so a toggle's deployed value is a telemetry query, not an inference from a green build.`,
+    ],
+    chips: ['Ray Serve', 'vLLM', 'HF Transformers', 'OpenTelemetry', 'Config over code', 'Flag telemetry'],
+  },
+  {
     key: 'defect',
     tags: [{ label: 'Aiv · Diffusion · Industrial AD' }],
     titleHtml: `Background-Aware <span class="acro">Defect Synthesis</span>`,

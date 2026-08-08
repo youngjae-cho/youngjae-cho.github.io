@@ -18,11 +18,18 @@
 // with the inner edge of each lower plate raked toward the centre. Sub-lines
 // stay to a single tag pair so all three plates keep the same mass — and stay
 // true of BOTH jobs, rather than promoting one project's constraint.
-const top = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness' };
-const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training · inference · serving' };
-const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system design' };
+//
+// Each plate is a link — the panel is the way into the site, not a decoration
+// beside it. Destinations follow the voice, not the page count: Research reads
+// the papers, Engineering the case studies, Product deep-links to the one
+// system that is a product decision rather than a method. They open in a new
+// tab, so the home page a visitor is part-way down is still there behind them;
+// the ↗ on every plate says so, and keeps the three the same mass.
+const top = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness', href: '/publications', to: 'publications' };
+const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training · inference · serving', href: '/projects', to: 'case studies' };
+const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system design', href: '/projects#autolabel', to: 'the auto-labeling case study' };
 ---
-<div class="magi" aria-label="Three sides of the work: research, engineering, product">
+<nav class="magi" aria-label="Three sides of the work: research, engineering, product">
   <div class="magi-bar">
     <span class="magi-code">CODE:751</span>
     {/* Seoul time, not the viewer's — the nav already says SEOUL · KR, and a
@@ -45,25 +52,28 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system desig
       <line x1="26" y1="82" x2="74" y2="82" vector-effect="non-scaling-stroke" />
     </svg>
 
-    <div class="plate p-top">
-      <span class="p-id">{top.id}</span>
+    <a class="plate p-top" href={top.href} target="_blank" rel="noopener"
+       aria-label={`${top.fn} — ${top.to} (opens in a new tab)`}>
+      <span class="p-id">{top.id}<span class="p-out" aria-hidden="true">↗</span></span>
       <span class="p-fn">{top.fn}</span>
       <span class="p-sub">{top.sub}</span>
-    </div>
+    </a>
 
-    <div class="plate p-left">
-      <span class="p-id">{left.id}</span>
+    <a class="plate p-left" href={left.href} target="_blank" rel="noopener"
+       aria-label={`${left.fn} — ${left.to} (opens in a new tab)`}>
+      <span class="p-id">{left.id}<span class="p-out" aria-hidden="true">↗</span></span>
       <span class="p-fn">{left.fn}</span>
       <span class="p-sub">{left.sub}</span>
-    </div>
+    </a>
 
     <div class="magi-core" aria-hidden="true">MAGI</div>
 
-    <div class="plate p-right">
-      <span class="p-id">{right.id}</span>
+    <a class="plate p-right" href={right.href} target="_blank" rel="noopener"
+       aria-label={`${right.fn} — ${right.to} (opens in a new tab)`}>
+      <span class="p-id">{right.id}<span class="p-out" aria-hidden="true">↗</span></span>
       <span class="p-fn">{right.fn}</span>
       <span class="p-sub">{right.sub}</span>
-    </div>
+    </a>
   </div>
 
   <div class="magi-status">
@@ -71,7 +81,7 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system desig
     <span class="ms-dots"></span>
     <span class="ms-val">3/3 Approved</span>
   </div>
-</div>
+</nav>
 
 <script>
   // Seoul wall-clock in the MAGI bar. Intl does the zone, so this stays correct
