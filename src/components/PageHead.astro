@@ -1,0 +1,36 @@
+---
+// The console header the interior pages were missing.
+//
+// The home page is a full console; /product, /engineering and /publications
+// were a dark article layout with orange accents — the vocabulary stopped at
+// the front door. This puts the panel's own status bar on top of each one.
+//
+// It reuses .magi-bar and its children rather than restating the look, so
+// there is one console bar in the stylesheet instead of two that drift apart.
+// The one thing it has to re-declare is the mono family: .magi-bar inherits
+// that from .magi, which isn't an ancestor out here.
+//
+// `count` carries real information — how many cases or papers are below — so
+// the bar is a readout rather than a decoration that says the same thing on
+// every page.
+interface Props {
+  section: string;
+  count: string;
+  eyebrow: string;
+  title: string;
+}
+const { section, count, eyebrow, title } = Astro.props;
+---
+<span class="page-rail" aria-hidden="true">{section} &nbsp;·&nbsp; <b>Nominal</b></span>
+<header class="page-head">
+  <div class="magi-bar page-bar">
+    <span class="magi-code">CODE:751</span>
+    <span class="pb-section">{section}</span>
+    <span class="magi-rule"></span>
+    <span class="pb-count">{count}</span>
+    <span class="magi-word">Nominal</span>
+  </div>
+  <div class="eyebrow">{eyebrow}</div>
+  <h1>{title}</h1>
+  <slot />
+</header>

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PubCard from '../components/PubCard.astro';
+import PageHead from '../components/PageHead.astro';
 import { publications, inProgress } from '../data/publications';
 
 // The four papers I led. Co-authored workshop and conference work is kept in
@@ -13,14 +14,12 @@ const pubs = publications
 ---
 <Base title="Publications — Youngjae Cho" active="publications">
   <main class="wrap">
-    <header class="page-head">
-      <div class="eyebrow">Research</div>
-      <h1>Publications</h1>
+    <PageHead section="Research" count={`${pubs.length} papers`} eyebrow="Research" title="Publications">
       <p class="intro">Four papers, one question: how do you train well when the data is too little or the labels are wrong? Each pulls a different lever — <em>which</em> samples to label, how to <em>adapt</em> when there are few, how to <em>synthesize</em> what's missing, and how to keep the optimization <em>stable</em> when the signal is noisy. First or co-first author on all four; two published at ICML 2023 and AAAI 2024, two preprints.</p>
-    </header>
+    </PageHead>
     <section class="block">
       <div class="grid">
-        {pubs.map((p) => <PubCard pub={p} />)}
+        {pubs.map((p, i) => <PubCard pub={p} index={i + 1} total={pubs.length} />)}
       </div>
     </section>
 
@@ -36,7 +35,7 @@ const pubs = publications
       </div>
       <div class="wip">
         {inProgress.map((w) => (
-          <article class="wip-row">
+          <article class="wip-row ticked">
             <div class="wip-meta">
               <span class="wip-status">Unpublished</span>
               <span class="wip-id">No result yet</span>
