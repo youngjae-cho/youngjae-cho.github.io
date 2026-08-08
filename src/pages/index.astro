@@ -2,53 +2,36 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import Ledger from '../components/Ledger.astro';
-import PubCard from '../components/PubCard.astro';
-import { publications } from '../data/publications';
-import { projects } from '../data/projects';
 import { work } from '../data/cv';
 
-// The home page is a trailer, not the catalogue. Research gets the larger
-// share of it deliberately — every home-flagged paper shows, against the two
-// systems that carry the most weight. The rest is one click away.
-const homePubs = publications.filter((p) => p.home);
-const homeProjects = projects.slice(0, 2);
+// The home page is the hub, not the catalogue. The MAGI panel in the hero is
+// the way in, and each of its three plates opens the page that holds the real
+// listing. What used to sit here was a second copy of those pages — four paper
+// cards and two case-study cards, maintained twice and read once. Both grids
+// are gone; what stays is the summary each destination earns, plus the one
+// thing no other page carries in full, the timeline.
 ---
 <Base>
   <Hero />
   <Ledger />
   <main class="wrap">
     <!-- SELECTED RESEARCH -->
-    <section class="block" id="research">
+    <section class="block summary" id="research">
       <div class="head">
         <div class="eyebrow">Selected Research</div>
         <h2>Robust learning when supervision is noisy, scarce, or shifting.</h2>
         <p>Six papers, four first-author, one theme: the failure mode each one attacks. The methods vary — <em>optimization geometry</em> for noisy preferences, <em>acquisition</em> for scarce labels, <em>Bayesian priors</em> for shift, <em>generative synthesis</em> for scarce anomalies — but the question doesn't.</p>
         <a class="section-link" href="/publications">All publications <span class="arr">→</span></a>
       </div>
-      <div class="grid">
-        {homePubs.map((p) => <PubCard pub={p} compact />)}
-      </div>
     </section>
 
     <!-- ENGINEERING -->
-    <section class="block" id="engineering">
+    <section class="block summary" id="engineering">
       <div class="head">
         <div class="eyebrow">Engineering &amp; Production</div>
         <h2>And then I ship it.</h2>
-        <p>The two that carry the most weight — the auto-labeling system I own, and the post-training that won an NVIDIA hackathon track. Three more on the case-studies page: the serving layer under the moderation stack, and two systems from Aiv.</p>
+        <p>Five systems across Pyler and Aiv — the auto-labeling system I own, the serving layer beneath it, the post-training that won an NVIDIA hackathon track, and two more from Aiv. Each written the same way: the problem, what was mine, and what moved.</p>
         <a class="section-link" href="/projects">Full case studies <span class="arr">→</span></a>
-      </div>
-      <div class="grid">
-        {homeProjects.map((p) => (
-          <a class="card" href={`/projects#${p.key}`}>
-            <div class="card-top">
-              {p.tags.map((t) => <span class={t.win ? 'badge win' : 'badge alt'}>{t.label}</span>)}
-            </div>
-            <h3 set:html={p.titleHtml}></h3>
-            <p>{p.blurb}</p>
-            <span class="more">Case study <span class="arr">→</span></span>
-          </a>
-        ))}
       </div>
     </section>
 
