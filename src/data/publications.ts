@@ -46,9 +46,9 @@ export const publications: Pub[] = [
     roleFirst: true,
     featured: true,
     home: true,
-    angle: 'Optimization geometry · noisy labels',
+    angle: 'Stability · noisy preferences',
     summary:
-      "Reads preference optimization as <b>learning dynamics</b>: DPO's frozen reference becomes a geometrically perturbed anchor — a worst-case local perturbation of the current policy — and each pair is reweighted by its geometric brittleness. Stronger under noisy labels and on less data, with no explicit noise model.",
+      "Reads preference optimization as <b>learning dynamics</b>, and puts the stability problem in the reference: DPO's frozen anchor becomes a geometrically perturbed one — a worst-case local perturbation of the current policy — with each pair reweighted by its geometric brittleness. A steadier objective, which is what holds up under noisy labels and on less data.",
     url: 'https://arxiv.org/abs/2602.04909',
     chips: [
       'AlpacaEval 2.0 LC&nbsp;<b>+3.6pp</b> vs SimPO',

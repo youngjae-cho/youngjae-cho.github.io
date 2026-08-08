@@ -40,7 +40,7 @@ export const work: Job[] = [
     end: 'present',
     highlights: [
       'Own the LLM/VLM auto-labeling system for content-safety scoring (5 categories × severity): mined the implicit decision tree from 299K VLM reasoning traces and turned it into auditable, tree-structured prompts — macro F1 0.777 → 0.857 (precision +0.103, recall +0.050) and over 4× the labeling throughput of the process it replaced, retiring logic that lived unwritten in each labeler\'s head',
-      'First-author alignment research (GAPO) — geometric anchoring for preference optimization robust to noisy labels, +3.6pp AlpacaEval 2.0 LC over SimPO',
+      'First-author alignment research (GAPO) — geometric anchoring that stabilizes preference optimization under noisy labels, +3.6pp AlpacaEval 2.0 LC over SimPO',
       'Winner — NVIDIA Nemotron Hackathon, Track B (Domain-Specialized Model), 2026: built the RL post-training framework for Nemotron-Nano-12B-VL, an architecture no existing RL framework supported — added the RL layer (rollout, loss, training loop) onto Megatron-Bridge with SimPO as the objective, and open-sourced it',
       'Redesigned the serving layer of the production content-moderation stack so a model swap is a config change rather than a serving-code rewrite — shipped a new inference task type end to end on Ray Serve (schema, strategy, batching, HTTP ingress, tracing), moved calibrated decision thresholds into the checkpoint artifact, and made deployed feature flags verifiable from telemetry',
       'Built the LLM benchmarking CLI and pluggable engine abstraction (vLLM / Hugging Face / synthetic CI fallback) the team evaluates on',
