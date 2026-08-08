@@ -125,6 +125,17 @@ nav{
 .nav-links a.active{color:var(--accent)}
 @media(max-width:760px){.nav-links{display:none}}
 
+/* Anchor targets have to clear the bar. A deep link — the console's Product
+   plate goes to /projects#autolabel, and the bar's own contact link — scrolls
+   its target to viewport top, where the sticky bar then covers the first 50px
+   of it. The bar is translucent with a blur behind it, so what you get is the
+   case study's badge row showing through, faintly: it reads as a rendering
+   fault rather than as a heading under a bar.
+   Scoped away from the home page deliberately. It has no bar to clear, and its
+   two panels are scroll-snap targets — scroll-margin shifts where a snap
+   lands, so a blanket rule would push every landing down by the same amount. */
+body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
+
 /* ===== THE TWO OPENING PANELS =====
    Each holds a full viewport and they snap one to the next, so the console
    arrives as a card being turned rather than as more of the intro.
@@ -143,21 +154,24 @@ nav{
   .intro{min-height:calc(100vh - var(--nav-h));min-height:calc(100svh - var(--nav-h))}
   .magi-panel{min-height:100vh;min-height:100svh}
 
-  /* Mandatory, and only on the home page — which is exactly two panels tall
-     with nothing after them. Everywhere else there is a page of case studies
-     below, and mandatory would fight the reader the whole way down.
-     Proximity was the earlier compromise and it read as ordinary scrolling:
-     the panels moved together, so the second felt like more of the first. */
-  html.home{scroll-snap-type:y mandatory}
-  .home .intro,.home .magi-panel{scroll-snap-align:start;scroll-snap-stop:always}
-
-  /* What actually makes it a swipe rather than a scroll: panel one pins and
-     panel two rides up OVER it, so the console arrives as a card dealt on top
-     instead of the page sliding along underneath. The accent rule is the
-     card's leading edge — the one bright line crossing the screen as it
-     lands. */
+  /* Panel one pins and panel two rides up OVER it, so the console arrives as
+     a card dealt on top instead of the page sliding along underneath. The
+     accent rule is the card's leading edge — the one bright line crossing the
+     screen as it lands. */
   .home .intro{position:sticky;top:0;z-index:0}
   .home .magi-panel{position:relative;z-index:1;border-top:1.5px solid var(--accent)}
+
+  /* No scroll-snap here, deliberately, and it took measuring to see why.
+     A stuck sticky element satisfies scroll-snap-align:start at EVERY scroll
+     offset — it is always at the top of the scrollport, that being the point
+     of sticky. So the snap engine saw a valid snap position wherever you
+     happened to be: short drags rubber-banded back, and scrolling up off the
+     console was pulled straight back down to it. Instrumented: the pager
+     asked for offset 0 and the page stayed at 813.
+     A snap point that follows the scroll is indistinguishable from no
+     snapping at all, which is exactly what "it still feels like scrolling"
+     was. The gesture handler in Hero.astro owns the transition now; snap here
+     would only fight it. */
 }
 /* scroll-behavior is already set, reduced-motion-guarded, at the top. */
 
