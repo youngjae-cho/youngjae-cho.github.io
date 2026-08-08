@@ -2,7 +2,7 @@
 // The page opens on two full-height panels that snap one to the next, so the
 // second arrives as a card being turned rather than as more of the first.
 //
-// .intro comes first and answers "who is this" — the name takes the display
+// .intro-panel comes first and answers "who is this" — the name takes the display
 // type, with the thesis and the venues under it. .magi-panel is the way in:
 // the console alone, three plates, three destinations.
 //
@@ -10,9 +10,9 @@
 // initPager below, and the note in global.css for why snap could not do it.
 import Magi from './Magi.astro';
 ---
-<section class="intro" id="top">
+<section class="intro-panel" id="top">
   <canvas class="field" data-fit="right" aria-hidden="true"></canvas>
-  <div class="intro-in">
+  <div class="intro-panel-in">
     <img class="avatar" src="/images/profile.png" alt="Youngjae Cho" width="112" height="112" />
     <div class="eyebrow">ML Research Engineer</div>
     <h1>Youngjae<br />Cho</h1>
@@ -182,7 +182,7 @@ import Magi from './Magi.astro';
   // for keyboard, hash links and anyone whose JS never arrives.
   function initPager() {
     if (!document.documentElement.classList.contains('home')) return;
-    const panels = Array.from(document.querySelectorAll<HTMLElement>('.intro, .magi-panel'));
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('.intro-panel, .magi-panel'));
     if (panels.length < 2) return;
 
     // Same threshold the stylesheet uses to turn panels on at all. Below it
