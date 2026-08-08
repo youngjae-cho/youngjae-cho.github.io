@@ -6,6 +6,18 @@
    Flat only: no gradients, no blur, no rounded corners, no shadows.
    Long-form copy is the one exception; it stays legible grey.
    ============================================================ */
+/* DotGothic16 — a bitmap dot-matrix gothic, self-hosted. Latin subset only
+   (10KB); the panel's text is all ASCII plus U+00B7, which that range covers.
+   Self-hosted rather than linked so the page makes no third-party request. */
+@font-face{
+  font-family:'DotGothic16';
+  src:url('/fonts/dotgothic16-latin.woff2') format('woff2');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+2000-206F,U+2212,U+2215;
+}
+
 :root{
   --paper:#000000;        /* pure black. the reference has no other ground */
   --panel:#050505;
@@ -26,6 +38,7 @@
   --punch:#000000;        /* text punched out of a filled plate */
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Monaco,"Cascadia Code","Roboto Mono",monospace;
+  --dot:'DotGothic16',var(--mono);   /* the MAGI panel's display face */
   --skew:-9deg;           /* the reference's plate rake */
   --maxw:1120px;
 }
@@ -185,41 +198,23 @@ nav{
 .links a .dot{width:5px;height:5px;background:var(--accent);flex:none}
 
 /* ===== MAGI triptych — raked plates, text punched out of filled colour =====
-   The panel is meant to read as a physical display: lettering built from a dot
-   matrix and rules built from a run of dots, rather than solid ink. The dots
-   come from a repeating radial-gradient — for text via background-clip, for
-   rules via the background itself, for the links via stroke-dasharray.
+   The panel reads as a physical display: the lettering is an actual bitmap
+   dot-matrix face, and the rules are a run of dots rather than a stroke.
 
-   Only type above ~13px gets the matrix. Below that a glyph is too few dots
-   tall to survive it, so the small labels stay solid. */
-.magi{font-family:var(--mono);background:var(--paper);padding:2px 0 0}
-
-/* The matrix. Dots run nearly cell-wide on purpose: a real LED panel reads as
-   solid glyphs cut by hairline gaps, not as sparse points. Sparse dots looked
-   right zoomed in and then washed out to nothing at actual size, because two
-   thirds of the glyph's ink was gone. Pitch stays fine enough (2.4px) that a
-   16px cap keeps its shape. Only type above ~13px gets this — below that a
-   glyph is too few dots tall to survive, so `.magi-word` and the labels stay
-   solid. */
-/* Selectors here have to out-specify `.plate .p-fn`, which sets a solid colour
-   further down the file — at equal specificity that rule wins and the glyphs
-   stay solid. Hence `.magi .plate .p-fn`. */
-@supports (background-clip:text) or (-webkit-background-clip:text){
-  .magi .plate .p-fn,.magi .magi-core{
-    color:transparent;
-    background-repeat:repeat;
-    background-size:2.4px 2.4px;
-    -webkit-background-clip:text;
-    background-clip:text;
-  }
-  /* Punched out of a filled plate: black cells, plate colour in the gaps. */
-  .magi .plate .p-fn{
-    background-image:radial-gradient(circle at 50% 50%,var(--punch) 66%,transparent 70%);
-  }
-  .magi .magi-core{
-    background-image:radial-gradient(circle at 50% 50%,var(--nominal) 66%,transparent 70%);
-  }
-}
+   An earlier pass faked the matrix on the system mono with a repeating
+   radial-gradient through background-clip:text. It worked, but it was a hack
+   with two failure modes — it lost to `.plate .p-fn` on specificity, and the
+   dots had to be pushed nearly cell-wide before the glyphs survived at actual
+   size. The font does the job properly, so that whole layer is gone. The
+   rules keep their gradient, since those are marks, not type. */
+.magi{font-family:var(--dot);background:var(--paper);padding:2px 0 0}
+/* DotGothic16's glyphs sit small on the em, so the panel needs a touch more
+   size and tracking than the mono did to hold the same optical weight. */
+.magi .p-fn{font-size:1.16rem;letter-spacing:.06em}
+.magi .p-id{font-size:.68rem;letter-spacing:.1em}
+.magi .p-sub{font-size:.68rem;letter-spacing:0}
+.magi .magi-bar,.magi .magi-status{font-size:.74rem;letter-spacing:.1em}
+.magi .magi-core{font-size:.98rem;letter-spacing:.2em}
 .magi-bar{
   display:flex;align-items:center;gap:12px;margin-bottom:14px;
   font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;
@@ -251,12 +246,13 @@ nav{
   align-items:stretch;
 }
 /* Links sit under the plates; the plates mask their overshoot. */
-/* Links are a run of dots too — round caps on a near-zero dash give circles,
-   not dashes. */
+/* Solid, deliberately: dotting these turned the connectors into scattered
+   points and the figure stopped reading as linked at all. The dot treatment
+   belongs on type and rules, where the run is dense enough to still read as
+   one mark; a 30px diagonal is not. */
 .magi-edges{
   position:absolute;inset:0;width:100%;height:100%;z-index:0;
-  stroke:var(--nominal);stroke-width:1.8;opacity:.85;
-  stroke-linecap:round;stroke-dasharray:0.1 3.4;
+  stroke:var(--nominal);stroke-width:1.3;opacity:.85;
 }
 /* All three plates are identical in treatment — peers, not a hierarchy. */
 .plate{
