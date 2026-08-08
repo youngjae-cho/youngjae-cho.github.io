@@ -129,11 +129,11 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system desig
     const DUR = 820;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 
-    // The panel is authored inside .hero-in, which sets z-index:2 and so opens
-    // a stacking context — a fixed overlay declared in there resolves its
-    // z-index against .hero, not the page, and loses to the sticky nav (and
-    // .hero's overflow:hidden crops it to the hero box). Reparent to <body> so
-    // the cut covers the viewport it is supposed to cover.
+    // The panel is authored inside .magi-panel-in, which sets z-index:2 and so
+    // opens a stacking context — a fixed overlay declared in there resolves
+    // its z-index against .magi-panel, not the page, and loses to the sticky
+    // nav (and .magi-panel's overflow:hidden crops it to that panel's box).
+    // Reparent to <body> so the cut covers the viewport it means to cover.
     if (cut.parentElement !== document.body) document.body.appendChild(cut);
 
     // Back-navigation can restore this page from the bfcache mid-cut, so the
