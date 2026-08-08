@@ -1,9 +1,18 @@
-// Engineering & production case studies, ordered by weight — the systems I own
-// come first. Every case reads Problem → My contribution → Result.
+// Case studies, ordered by weight — the systems I own come first. Every case
+// reads Problem → My contribution → Result.
 // `visual` selects a bespoke diagram in the case's left column ('gap' | 'tree' | none).
+//
+// `track` splits this list across the two pages the MAGI panel promises:
+// /product for things that shipped as products I owned, /engineering for the
+// tooling other work runs on. The panel's own sub-lines already draw that line
+// — "training · inference · serving" is the RL framework and the serving layer
+// — so the split lives in the data rather than as two hand-kept page lists,
+// and a card can never end up on both pages or neither.
+export type Track = 'product' | 'engineering';
 export interface ProjectTag { label: string; win?: boolean; }
 export interface Project {
   key: string;
+  track: Track;
   tags: ProjectTag[];
   titleHtml: string;
   blurb: string; // one-line, used on the home page
@@ -20,6 +29,7 @@ export interface Project {
 export const projects: Project[] = [
   {
     key: 'autolabel',
+    track: 'product',
     tags: [{ label: 'Pyler · Product · Content Safety' }, { label: 'System I own', win: true }],
     titleHtml: `Mining <span class="acro">Decision Trees</span> from VLM Reasoning`,
     blurb: `The auto-labeling system I own at Pyler — mined the implicit labeling decision tree from 299K VLM reasoning traces; macro F1 0.777 → 0.857.`,
@@ -37,6 +47,7 @@ export const projects: Project[] = [
   },
   {
     key: 'hackathon',
+    track: 'engineering',
     tags: [
       { label: 'Pyler · NVIDIA Nemotron Hackathon' },
       { label: '★ Winner · Track B', win: true },
@@ -57,6 +68,7 @@ export const projects: Project[] = [
   },
   {
     key: 'serving',
+    track: 'engineering',
     tags: [{ label: 'Pyler · Serving · Content Safety' }],
     titleHtml: `Config-Driven <span class="acro">Model Serving</span>`,
     blurb: `Rebuilt the serving layer under the moderation stack so putting a new model in front of traffic is a config change.`,
@@ -73,6 +85,7 @@ export const projects: Project[] = [
   },
   {
     key: 'defect',
+    track: 'product',
     tags: [{ label: 'Aiv · Product · Industrial AD' }, { label: 'Product I own' }],
     titleHtml: `Background-Aware <span class="acro">Defect Synthesis</span>`,
     blurb: `Diffusion defect generator that disentangles defect from background; best FID/LPIPS vs baselines, deployed on a real line.`,
@@ -89,6 +102,7 @@ export const projects: Project[] = [
   },
   {
     key: 'ocr',
+    track: 'product',
     tags: [{ label: 'Aiv · Product · OCR' }, { label: 'Product I own' }],
     titleHtml: `Real-Time <span class="acro">OCR Pipeline</span> for Steel-Plate IDs`,
     blurb: `Two-stage Triton OCR pipeline, profiled and cut to real-time with TensorRT + CUDA graphs.`,
