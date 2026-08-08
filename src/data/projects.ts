@@ -20,12 +20,12 @@ export interface Project {
 export const projects: Project[] = [
   {
     key: 'autolabel',
-    tags: [{ label: 'Pyler · LLM/VLM · Content Safety' }, { label: 'System I own', win: true }],
+    tags: [{ label: 'Pyler · Product · Content Safety' }, { label: 'System I own', win: true }],
     titleHtml: `Mining <span class="acro">Decision Trees</span> from VLM Reasoning`,
     blurb: `The auto-labeling system I own at Pyler — mined the implicit labeling decision tree from 299K VLM reasoning traces; macro F1 0.777 → 0.857.`,
     problemHtml: `Content-safety scoring — 5 categories × severity — drifted between labelers. The written guidelines were flat ladder tables, but the decision logic that actually produced a score lived unwritten in each labeler's head, so the same clip scored differently depending on who saw it.`,
     ownershipHtml: `End-to-end ownership: problem framing, the mining pipeline, the tree design, and the prompts now in production.`,
-    resultHtml: `Macro <b>F1 0.777 → 0.857</b> (+0.080) — precision 0.731 → 0.834, recall 0.833 → 0.883. And every score became auditable: you can point at the node that fired.`,
+    resultHtml: `Macro <b>F1 0.777 → 0.857</b> (+0.080), and <b>over 4× the labeling throughput</b> of the process it replaced. Every score is auditable now: you can point at the node that fired.`,
     visual: 'tree',
     micro: 'My contribution',
     approachHtml: [
@@ -33,7 +33,7 @@ export const projects: Project[] = [
       `<b>A pipeline over 299K traces.</b> Group into <span class="m">30 buckets</span> (5 categories × 6 scores), a small LLM extracts the decisive signals, another synthesizes them into a yes/no tree (YAML) injected back into the prompt.`,
       `<b>Engineered the trees.</b> Merged equivalent signals into single axes, pulled exceptions to the front as <span class="m">early gates</span>, and collapsed the fuzzy 2-vs-3 / 4-vs-5 bands into a stable <span class="m">0 / 1 / 3 / 5</span> scale.`,
     ],
-    chips: ['Macro F1 +0.080', 'Precision +0.103', 'Recall +0.050', '299K traces', 'VLM reasoning', 'YAML trees'],
+    chips: ['Macro F1 +0.080', 'Throughput 4×+', 'Precision +0.103', 'Recall +0.050', '299K traces', 'YAML trees'],
   },
   {
     key: 'hackathon',
@@ -73,11 +73,11 @@ export const projects: Project[] = [
   },
   {
     key: 'defect',
-    tags: [{ label: 'Aiv · Diffusion · Industrial AD' }],
+    tags: [{ label: 'Aiv · Product · Industrial AD' }, { label: 'Product I own' }],
     titleHtml: `Background-Aware <span class="acro">Defect Synthesis</span>`,
     blurb: `Diffusion defect generator that disentangles defect from background; best FID/LPIPS vs baselines, deployed on a real line.`,
     problemHtml: `Real defects are scarce on a manufacturing line — too few, and too narrow in type, to train a detector that generalizes. So I generate them.`,
-    ownershipHtml: `First author on the method; built the training and inference pipeline that put it on the line.`,
+    ownershipHtml: `Mine end to end: first author on the method, then the pipeline and rollout that put it on the line — research carried into production, not handed off.`,
     resultHtml: `Best generation quality (FID / LPIPS) over DFMGAN &amp; AnomalyDiffusion on MVTec-AD &amp; LOCO; raised detector precision &amp; recall on the real production line.`,
     micro: 'My contribution',
     approachHtml: [
@@ -89,11 +89,11 @@ export const projects: Project[] = [
   },
   {
     key: 'ocr',
-    tags: [{ label: 'Aiv · Serving · OCR' }],
+    tags: [{ label: 'Aiv · Product · OCR' }, { label: 'Product I own' }],
     titleHtml: `Real-Time <span class="acro">OCR Pipeline</span> for Steel-Plate IDs`,
     blurb: `Two-stage Triton OCR pipeline, profiled and cut to real-time with TensorRT + CUDA graphs.`,
     problemHtml: `Read identifiers stamped on steel plates outdoors — from CCTV and mobile — fast and reliably, under any weather.`,
-    ownershipHtml: `Owned the serving stack end-to-end: pipeline design, profiling, optimization, rollout.`,
+    ownershipHtml: `Mine end to end: pipeline design, the models, profiling and optimization, and the rollout. A product I owned, not a component I contributed to.`,
     resultHtml: `Client confirmed throughput and recognition accuracy both rose sharply after rollout.`,
     micro: 'My contribution',
     approachHtml: [
