@@ -106,13 +106,7 @@ nav{
   max-width:var(--maxw);margin:0 auto;padding:11px 28px;
   display:flex;align-items:center;gap:22px;
 }
-.brand{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase}
-.mono-mark{
-  width:28px;height:28px;display:grid;place-items:center;
-  border:1.5px solid var(--accent);color:var(--accent);
-  font-weight:700;font-size:.74rem;letter-spacing:.02em;
-  clip-path:polygon(0 0,100% 0,100% 72%,72% 100%,0 100%);
-}
+.brand{display:flex;align-items:center;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase}
 .nav-code{
   font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;
   color:var(--ink-3);border-left:1px solid var(--line);padding-left:16px;
@@ -125,13 +119,6 @@ nav{
 .nav-links a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:1.5px;background:var(--accent);transition:width .22s ease}
 .nav-links a:hover::after,.nav-links a.active::after{width:100%}
 .nav-links a.active{color:var(--accent)}
-.nav-cv{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
-  border:1.5px solid var(--accent);padding:6px 14px;color:var(--accent);
-  transition:background .2s,color .2s;white-space:nowrap;
-  clip-path:polygon(0 0,100% 0,100% 62%,88% 100%,0 100%);
-}
-.nav-cv:hover{background:var(--accent);color:#06080b}
 @media(max-width:760px){.nav-links{display:none}}
 
 /* ===== HERO ===== */
@@ -245,7 +232,11 @@ nav{
 .plate .p-fn{color:var(--punch)}
 .plate .p-sub{color:rgba(0,0,0,.74)}
 .plate:hover{filter:brightness(1.14)}
-.p-id{font-size:.58rem;letter-spacing:.18em;font-weight:700}
+/* The id line carries the outbound mark at its far edge — same glyph on all
+   three, so making them links doesn't disturb the equal mass. */
+.p-id{font-size:.58rem;letter-spacing:.18em;font-weight:700;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.p-out{letter-spacing:0;opacity:.5}
+.plate:hover .p-out{opacity:.85}
 .p-fn{font-size:1rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;line-height:1.25}
 .p-sub{font-size:.58rem;letter-spacing:.03em;line-height:1.45;margin-top:3px}
 
