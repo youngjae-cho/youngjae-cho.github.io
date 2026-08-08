@@ -2,13 +2,14 @@
 import type { Pub } from '../data/publications';
 // `compact` drops the author list — used on the home page, where the full
 // listing is a click away and the density isn't worth it.
-interface Props { pub: Pub; compact?: boolean; }
-const { pub, compact = false } = Astro.props;
+interface Props { pub: Pub; compact?: boolean; index?: number; total?: number; }
+const { pub, compact = false, index, total } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
 
 // Author lists are stored with **markers** around my name — render them bold.
 const authorsHtml = pub.authors.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 ---
-<article class={pub.featured ? 'card feature' : 'card'}>
+<article class={pub.featured ? 'card feature ticked' : 'card ticked'}>
   {pub.featured && (
     <svg class="feature-contour" viewBox="0 0 200 200" fill="none" stroke="var(--accent)" stroke-width="1" aria-hidden="true">
       <ellipse cx="100" cy="100" rx="20" ry="16" /><ellipse cx="100" cy="100" rx="42" ry="34" />
@@ -17,6 +18,7 @@ const authorsHtml = pub.authors.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
     </svg>
   )}
   <div class="card-top">
+    {index && total && <span class="idx">Ref {pad(index)}/{pad(total)}</span>}
     <span class={pub.venueAlt ? 'badge alt' : 'badge'}>{pub.venue}</span>
     <span class="status">{pub.status}</span>
     {pub.role && (

@@ -1,5 +1,4 @@
-// Publications. `home: true` surfaces it in "Selected Research" on the home page;
-// /publications lists all.
+// Publications. /publications shows the four I led; the résumé lists all.
 //
 // Metadata rule — keep these three in lockstep everywhere they surface:
 //   venue   the canonical venue string, e.g. "ICML 2023", "arXiv 2026"
@@ -29,7 +28,6 @@ export interface Pub {
    *  and conference papers that aren't part of the four-paper throughline. */
   minor?: boolean;
   featured?: boolean; // full-width feature card
-  home?: boolean; // show on home "Selected Research"
   chips?: string[]; // HTML strings, feature card only
 }
 
@@ -45,7 +43,6 @@ export const publications: Pub[] = [
     role: 'First author',
     roleFirst: true,
     featured: true,
-    home: true,
     angle: 'Stability · noisy preferences',
     summary:
       "Reads preference optimization as <b>learning dynamics</b>, and puts the stability problem in the reference: DPO's frozen anchor becomes a geometrically perturbed one — a worst-case local perturbation of the current policy — with each pair reweighted by its geometric brittleness. A steadier objective, which is what holds up under noisy labels and on less data.",
@@ -65,7 +62,6 @@ export const publications: Pub[] = [
     date: '2024-02',
     role: 'First author',
     roleFirst: true,
-    home: true,
     angle: 'Adaptation · scarce data',
     summary:
       'Bayesian, data-dependent priors that let vision-language prompts adapt per input instead of staying fixed — so a VLM holds up when there is little data to tune on, and stays calibrated when the input shifts.',
@@ -81,7 +77,6 @@ export const publications: Pub[] = [
     date: '2023-07',
     role: 'Co-first author',
     roleFirst: true,
-    home: true,
     angle: 'Acquisition · scarce labels',
     summary:
       'An acquisition function that bridges sharpness-aware minimization and active learning — select the samples that flatten the loss landscape, and a fixed labeling budget buys more generalization per label.',
@@ -97,7 +92,6 @@ export const publications: Pub[] = [
     date: '2024-11',
     role: 'First author',
     roleFirst: true,
-    home: true,
     angle: 'Synthesis · scarce anomalies',
     summary:
       'When real defects are too rare to train on, generate them — diffusion synthesis that models the relationship between foreground defect and background surface explicitly, and argues the disentanglement theoretically rather than only showing it. The method behind the production system on the product page.',

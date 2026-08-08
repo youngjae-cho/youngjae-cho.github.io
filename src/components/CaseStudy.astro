@@ -2,12 +2,15 @@
 import type { Project } from '../data/projects';
 import DecisionTree from './DecisionTree.astro';
 import GapDiagram from './GapDiagram.astro';
-interface Props { project: Project; }
-const { project: p } = Astro.props;
+interface Props { project: Project; index?: number; total?: number; }
+const { project: p, index, total } = Astro.props;
+// Zero-padded so the column stays put whether there are 3 cases or 30.
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
-<article class="case" id={p.key}>
+<article class="case ticked" id={p.key}>
   <div class="case-grid">
     <div class="case-meta">
+      {index && total && <span class="idx">Case {pad(index)}/{pad(total)}</span>}
       {p.tags.length === 1 ? (
         <span class="badge alt">{p.tags[0].label}</span>
       ) : (

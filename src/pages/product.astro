@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import CaseStudy from '../components/CaseStudy.astro';
+import PageHead from '../components/PageHead.astro';
 import { projects } from '../data/projects';
 
 // CASPER·3 on the console panel lands here. Membership comes from each case's
@@ -10,14 +11,12 @@ const cases = projects.filter((p) => p.track === 'product');
 ---
 <Base title="Product — Youngjae Cho" active="product">
   <main class="wrap">
-    <header class="page-head">
-      <div class="eyebrow">Product</div>
-      <h1>Product</h1>
+    <PageHead section="Product" count={`${cases.length} cases`} eyebrow="Product" title="Product">
       <p class="intro">Three systems I owned end to end — content-safety auto-labeling at Pyler, defect synthesis and steel-plate OCR at Aiv. Each reads the same way: the problem, what was mine, and what moved. One of them started as research and I carried it onto the line myself rather than handing it over.</p>
-    </header>
+    </PageHead>
     <section class="block" style="border-bottom:0">
       <div class="cases">
-        {cases.map((p) => <CaseStudy project={p} />)}
+        {cases.map((p, i) => <CaseStudy project={p} index={i + 1} total={cases.length} />)}
       </div>
     </section>
   </main>

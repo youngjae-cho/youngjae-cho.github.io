@@ -15,7 +15,6 @@ export interface Project {
   track: Track;
   tags: ProjectTag[];
   titleHtml: string;
-  blurb: string; // one-line, used on the home page
   problemHtml: string;
   /** Scope line: what was mine vs the team's. Keeps credit honest. */
   ownershipHtml?: string;
@@ -32,7 +31,6 @@ export const projects: Project[] = [
     track: 'product',
     tags: [{ label: 'Pyler · Product · Content Safety' }, { label: 'System I own', win: true }],
     titleHtml: `Mining <span class="acro">Decision Trees</span> from VLM Reasoning`,
-    blurb: `The auto-labeling system I own at Pyler — mined the implicit labeling decision tree from 299K VLM reasoning traces; macro F1 0.777 → 0.857.`,
     problemHtml: `Content-safety scoring — 5 categories × severity — drifted between labelers. The written guidelines were flat ladder tables, but the decision logic that actually produced a score lived unwritten in each labeler's head, so the same clip scored differently depending on who saw it.`,
     ownershipHtml: `End-to-end ownership: problem framing, the mining pipeline, the tree design, and the prompts now in production.`,
     resultHtml: `Macro <b>F1 0.777 → 0.857</b> (+0.080), and <b>over 4× the labeling throughput</b> of the process it replaced. Every score is auditable now: you can point at the node that fired.`,
@@ -53,7 +51,6 @@ export const projects: Project[] = [
       { label: '★ Winner · Track B', win: true },
     ],
     titleHtml: `Building the <span class="acro">RL Framework</span> a 12B VLM Didn't Have`,
-    blurb: `No RL framework could post-train Nemotron-Nano-12B-VL — so I built the RL layer onto Megatron-Bridge and open-sourced it.`,
     problemHtml: `The team entry was a video content-safety VLM on Nemotron-Nano-12B-v2-VL. The blocker wasn't the model or the data — it was the tooling: Nemo-RL had no support for this architecture, so there was no RL post-training path at all.`,
     ownershipHtml: `Team award (Track B, Domain-Specialized Model). Mine within it: the RL framework work, the post-training method, and the preference data design.`,
     resultHtml: `A working RL post-training stack for an architecture that had none — open-sourced as <a href="https://github.com/youngjaecho98/Megatron-Bridge_RL">Megatron-Bridge_RL</a>. The aligned model held temporal IoU <b>0.927</b> while internalizing the guardrails; the team took 1st in Track B.`,
@@ -71,7 +68,6 @@ export const projects: Project[] = [
     track: 'engineering',
     tags: [{ label: 'Pyler · Serving · Content Safety' }],
     titleHtml: `Config-Driven <span class="acro">Model Serving</span>`,
-    blurb: `Rebuilt the serving layer under the moderation stack so putting a new model in front of traffic is a config change.`,
     problemHtml: `A moderation request doesn't hit one model — it walks a chain of them, and each stage's decision logic lived in the serving layer. Swapping in a better model meant another strategy class, another batch path, another set of thresholds. The model was the cheap part.`,
     ownershipHtml: `Mine: the new inference path end to end, and the config and validation layers around it — inside a serving stack the team runs together.`,
     resultHtml: `A model swap is now a checkpoint plus a config edit — the serving code doesn't move, and what a replica is running is queryable.`,
@@ -88,7 +84,6 @@ export const projects: Project[] = [
     track: 'product',
     tags: [{ label: 'Aiv · Product · Industrial AD' }, { label: 'Product I own' }],
     titleHtml: `Background-Aware <span class="acro">Defect Synthesis</span>`,
-    blurb: `Diffusion defect generator that disentangles defect from background; best FID/LPIPS vs baselines, deployed on a real line.`,
     problemHtml: `Real defects are scarce on a manufacturing line — too few, and too narrow in type, to train a detector that generalizes. So I generate them.`,
     ownershipHtml: `Mine end to end: first author on the method, then the pipeline and rollout that put it on the line — research carried into production, not handed off.`,
     resultHtml: `Best generation quality (FID / LPIPS) over DFMGAN &amp; AnomalyDiffusion on MVTec-AD &amp; LOCO; raised detector precision &amp; recall on the real production line.`,
@@ -105,7 +100,6 @@ export const projects: Project[] = [
     track: 'product',
     tags: [{ label: 'Aiv · Product · OCR' }, { label: 'Product I own' }],
     titleHtml: `Real-Time <span class="acro">OCR Pipeline</span> for Steel-Plate IDs`,
-    blurb: `Two-stage Triton OCR pipeline, profiled and cut to real-time with TensorRT + CUDA graphs.`,
     problemHtml: `Read identifiers stamped on steel plates outdoors — from CCTV and mobile — fast and reliably, under any weather.`,
     ownershipHtml: `Mine end to end: pipeline design, the models, profiling and optimization, and the rollout. A product I owned, not a component I contributed to.`,
     resultHtml: `Client confirmed throughput and recognition accuracy both rose sharply after rollout.`,

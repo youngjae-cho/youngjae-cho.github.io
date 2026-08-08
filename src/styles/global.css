@@ -74,14 +74,18 @@ img{max-width:100%;display:block}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
 
 /* ---- corner ticks: the console frame motif ----
-   applied to any bordered box via .ticked */
+   Applied to any bordered box via .ticked. Sits flush at inset 0 rather than
+   overhanging by 1px: .case and .card both clip with overflow:hidden, and an
+   overhanging bracket is simply eaten by them — which is why this rule sat in
+   the stylesheet unused, describing hardware that could not be mounted. */
 .ticked{position:relative}
 .ticked::before,.ticked::after{
-  content:"";position:absolute;width:9px;height:9px;pointer-events:none;
-  border-color:var(--accent);opacity:.65;
+  content:"";position:absolute;width:10px;height:10px;pointer-events:none;
+  border-color:var(--accent);opacity:.55;transition:opacity .22s;
 }
-.ticked::before{top:-1px;left:-1px;border-top:1.5px solid;border-left:1.5px solid}
-.ticked::after{bottom:-1px;right:-1px;border-bottom:1.5px solid;border-right:1.5px solid}
+.ticked::before{top:0;left:0;border-top:1.5px solid;border-left:1.5px solid}
+.ticked::after{bottom:0;right:0;border-bottom:1.5px solid;border-right:1.5px solid}
+.ticked:hover::before,.ticked:hover::after{opacity:1}
 
 /* ---- eyebrow: a label plate with the text punched out of filled colour.
    The plate's trailing edge is raked via clip-path rather than skewX, so the
@@ -469,33 +473,23 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 @keyframes blip{0%,72%{opacity:1}76%,100%{opacity:.2}}
 
 /* ===== LEDGER — the numbered diamond rack ===== */
-.ledger{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper)}
-.ledger-in{
-  max-width:var(--maxw);margin:0 auto;padding:26px 28px;
-  display:flex;flex-wrap:wrap;gap:14px 10px;font-family:var(--mono);
-}
-.stat{
-  flex:1 1 0;min-width:150px;
-  display:flex;align-items:center;gap:13px;
-}
 /* Rotated square, filled — the reference's numbered blocks. Note the usable
    width is NOT the diagonal: a horizontal band of text height h through the
    centre only clears (diagonal - 2h), so the type has to stay small. */
-.stat .n{
-  flex:none;display:grid;place-items:center;
-  width:58px;height:58px;transform:rotate(45deg);
-  background:var(--accent);color:var(--punch);
-  font-size:.58rem;font-weight:800;letter-spacing:0;
-  font-variant-numeric:tabular-nums;
-}
-.stat .n > span{transform:rotate(-45deg);display:block;white-space:nowrap;line-height:1}
-.stat .n.win{background:var(--gold)}
-.stat .k{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--nominal);line-height:1.55;max-width:19ch}
 @media(max-width:620px){.stat{flex-basis:46%;min-width:0}.stat .n{width:50px;height:50px;font-size:.52rem}}
 
 /* ===== generic section ===== */
-section.block{padding:70px 0;border-bottom:1px solid var(--line)}
+/* Section boundaries carry the plate rake. The 1px rule stays for structure;
+   a short accent segment sits on it, raked by --skew — the token this file has
+   defined as "the reference's plate rake" since the beginning and never used.
+   Every other edge on the site is raked; these were the one place still square. */
+section.block{padding:70px 0;border-bottom:1px solid var(--line);position:relative}
+section.block::after{
+  content:"";position:absolute;left:0;bottom:-1px;width:58px;height:2px;
+  background:var(--accent);transform:skewX(var(--skew));transform-origin:0 100%;
+}
 .block:last-of-type{border-bottom:0}
+.block:last-of-type::after{display:none}
 /* A summary block is a head and nothing else — the listing it used to carry
    lives on the page its link points at. Drop the head's grid gap and pull the
    padding in, or two of these read as a page of air. */
@@ -505,11 +499,53 @@ section.block{padding:70px 0;border-bottom:1px solid var(--line)}
 .head h2{font-size:clamp(1.6rem,3.2vw,2.15rem);font-weight:750;letter-spacing:-.02em;line-height:1.08;text-wrap:balance;margin:0}
 .head p{color:var(--ink-2);font-size:1.02rem;margin:0}
 .head em{color:var(--accent-ink);font-style:normal}
-.section-link{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:inline-flex;align-items:center;gap:8px;margin-top:4px}
-.section-link .arr{transition:transform .22s}
-.section-link:hover .arr{transform:translateX(4px)}
 
 /* page header (inner pages) */
+/* ===== interior page console =====
+   The bar reuses .magi-bar and its children so there is one console bar in
+   this file, not two that drift. The one thing it must restate is the mono
+   family — .magi-bar inherits that from .magi, which is not an ancestor here. */
+.page-bar{
+  font-family:var(--mono);margin-bottom:26px;
+  padding-bottom:11px;border-bottom:1px solid var(--line-2);
+}
+.pb-section{color:var(--ink);font-weight:700;letter-spacing:.24em}
+/* A rail down the left margin, the way the reference labels the edge of a
+   screen rather than only the top of it. Lives in the gutter outside .wrap's
+   1120px, so it costs the layout nothing — and it is the first thing to go
+   when that gutter runs out. */
+.page-rail{
+  position:fixed;left:20px;top:50%;transform:translateY(-50%);z-index:30;
+  writing-mode:vertical-rl;font-family:var(--mono);font-size:.6rem;
+  letter-spacing:.34em;text-transform:uppercase;color:var(--ink-3);
+  pointer-events:none;user-select:none;
+}
+.page-rail b{color:var(--nominal);font-weight:600}
+@media(max-width:1240px){.page-rail{display:none}}
+.pb-count{color:var(--ink-3);letter-spacing:.14em;white-space:nowrap}
+@media(max-width:620px){.pb-count{display:none}}
+
+/* A measurement graticule behind the page head — the reference puts its type
+   on a ruled field, never on empty ground. Masked so it never reaches the
+   copy: it should register at the edge of vision and nowhere else. */
+.page-head{position:relative}
+.page-head::before{
+  content:"";position:absolute;inset:-30px -40px auto;height:270px;z-index:-1;
+  pointer-events:none;opacity:.2;
+  background-image:
+    repeating-linear-gradient(to right,var(--nominal-dim) 0 1px,transparent 1px 64px),
+    repeating-linear-gradient(to bottom,var(--nominal-dim) 0 1px,transparent 1px 64px);
+  -webkit-mask-image:radial-gradient(120% 90% at 22% 30%,#000 0%,transparent 72%);
+  mask-image:radial-gradient(120% 90% at 22% 30%,#000 0%,transparent 72%);
+}
+
+/* Card index. Zero-padded and monospaced so the column never shifts. */
+.idx{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.case-meta > .idx{align-self:flex-start}
+
 .page-head{padding:76px 0 8px}
 .page-head h1{font-size:clamp(2rem,4.6vw,3rem);font-weight:800;letter-spacing:-.028em;line-height:1;margin:.3em 0 0;text-wrap:balance}
 .page-head .intro{margin-top:18px;max-width:60ch;color:var(--ink-2);font-size:1.02rem}
@@ -596,26 +632,9 @@ section.block{padding:70px 0;border-bottom:1px solid var(--line)}
 .result a{text-decoration:underline;text-underline-offset:2px}
 
 /* ===== experience timeline ===== */
-.tl{display:flex;flex-direction:column}
-.row{display:grid;grid-template-columns:170px 1fr;gap:24px;padding:22px 0;border-top:1px solid var(--line-2);position:relative}
-.row::before{content:"";position:absolute;left:0;top:-1px;width:26px;height:1px;background:var(--accent)}
-.row:first-child{border-top:0}
-.row:first-child::before{display:none}
-.when{font-family:var(--mono);font-size:.76rem;color:var(--ink-3);letter-spacing:.06em;padding-top:3px;font-variant-numeric:tabular-nums}
-.what h4{font-size:1.1rem;font-weight:700;letter-spacing:-.01em;margin:0}
-.what .org{font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;color:var(--accent);margin-top:3px;text-transform:uppercase}
-.what p{margin:9px 0 0;color:var(--ink-2);font-size:.94rem;max-width:64ch}
-.what ul{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
-.what ul li{position:relative;padding-left:18px;color:var(--ink-2);font-size:.92rem;line-height:1.55}
-.what ul li::before{content:"";position:absolute;left:0;top:.6em;width:7px;height:1.5px;background:var(--accent)}
 @media(max-width:600px){.row{grid-template-columns:1fr;gap:6px}}
 
 /* ===== skills (cv) ===== */
-.skills{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-@media(max-width:620px){.skills{grid-template-columns:1fr}}
-.skill{border:1px solid var(--line);padding:18px 20px;background:var(--card)}
-.skill h4{margin:0 0 12px;font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600}
-.skill .chips{margin:0}
 
 /* ===== footer / contact ===== */
 footer{padding:74px 0 44px}
@@ -628,7 +647,6 @@ footer{padding:74px 0 44px}
 
 /* ===== publication metadata ===== */
 /* Status sits next to the venue badge so the pair reads as one fact. */
-.status{font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
 .authors{font-size:.84rem;color:var(--ink-3);line-height:1.5;margin:-4px 0 0;max-width:70ch}
 .authors b{color:var(--ink-2);font-weight:650}
 /* The lever the paper pulls on data efficiency — the research throughline.
