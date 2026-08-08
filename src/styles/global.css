@@ -6,6 +6,51 @@
    Flat only: no gradients, no blur, no rounded corners, no shadows.
    Long-form copy is the one exception; it stays legible grey.
    ============================================================ */
+/* ---- the two faces the console owns ----
+   Everything else stays on the operating system's own type. Body copy is the
+   part that has to be read, and the OS ships the face it hinted and spaced for
+   its own screens; nothing self-hosted beats that. So only the two places
+   where the lettering IS the instrument get a file of their own.
+
+   Azeret Mono carries the chrome. It matters because the mono is not a detail
+   here — var(--mono) is on 31 rules against var(--sans)'s 1, so the console's
+   whole voice was being set by a stack that resolves to a DIFFERENT face on
+   every platform: SF Mono on a Mac, Cascadia on Windows, Roboto Mono on
+   Android. One variable file at 26KB fixes the identity in place, and being
+   variable it carries a real 800 — the weight nine of those rules ask for, and
+   the reason a 400/700 face like Space Mono or a single-weight one like Share
+   Tech Mono could not take the job without the browser faking the bold.
+
+   Shippori Mincho B1 carries two glyphs and no more: 可決, the verdict in the
+   cut. Japanese display type here is a Mincho — heavy vertical stress, chisel
+   serifs — not the brush scripts that get filed under "anime font"; the
+   reference's own title cards are set in Matisse EB, a Mincho. Every system
+   fallback is a GOTHIC, so today that stamp renders in the same sans as a
+   button label. Subset to the two codepoints it actually uses, the file is
+   1.5KB, which is less than the profile photo by two orders of magnitude.
+
+   Neither file covers the symbol marks — the ▸ ■ ▼ ★ → ✓ ✕ the chrome draws
+   with. Those fall through to the stacks below on a per-glyph basis and render
+   exactly as they do now; the fallback list is load-bearing, not decoration. */
+@font-face{
+  font-family:'Azeret Mono';
+  font-style:normal;
+  font-weight:100 900;   /* variable: one file, the whole range */
+  font-display:swap;     /* preloaded in Base's <head>, so the swap is theory */
+  src:url('/fonts/azeret-mono-latin.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Shippori Mincho B1';
+  font-style:normal;
+  font-weight:800;
+  /* block, not swap: this face exists to stop 可決 rendering as a gothic, and
+     a swap would show precisely that for a beat. The cut is behind a click and
+     the file is 1.5KB, so it is never the thing being waited on. */
+  font-display:block;
+  src:url('/fonts/shippori-mincho-b1-800-kaketsu.woff2') format('woff2');
+  unicode-range:U+53EF,U+6C7A;
+}
+
 :root{
   --paper:#000000;        /* pure black. the reference has no other ground */
   --panel:#050505;
@@ -25,7 +70,11 @@
   --alert:#ff1d0d;
   --punch:#000000;        /* text punched out of a filled plate */
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
-  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Monaco,"Cascadia Code","Roboto Mono",monospace;
+  --mono:'Azeret Mono',ui-monospace,"SF Mono",SFMono-Regular,Menlo,Monaco,"Cascadia Code","Roboto Mono",monospace;
+  /* The stamp's face, applied at exactly one site. Kept as a token rather than
+     inlined so the fallback chain is stated once: if the 1.5KB file never
+     arrives, 可決 lands on the platform gothic, which is where it is today. */
+  --jp:'Shippori Mincho B1',"Hiragino Mincho ProN","Yu Mincho",serif;
   --skew:-9deg;           /* the reference's plate rake */
   --maxw:1120px;
   --nav-h:50px;          /* the sticky bar's flow height; panel one subtracts it */
@@ -426,8 +475,14 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
   26%,31%{opacity:1;transform:scale(1.14)}
   32%,100%{opacity:1;transform:scale(1)}
 }
-.mc-stamp b{font-size:1.9rem;line-height:1;color:var(--alert);letter-spacing:.12em;
-  border:2px solid var(--alert);padding:5px 11px 7px}
+/* The verdict is the one place on the site with Japanese type, so it is the one
+   place that gets a Japanese face rather than whatever the platform hands a
+   stray kanji. Optical size correction comes with it: a Mincho at 800 carries
+   far more ink than the gothic it replaces, so the box tightens and the
+   letter-spacing comes down — .12em was set for a face that no longer sets it. */
+.mc-stamp b{font-family:var(--jp);font-size:1.9rem;line-height:1;color:var(--alert);
+  letter-spacing:.08em;font-weight:800;
+  border:2px solid var(--alert);padding:6px 12px 8px}
 .mc-stamp em{font-style:normal;font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;color:var(--nominal)}
 /* Three bars across the field, staggered — the reference's hard inserts. */
 .mc-bars{position:absolute;inset:0;overflow:hidden}
@@ -529,8 +584,15 @@ section.block::after{
    on a ruled field, never on empty ground. Masked so it never reaches the
    copy: it should register at the edge of vision and nowhere else. */
 .page-head{position:relative}
+/* The bleed is -28px, not -40px, until there is gutter to spend it in. .wrap
+   pads 28px, so a -40px inset puts this pseudo-element's edge 12px past the
+   viewport — measured as docW 512 against a 500px window, on every interior
+   page. body's overflow-x:hidden was clipping it, which is why it never showed
+   up as anything: an invisible 12px of scrollable document. Below 1180px the
+   graticule now stops exactly at the screen edge; above it the wrap is centred
+   with gutter to spare and the wider bleed costs nothing. */
 .page-head::before{
-  content:"";position:absolute;inset:-30px -40px auto;height:270px;z-index:-1;
+  content:"";position:absolute;inset:-30px -28px auto;height:270px;z-index:-1;
   pointer-events:none;opacity:.2;
   background-image:
     repeating-linear-gradient(to right,var(--nominal-dim) 0 1px,transparent 1px 64px),
@@ -538,6 +600,7 @@ section.block::after{
   -webkit-mask-image:radial-gradient(120% 90% at 22% 30%,#000 0%,transparent 72%);
   mask-image:radial-gradient(120% 90% at 22% 30%,#000 0%,transparent 72%);
 }
+@media(min-width:1180px){.page-head::before{inset:-30px -40px auto}}
 
 /* Card index. Zero-padded and monospaced so the column never shifts. */
 .idx{
