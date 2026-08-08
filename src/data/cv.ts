@@ -12,7 +12,7 @@ export const basics = {
     'I design learning methods for noisy, scarce, and shifting supervision — and ship them to production.',
   // Longer form, for the resume header.
   summaryLong:
-    'ML Research Engineer working on robust learning under imperfect supervision — six papers, four first-author, including ICML 2023 and AAAI 2024. Currently on preference alignment at Pyler, alongside the LLM/VLM auto-labeling system and RL post-training framework I own there.',
+    'ML Research Engineer working on robust learning under imperfect supervision — six papers, four first-author, including ICML 2023 and AAAI 2024. Currently on RL post-training for MLLMs at Pyler, alongside the LLM/VLM auto-labeling system I own there.',
   resume: '/resume',
   links: {
     github: 'https://github.com/youngjae-cho',
