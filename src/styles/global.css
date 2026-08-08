@@ -125,6 +125,17 @@ nav{
 .nav-links a.active{color:var(--accent)}
 @media(max-width:760px){.nav-links{display:none}}
 
+/* Anchor targets have to clear the bar. A deep link — the console's Product
+   plate goes to /projects#autolabel, and the bar's own contact link — scrolls
+   its target to viewport top, where the sticky bar then covers the first 50px
+   of it. The bar is translucent with a blur behind it, so what you get is the
+   case study's badge row showing through, faintly: it reads as a rendering
+   fault rather than as a heading under a bar.
+   Scoped away from the home page deliberately. It has no bar to clear, and its
+   two panels are scroll-snap targets — scroll-margin shifts where a snap
+   lands, so a blanket rule would push every landing down by the same amount. */
+body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
+
 /* ===== THE TWO OPENING PANELS =====
    Each holds a full viewport and they snap one to the next, so the console
    arrives as a card being turned rather than as more of the intro.
