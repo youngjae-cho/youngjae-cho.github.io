@@ -1,20 +1,56 @@
 ---
 import Base from '../layouts/Base.astro';
 import PubCard from '../components/PubCard.astro';
-import { publications } from '../data/publications';
+import { publications, inProgress } from '../data/publications';
 
-const pubs = [...publications].sort((a, b) => b.date.localeCompare(a.date));
+// The four papers I led. Co-authored workshop and conference work is kept in
+// the data — the résumé lists every publication — but held back from here,
+// because four papers answering one question read as a body of work and six
+// papers with two of them unrelated read as a list.
+const pubs = publications
+  .filter((p) => !p.minor)
+  .sort((a, b) => b.date.localeCompare(a.date));
 ---
 <Base title="Publications — Youngjae Cho" active="publications">
   <main class="wrap">
     <header class="page-head">
-      <div class="eyebrow">Publications</div>
+      <div class="eyebrow">Research</div>
       <h1>Publications</h1>
-      <p class="intro">Six papers on robust learning under imperfect supervision — four first-author (incl. one co-first), spanning ICML, AAAI, IEEE SMC, and arXiv. Each one is tagged with the supervision failure it attacks: noisy labels, scarce labels, distribution shift, spurious correlation.</p>
+      <p class="intro">Four papers, one question: how do you learn well when there isn't enough data, or the labels are wrong? Each pulls a different lever — <em>which</em> samples to label, how to <em>adapt</em> when there are few, how to <em>synthesize</em> what's missing, and how to get more out of pairs that are <em>noisy</em>. First or co-first author on all four; two published at ICML 2023 and AAAI 2024, two preprints.</p>
     </header>
-    <section class="block" style="border-bottom:0">
+    <section class="block">
       <div class="grid">
         {pubs.map((p) => <PubCard pub={p} />)}
+      </div>
+    </section>
+
+    {/* Stated, not described. Each row gives the topic and the question and
+        then stops, because there is no result yet — the blacked-out lines are
+        the honest rendering of that, and they disappear when a row graduates
+        into a paper above. */}
+    <section class="block" id="in-progress" style="border-bottom:0">
+      <div class="head">
+        <div class="eyebrow">In progress</div>
+        <h2>Two lines still open.</h2>
+        <p>Neither is public and neither has a result to report. They're here because they're where the work is going, and because both extend threads already on this site — the temporal localization behind the hackathon entry, and the safety side of the moderation stack.</p>
+      </div>
+      <div class="wip">
+        {inProgress.map((w) => (
+          <article class="wip-row">
+            <div class="wip-meta">
+              <span class="wip-status">Unpublished</span>
+              <span class="wip-id">No result yet</span>
+            </div>
+            <div>
+              <h3>{w.topic}</h3>
+              <p class="wip-q">{w.question}</p>
+              <div class="wip-redact" role="img" aria-label="Findings withheld — no result to report yet">
+                <i></i><i></i><i></i>
+              </div>
+              <span class="wip-withheld">Findings withheld</span>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   </main>

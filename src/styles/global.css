@@ -631,12 +631,41 @@ footer{padding:74px 0 44px}
 .status{font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
 .authors{font-size:.84rem;color:var(--ink-3);line-height:1.5;margin:-4px 0 0;max-width:70ch}
 .authors b{color:var(--ink-2);font-weight:650}
-/* The supervision failure the paper attacks — the site's research throughline.
+/* The lever the paper pulls on data efficiency — the research throughline.
    Reads as a console readout tag: amber rule, mono, uppercase. */
-.supervision{
+.angle{
   align-self:flex-start;font-family:var(--mono);font-size:.64rem;
   letter-spacing:.16em;text-transform:uppercase;
   color:var(--accent);border-left:2px solid var(--accent);padding-left:10px;
+}
+
+/* ===== in progress — stated, not described =====
+   Two lines of work with no result to report. The blacked-out lines are
+   literal: there is nothing publishable to put in that space, and a redaction
+   says so where filler would quietly imply otherwise. Widths step down the way
+   a redacted paragraph's last line runs short, so it reads as removed text
+   rather than as three decorative bars. */
+.wip{display:flex;flex-direction:column;gap:12px}
+.wip-row{
+  display:grid;grid-template-columns:180px 1fr;gap:22px;
+  border:1px solid var(--line);background:var(--card);padding:20px 22px;
+}
+@media(max-width:700px){.wip-row{grid-template-columns:1fr;gap:14px}}
+.wip-meta{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.wip-status{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-2);border:1px solid var(--line);padding:3px 10px;
+}
+.wip-id{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.wip-row h3{margin:0;font-size:1.05rem;font-weight:700;letter-spacing:-.015em}
+.wip-q{margin:7px 0 0;color:var(--ink-2);font-size:.93rem;line-height:1.5;max-width:60ch}
+.wip-redact{display:flex;flex-direction:column;gap:6px;margin-top:15px;max-width:60ch}
+.wip-redact i{height:9px;background:var(--line-2);display:block}
+.wip-redact i:nth-child(2){width:88%}
+.wip-redact i:nth-child(3){width:52%}
+.wip-withheld{
+  display:block;margin-top:11px;font-family:var(--mono);font-size:.6rem;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);
 }
 
 /* ===== case study: scope of credit ===== */
