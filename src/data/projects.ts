@@ -56,6 +56,22 @@ export const projects: Project[] = [
     chips: ['RL framework', 'SimPO', 'Megatron-Bridge', 'Nemotron-Nano-12B-VL', 'Open source'],
   },
   {
+    key: 'serving',
+    tags: [{ label: 'Pyler · Serving · Content Safety' }],
+    titleHtml: `Making a Model Swap a <span class="acro">Config Change</span>`,
+    blurb: `Rebuilt the serving layer of the production moderation stack so putting a new model in front of traffic is a config change, not a serving-code rewrite.`,
+    problemHtml: `A moderation request doesn't hit one model — it walks a chain of them. But each stage's decision logic was written into the serving layer itself, so putting a better model in front of traffic meant editing serving code: another strategy class, another batch path, thresholds compiled into the route. The model was the cheap part.`,
+    ownershipHtml: `Mine: the new inference path end to end, and the config and validation layers around it — inside a serving stack the team runs together.`,
+    resultHtml: `A model swap is now a checkpoint plus a config edit; the serving code doesn't move. Stages left the hot path, and what a replica is running is queryable rather than assumed.`,
+    micro: 'My contribution',
+    approachHtml: [
+      `<b>Shipped a new inference route end to end.</b> A classification task type through the shared model gateway — <span class="m">request/response schema</span>, strategy protocol, batch adapter, HTTP ingress, tracing — so a light classifier could drop into a stage that had been carrying a much heavier multi-model route.`,
+      `<b>Moved the decision policy out of the serving code.</b> Mode selection became a flag on the model config, and calibrated thresholds now ship <em>inside</em> the checkpoint — a <span class="m">policy config</span> riding with the weights, the way generation settings ride with a language model — so one artifact serves several behaviours and no strategy class holds a number.`,
+      `<b>Made the configuration externally verifiable.</b> Model names are validated as an <span class="m">endpoint contract</span> — naming lint, closed vocabulary, task binding — so no checkpoint-flavoured string silently mints an endpoint; and each replica announces its flags on startup as a structured event, so "<span class="m">CI green, toggle inert</span>" stops being invisible.`,
+    ],
+    chips: ['Ray Serve', 'vLLM', 'HF Transformers', 'OpenTelemetry', 'Config-over-code', 'Flag telemetry'],
+  },
+  {
     key: 'defect',
     tags: [{ label: 'Aiv · Diffusion · Industrial AD' }],
     titleHtml: `Background-Aware <span class="acro">Defect Synthesis</span>`,

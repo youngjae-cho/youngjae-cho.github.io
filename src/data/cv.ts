@@ -42,6 +42,7 @@ export const work: Job[] = [
       'Own the LLM/VLM auto-labeling system for content-safety scoring (5 categories × severity): mined the implicit decision tree from 299K VLM reasoning traces and turned it into auditable, tree-structured prompts — macro F1 0.777 → 0.857 (precision +0.103, recall +0.050), replacing labeling logic that lived unwritten in each labeler\'s head',
       'First-author alignment research (GAPO) — geometric anchoring for preference optimization robust to noisy labels, +3.6pp AlpacaEval 2.0 LC over SimPO',
       'Winner — NVIDIA Nemotron Hackathon, Track B (Domain-Specialized Model), 2026: built the RL post-training framework for Nemotron-Nano-12B-VL, an architecture no existing RL framework supported — added the RL layer (rollout, loss, training loop) onto Megatron-Bridge with SimPO as the objective, and open-sourced it',
+      'Redesigned the serving layer of the production content-moderation stack so a model swap is a config change rather than a serving-code rewrite — shipped a new inference task type end to end on Ray Serve (schema, strategy, batching, HTTP ingress, tracing), moved calibrated decision thresholds into the checkpoint artifact, and made deployed feature flags verifiable from telemetry',
       'Built the LLM benchmarking CLI and pluggable engine abstraction (vLLM / Hugging Face / synthetic CI fallback) the team evaluates on',
     ],
   },
@@ -90,7 +91,7 @@ export interface SkillGroup { name: string; items: string[]; }
 export const skills: SkillGroup[] = [
   { name: 'Research & Modeling', items: ['PyTorch', 'Hugging Face', 'TensorFlow', 'JAX'] },
   { name: 'Post-training & Alignment', items: ['SimPO / DPO', 'RL frameworks (Megatron-Bridge, Nemo-RL)', 'Preference data design'] },
-  { name: 'Optimization & Serving', items: ['TensorRT', 'ONNX', 'Triton Inference Server', 'vLLM', 'Flash Attention', 'DeepSpeed', 'CUDA Graphs'] },
+  { name: 'Optimization & Serving', items: ['TensorRT', 'ONNX', 'Triton Inference Server', 'Ray Serve', 'vLLM', 'Flash Attention', 'DeepSpeed', 'CUDA Graphs', 'OpenTelemetry'] },
   { name: 'Domains', items: ['Robust learning under noisy supervision', 'LLM/VLM auto-labeling', 'Vision-Language', 'Active learning', 'Diffusion / anomaly detection'] },
 ];
 
