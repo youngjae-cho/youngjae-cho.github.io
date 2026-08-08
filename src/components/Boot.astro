@@ -1,0 +1,23 @@
+---
+// The console boots before it answers.
+//
+// Deliberately dumb markup: every moving part is a CSS animation with a
+// delay, and JS does exactly one thing — decide whether this session has
+// already seen it. That split is the point. If the teardown were JS's job and
+// the script threw, a visitor would be left staring at a locked black screen
+// with the site behind it; because the overlay's exit is a keyframe with
+// fill-mode forwards, it leaves whether or not anything else works.
+//
+// The gate is in Base's <head> rather than here: an Astro component <script>
+// is bundled as a module and runs deferred, which is after first paint — the
+// page would flash before the boot covered it.
+---
+<div class="boot" aria-hidden="true">
+  <div class="boot-in">
+    <span class="boot-h">MAGI System</span>
+    <span class="boot-l" style="--d:.16s"><i>Melchior·1</i><s></s><b>Online</b></span>
+    <span class="boot-l" style="--d:.30s"><i>Balthasar·2</i><s></s><b>Online</b></span>
+    <span class="boot-l" style="--d:.44s"><i>Casper·3</i><s></s><b>Online</b></span>
+    <span class="boot-f" style="--d:.62s">3/3 Nominal</span>
+  </div>
+</div>
