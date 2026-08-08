@@ -6,9 +6,8 @@
 // type, with the thesis and the venues under it. .magi-panel is the way in:
 // the console alone, three plates, three destinations.
 //
-// Snapping is proximity rather than mandatory, and only these two carry snap
-// points. Past them the article scrolls normally — mandatory would fight the
-// reader all the way down a page of case studies.
+// The transition between them is a gesture handler, not CSS scroll-snap — see
+// initPager below, and the note in global.css for why snap could not do it.
 import Magi from './Magi.astro';
 ---
 <section class="intro" id="top">
@@ -169,4 +168,92 @@ import Magi from './Magi.astro';
     boot();
   }
   document.querySelectorAll<HTMLCanvasElement>('canvas.field').forEach(initField);
+
+  // One gesture, one panel.
+  //
+  // CSS scroll-snap alone is not a page turn: it only settles once a gesture
+  // has ENDED, so a drag tracks the finger the whole way down and a short one
+  // rubber-bands back. Measured on the shipped build — a 40% push returns to
+  // 0, a 65% push lands on the console. Correct behaviour, but what it feels
+  // like in the hand is scrolling that argues with you.
+  //
+  // So the gesture itself becomes the trigger: hold the page still, and on
+  // release move a whole panel. Snap stays in the stylesheet as the backstop
+  // for keyboard, hash links and anyone whose JS never arrives.
+  function initPager() {
+    if (!document.documentElement.classList.contains('home')) return;
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('.intro, .magi-panel'));
+    if (panels.length < 2) return;
+
+    // Same threshold the stylesheet uses to turn panels on at all. Below it
+    // the panels are ordinary blocks, and taking the scroll away from someone
+    // on a short screen would strand them mid-page.
+    const paged = matchMedia('(min-height: 700px)');
+    let index = 0;
+    let locked = false;
+
+    // Panel one is position:sticky, and offsetTop on a STUCK element reports
+    // where it is currently painted, not where it sits in flow — so once you
+    // were on the console, "scroll back to panel one" resolved to the position
+    // you were already at, and there was no way back up. Heights are unaffected
+    // by sticky, so accumulate those instead.
+    function tops() {
+      let acc = 0;
+      return panels.map((p) => {
+        const t = acc;
+        acc += p.getBoundingClientRect().height;
+        return t;
+      });
+    }
+
+    function go(next: number) {
+      const i = Math.max(0, Math.min(panels.length - 1, next));
+      if (i === index) return;
+      index = i;
+      locked = true;
+      window.scrollTo({ top: tops()[i] });
+      window.setTimeout(() => { locked = false; }, 620);
+    }
+
+    // Anything else that moves the page — keyboard, a hash, the browser
+    // restoring a position — has to leave the index telling the truth.
+    window.addEventListener('scroll', () => {
+      if (locked) return;
+      const y = window.scrollY;
+      let nearest = 0, best = Infinity;
+      tops().forEach((t, i) => {
+        const d = Math.abs(t - y);
+        if (d < best) { best = d; nearest = i; }
+      });
+      index = nearest;
+    }, { passive: true });
+
+    window.addEventListener('wheel', (e) => {
+      if (!paged.matches || locked || Math.abs(e.deltaY) < 4) return;
+      e.preventDefault();
+      go(index + (e.deltaY > 0 ? 1 : -1));
+    }, { passive: false });
+
+    let startY = 0, tracking = false;
+    window.addEventListener('touchstart', (e) => {
+      // Single finger only — pinch-zoom has to keep working.
+      tracking = e.touches.length === 1;
+      startY = tracking ? e.touches[0].clientY : 0;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      // Hold the page still, so the gesture reads as a swipe and not a drag.
+      if (tracking && paged.matches && e.cancelable) e.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('touchend', (e) => {
+      if (!tracking) return;
+      tracking = false;
+      if (!paged.matches || locked) return;
+      const dy = startY - e.changedTouches[0].clientY;
+      // Short enough that a flick counts, long enough that a tap never does.
+      if (Math.abs(dy) > 36) go(index + (dy > 0 ? 1 : -1));
+    });
+  }
+  initPager();
 </script>
