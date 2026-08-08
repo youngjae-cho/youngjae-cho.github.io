@@ -11,6 +11,26 @@ import PageHead from '../components/PageHead.astro';
 // (see the .core block in global.css) and it is doing real work: red is the job
 // on every other page, so a visitor who lands on amber knows before reading a
 // word that the rules changed.
+const CHANNEL = 'https://youtube.com/@moodrainbow';
+
+// Titles stay in Korean because that is what they are called; translating them
+// would be inventing a second name for a real thing. Neither shipped font
+// covers Hangul, so those glyphs fall through to the system stack the same way
+// the console's ▸ ■ ▼ marks do — which is why the title is set in the body sans
+// and only the count is mono.
+//
+// Canonical watch URLs, not the youtu.be share links they arrived as: the
+// ?si= those carry is a share-attribution token tied to whoever copied the
+// link, and there is no reason to publish one person's tracking parameter on
+// every visit to this page.
+//
+// Counts are point-in-time and rounded to 0.1M, so they drift slowly rather
+// than becoming wrong — but they are the one thing on this page that goes
+// stale on its own.
+const sets = [
+  { views: '3.5M', title: '코딩할 때 듣기 좋은 로파이 재즈 힙합', id: 'nxKfi-6EtmY' },
+  { views: '3.2M', title: '과제 할 때 집중 하기 좋은 로파이 재즈 힙합', id: 'SyqyRv6NS_U' },
+].map((s) => ({ ...s, href: `https://www.youtube.com/watch?v=${s.id}` }));
 ---
 <Base
   title="Elsewhere — Youngjae Cho"
@@ -24,17 +44,31 @@ import PageHead from '../components/PageHead.astro';
 
     <section class="block" style="border-bottom:0">
       <article class="offd">
-        <div class="offd-meta">
+        <div class="offd-top">
           <span class="badge">YouTube</span>
           <span class="offd-tag">Lo-fi · Jazz</span>
         </div>
-        <div class="offd-body">
-          <h2><a href="https://youtube.com/@moodrainbow" rel="me noopener" target="_blank">moodrainbow</a></h2>
-          <p>Playlists — lo-fi and jazz, put together and posted. None of it connects to anything on the other three pages, and that is most of the appeal: nothing is being optimized, no metric moves, and the only question is whether one track belongs after another.</p>
-          <a class="more" href="https://youtube.com/@moodrainbow" rel="me noopener" target="_blank">
-            youtube.com/@moodrainbow <span class="arr" aria-hidden="true">→</span>
-          </a>
-        </div>
+        <h2><a href={CHANNEL} rel="me noopener" target="_blank">Mood Rainbow</a></h2>
+        {/* One sentence on what the work was, then the evidence. No "first",
+            no "pioneer" — the date is carried by "before … became a familiar
+            format", and 3.5M sitting underneath it lets a reader draw the
+            conclusion themselves, which lands harder than claiming it. */}
+        <p>I made lo-fi playlists around specific moments — coding, studying, late-night work — before “coding lofi” became a familiar format in Korea.</p>
+        <ol class="offd-list">
+          {sets.map((s) => (
+            <li>
+              <a class="offd-row" href={s.href} rel="noopener" target="_blank"
+                 aria-label={`${s.views} views — ${s.title}`}>
+                <span class="offd-n">{s.views}<i>views</i></span>
+                <span class="offd-t">{s.title}</span>
+                <span class="offd-go" aria-hidden="true">↗</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+        <a class="more" href={CHANNEL} rel="me noopener" target="_blank">
+          youtube.com/@moodrainbow <span class="arr" aria-hidden="true">→</span>
+        </a>
       </article>
     </section>
   </main>
