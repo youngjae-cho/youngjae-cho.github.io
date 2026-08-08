@@ -31,8 +31,36 @@
 const top = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness', href: '/publications', to: 'publications' };
 const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training · inference · serving', href: '/engineering', to: 'engineering cases' };
 const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis · OCR', href: '/product', to: 'product cases' };
+
+// The honeycomb for the field cut. Generated rather than hand-listed: a hex
+// lattice is two spacings and an odd-row offset, and writing 50 polygons out
+// by hand is how you get one that doesn't tile.
+//
+// Pointy-top, circumradius r: neighbours sit √3·r apart across and 1.5·r down,
+// with alternate rows shifted half a column. Generated past the viewBox on
+// every side because the SVG is sliced to fill the viewport, so the edges of
+// this grid are never where the edges of the screen are.
+// r is in viewBox units against a 100-unit box that is SLICED to fill the
+// screen, so it is a fraction of the viewport's long edge, not a pixel size.
+// At 11 the field came out as eight cells the size of dinner plates; ~16
+// across is what reads as a mesh.
+const R = 3.6;
+const DX = Math.sqrt(3) * R;
+const DY = 1.5 * R;
+const hexes: string[] = [];
+for (let row = -2; row * DY < 118; row++) {
+  for (let col = -2; col * DX < 118; col++) {
+    const cx = col * DX + (row % 2 ? DX / 2 : 0);
+    const cy = row * DY;
+    hexes.push(
+      [[0, -1], [0.866, -0.5], [0.866, 0.5], [0, 1], [-0.866, 0.5], [-0.866, -0.5]]
+        .map(([ux, uy]) => `${(cx + ux * R).toFixed(2)},${(cy + uy * R).toFixed(2)}`)
+        .join(' ')
+    );
+  }
+}
 ---
-<nav class="magi" aria-label="Three sides of the work: research, engineering, product">
+<nav class="magi" aria-label="Research, engineering, product — and the person they are sides of">
   <div class="magi-bar">
     <span class="magi-code">CODE:751</span>
     {/* Seoul time, not the viewer's — the nav already says SEOUL · KR, and a
@@ -69,7 +97,29 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
       <span class="p-sub">{left.sub}</span>
     </a>
 
-    <div class="magi-core" aria-hidden="true">MAGI</div>
+    {/* The fourth way in, and the only one that isn't work.
+        In the show the MAGI are three aspects of ONE person — Naoko Akagi split
+        herself into scientist, mother, woman — so the point where the three
+        plates converge is not a label, it is the person they are aspects of.
+        This site had been using the figure for three aspects of one JOB, with
+        the centre left as decoration.
+        It goes here rather than becoming a fourth plate for two reasons: the
+        home page is two panels and stops, so there is no room to add one; and a
+        fourth plate would make a music channel weigh the same as the research.
+        The centre is off to one side of the hierarchy, which is where it
+        belongs. */}
+    {/* The hexagon is the wordmark's own ground, not a badge behind it. It has
+        to be: this element sits on top of the three connector lines and masks
+        them where they would otherwise run into the lettering, so whatever
+        shape carries the black IS the shape you see. Stretched to the box with
+        preserveAspectRatio="none" and held to 1px by non-scaling-stroke —
+        the same pair .magi-edges uses a few lines up. */}
+    <a class="magi-core" href="/core" aria-label="Elsewhere — what the three sides are sides of">
+      <svg class="core-hex" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+        <polygon points="9,0 91,0 100,20 91,40 9,40 0,20" vector-effect="non-scaling-stroke" />
+      </svg>
+      <span>MAGI</span>
+    </a>
 
     <a class="plate p-right" href={right.href}
        aria-label={`${right.fn} — ${right.to}`}>
@@ -103,6 +153,26 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
   <div class="mc-wipe"></div>
 </div>
 
+{/* The other cut, for the one destination that isn't a verdict.
+    An A.T. field is the wall between one person and another — Anno's own
+    reading — and canonically it is invisible until something pushes on it, and
+    can only be brought down by another field. So the way to the personal page
+    is not deliberated and stamped like the work is: it is a barrier that shows
+    itself, holds, and is neutralised.
+    Same idiom as the cut above and deliberately not the same event: it reuses
+    that one's ground and wipe keyframes, swaps red for the field's amber, and
+    stamps 中和 where the other stamps 可決. */}
+<div class="at-cut" id="at-cut" aria-hidden="true">
+  <svg class="at-hex" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    {hexes.map((pts) => <polygon points={pts} />)}
+  </svg>
+  <div class="at-readout">
+    <span class="mc-lbl">A.T. Field</span>
+    <span class="at-stamp"><b>中和</b><em>Neutralized</em></span>
+  </div>
+  <div class="mc-wipe"></div>
+</div>
+
 <script>
   // Seoul wall-clock in the MAGI bar. Intl does the zone, so this stays correct
   // wherever the page is opened from and needs no offset arithmetic.
@@ -119,52 +189,69 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
   }
   initMagiClock();
 
-  // Runs the cut, then navigates. The animation is decoration over a link that
-  // already works: modified clicks fall through to the browser, reduced motion
+  // Runs a cut, then navigates. The animation is decoration over links that
+  // already work: modified clicks fall through to the browser, reduced motion
   // goes straight there, and a stalled navigation still lands via the fallback
   // timer — nothing here can leave a visitor stuck behind a black overlay.
-  function initMagiCut() {
-    const cut = document.getElementById('magi-cut');
-    const idEl = document.getElementById('mc-id');
-    const plates = document.querySelectorAll<HTMLAnchorElement>('.magi .plate');
-    if (!cut || !idEl || !plates.length) return;
-
+  //
+  // Two overlays now, because the console has two kinds of destination. The
+  // work is deliberated and stamped; the person behind it is behind a field.
+  // Which one runs is the ONLY difference between the two paths, so the arming
+  // is written once and handed an overlay.
+  function initCuts() {
     const DUR = 820;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+    const overlays = ['magi-cut', 'at-cut']
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el);
+    if (!overlays.length) return;
 
     // The panel is authored inside .magi-panel-in, which sets z-index:2 and so
     // opens a stacking context — a fixed overlay declared in there resolves
     // its z-index against .magi-panel, not the page, and loses to the sticky
     // nav (and .magi-panel's overflow:hidden crops it to that panel's box).
-    // Reparent to <body> so the cut covers the viewport it means to cover.
-    if (cut.parentElement !== document.body) document.body.appendChild(cut);
+    // Reparent to <body> so a cut covers the viewport it means to cover.
+    overlays.forEach((o) => {
+      if (o.parentElement !== document.body) document.body.appendChild(o);
+    });
 
     // Back-navigation can restore this page from the bfcache mid-cut, so the
-    // overlay has to be cleared on the way back IN. Not on the way out —
+    // overlays have to be cleared on the way back IN. Not on the way out —
     // pagehide fires while the old page is still on screen, and lifting the
     // black there flashes the page you just cut away from.
     const clear = () => {
-      cut.removeAttribute('data-run');
-      document.querySelector('.plate.mc-sel')?.classList.remove('mc-sel');
+      overlays.forEach((o) => o.removeAttribute('data-run'));
+      document.querySelectorAll('.mc-sel').forEach((el) => el.classList.remove('mc-sel'));
     };
     window.addEventListener('pageshow', clear);
 
-    plates.forEach((a) => {
+    const arm = (a: HTMLAnchorElement | null, overlay: HTMLElement | null, before?: () => void) => {
+      if (!a || !overlay) return;
       a.addEventListener('click', (e) => {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
         const href = a.getAttribute('href');
         if (!href) return;
         e.preventDefault();
         if (reduce.matches) { window.location.href = href; return; }
-
-        // The plate's own id, minus the trailing arrow glyph.
-        idEl.textContent = a.querySelector('.p-id')?.firstChild?.textContent?.trim() ?? '';
+        before?.();
         a.classList.add('mc-sel');
-        cut.setAttribute('data-run', '');
+        overlay.setAttribute('data-run', '');
         window.setTimeout(() => { window.location.href = href; }, DUR - 40);
         window.setTimeout(clear, DUR + 2500);
       });
+    };
+
+    const cut = document.getElementById('magi-cut');
+    const idEl = document.getElementById('mc-id');
+    document.querySelectorAll<HTMLAnchorElement>('.magi .plate').forEach((a) => {
+      // The plate's own id, minus the trailing arrow glyph.
+      arm(a, cut, () => {
+        if (idEl) idEl.textContent = a.querySelector('.p-id')?.firstChild?.textContent?.trim() ?? '';
+      });
     });
+
+    arm(document.querySelector<HTMLAnchorElement>('.magi-core'), document.getElementById('at-cut'));
   }
-  initMagiCut();
+  initCuts();
 </script>

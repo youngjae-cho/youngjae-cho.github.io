@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+
+// The centre of the MAGI figure lands here — the one destination on the console
+// that isn't work. It is deliberately not in the nav: the console's centre is
+// how you find it, and a bar link would make it a fourth section of the
+// portfolio rather than the thing on the other side of the field.
+//
+// Everything here runs amber instead of the site's red. That is one token flip
+// (see the .core block in global.css) and it is doing real work: red is the job
+// on every other page, so a visitor who lands on amber knows before reading a
+// word that the rules changed.
+---
+<Base
+  title="Elsewhere — Youngjae Cho"
+  description="Youngjae Cho outside the work — moodrainbow, a lo-fi and jazz playlist channel."
+  pageClass="core"
+>
+  <main class="wrap">
+    <PageHead section="Core" count="1 channel" eyebrow="Off duty" title="Elsewhere">
+      <p class="intro">The console's three nodes are all the same person at work. This is the part that isn't.</p>
+    </PageHead>
+
+    <section class="block" style="border-bottom:0">
+      <article class="offd">
+        <div class="offd-meta">
+          <span class="badge">YouTube</span>
+          <span class="offd-tag">Lo-fi · Jazz</span>
+        </div>
+        <div class="offd-body">
+          <h2><a href="https://youtube.com/@moodrainbow" rel="me noopener" target="_blank">moodrainbow</a></h2>
+          <p>Playlists — lo-fi and jazz, put together and posted. None of it connects to anything on the other three pages, and that is most of the appeal: nothing is being optimized, no metric moves, and the only question is whether one track belongs after another.</p>
+          <a class="more" href="https://youtube.com/@moodrainbow" rel="me noopener" target="_blank">
+            youtube.com/@moodrainbow <span class="arr" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </article>
+    </section>
+  </main>
+</Base>
