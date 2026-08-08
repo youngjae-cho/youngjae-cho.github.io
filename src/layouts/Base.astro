@@ -50,6 +50,22 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    {pageClass === 'home' && (
+      /* Inline and in <head> on purpose: a bundled module script runs after
+         first paint, so the page would flash before the boot covered it.
+         sessionStorage can throw (private mode, blocked storage) — on any
+         failure we simply don't boot, which is the safe direction. The flag is
+         set here rather than when the animation ends, so a reload mid-boot
+         doesn't replay it. */
+      <script is:inline>
+        try {
+          if (!sessionStorage.getItem('magi-booted')) {
+            sessionStorage.setItem('magi-booted', '1');
+            document.documentElement.setAttribute('data-boot', '');
+          }
+        } catch (e) {}
+      </script>
+    )}
   </head>
   <body class={[nav ? null : 'no-nav', pageClass].filter(Boolean).join(' ') || undefined}>
     <div class="crt" aria-hidden="true"></div>

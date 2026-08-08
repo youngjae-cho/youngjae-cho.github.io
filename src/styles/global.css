@@ -657,6 +657,54 @@ footer{padding:74px 0 44px}
   color:var(--accent);border-left:2px solid var(--accent);padding-left:10px;
 }
 
+/* ===== boot =====
+   The console boots before it answers. Every moving part is a keyframe with a
+   delay; the only script involved decides whether this session has seen it.
+
+   That split is deliberate. The overlay's exit is an animation with fill-mode
+   forwards, so it leaves on its own — if the teardown were JS's job and the
+   script threw, a visitor would be locked behind a black screen with the site
+   sitting right there underneath it. Here the worst a broken script can do is
+   fail to START the boot, which nobody notices.
+
+   Hidden by default and shown only under [data-boot], so no-JS gets the site
+   directly. Above .crt (900) and the cut (950): the machine is not on yet, so
+   nothing else should be either. Timing is steps(), like the cut. */
+.boot{display:none}
+@media(prefers-reduced-motion:no-preference){
+  html[data-boot] .boot{
+    display:grid;place-items:center;
+    position:fixed;inset:0;z-index:960;background:var(--paper);
+    animation:boot-out 1.3s steps(1,end) forwards;
+  }
+}
+@keyframes boot-out{0%,86%{opacity:1;visibility:visible}87%,100%{opacity:0;visibility:hidden}}
+
+.boot-in{
+  font-family:var(--mono);display:flex;flex-direction:column;gap:9px;
+  width:min(340px,76vw);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+}
+.boot-in > *{opacity:0}
+/* Each line lands on its own beat rather than the block fading in as one.
+   The beat is --d on the element, not an nth-of-type rule: every child here is
+   a <span>, so nth-of-type counted the header and the footer too — it skipped
+   Balthasar entirely and fired Casper with no delay at all. Positional
+   selectors over same-tag siblings are a trap; the beat belongs to the line. */
+html[data-boot] .boot-in > *{animation:boot-line 1.3s steps(1,end) var(--d,0s) forwards}
+@keyframes boot-line{0%{opacity:0}1%,100%{opacity:1}}
+
+.boot-h{color:var(--nominal);font-weight:700;letter-spacing:.42em}
+.boot-l{display:flex;align-items:baseline;gap:9px;color:var(--ink-3)}
+.boot-l i{font-style:normal;color:var(--accent);white-space:nowrap}
+/* The dotted leader, same run-of-dots the panel's rules use. */
+.boot-l s{
+  flex:1;height:3px;text-decoration:none;opacity:.7;
+  background-image:radial-gradient(circle at 50% 50%,var(--nominal) 40%,transparent 42%);
+  background-size:3px 3px;background-repeat:repeat-x;background-position:center;
+}
+.boot-l b{color:var(--nominal);font-weight:700;white-space:nowrap}
+.boot-f{color:var(--gold);font-weight:700;letter-spacing:.28em;margin-top:4px}
+
 /* ===== in progress — stated, not described =====
    Two lines of work with no result to report. The blacked-out lines are
    literal: there is nothing publishable to put in that space, and a redaction
