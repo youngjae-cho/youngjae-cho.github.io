@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import CaseStudy from '../components/CaseStudy.astro';
+import { projects } from '../data/projects';
+
+// CASPER·3 on the console panel lands here. Membership comes from each case's
+// `track`, not a list kept in this file, so a case can never appear on both
+// pages or fall off both.
+const cases = projects.filter((p) => p.track === 'product');
+---
+<Base title="Product — Youngjae Cho" active="product">
+  <main class="wrap">
+    <header class="page-head">
+      <div class="eyebrow">Product</div>
+      <h1>Product</h1>
+      <p class="intro">Three systems I owned end to end — content-safety auto-labeling at Pyler, defect synthesis and steel-plate OCR at Aiv. Each reads the same way: the problem, what was mine, and what moved. One of them started as research and I carried it onto the line myself rather than handing it over.</p>
+    </header>
+    <section class="block" style="border-bottom:0">
+      <div class="cases">
+        {cases.map((p) => <CaseStudy project={p} />)}
+      </div>
+    </section>
+  </main>
+</Base>

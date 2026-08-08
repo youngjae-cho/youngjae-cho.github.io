@@ -126,7 +126,7 @@ nav{
 @media(max-width:760px){.nav-links{display:none}}
 
 /* Anchor targets have to clear the bar. A deep link — the console's Product
-   plate goes to /projects#autolabel, and the bar's own contact link — scrolls
+   plate goes to /product#autolabel, and the bar's own contact link — scrolls
    its target to viewport top, where the sticky bar then covers the first 50px
    of it. The bar is translucent with a blur behind it, so what you get is the
    case study's badge row showing through, faintly: it reads as a rendering
@@ -137,14 +137,14 @@ nav{
 body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 
 /* ===== THE TWO OPENING PANELS =====
-   Each holds a full viewport and they snap one to the next, so the console
-   arrives as a card being turned rather than as more of the intro.
+   Each holds a full viewport, and the console arrives as a card being turned
+   rather than as more of the intro. The turn is driven by the gesture handler
+   in Hero.astro, not by scroll-snap — see the note further down for why snap
+   could not do it here.
 
-   Proximity, not mandatory, and the snap points stop after these two: past
-   them the article scrolls normally. Mandatory would fight the reader the
-   whole way down a page of case studies. The height guard keeps snapping off
-   where a 100svh panel is too cramped to be worth landing on — short windows
-   and phones held sideways. */
+   The height guard turns the whole arrangement off where a 100svh panel is too
+   cramped to be worth landing on — short windows, phones held sideways — and
+   the pager reads the same query so the two can't disagree. */
 @media(min-height:700px){
   /* The nav is sticky but still takes flow space above panel one and only
      panel one — every later panel scrolls under it. So the first panel is a

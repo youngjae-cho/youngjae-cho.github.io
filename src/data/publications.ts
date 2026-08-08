@@ -94,7 +94,7 @@ export const publications: Pub[] = [
     home: true,
     supervision: 'Scarce anomalies',
     summary:
-      'Diffusion synthesis that disentangles defect from background via masked cross-attention — when real defects are too rare to train on, generate them. The method behind the production system on the projects page.',
+      'Diffusion synthesis that disentangles defect from background via masked cross-attention — when real defects are too rare to train on, generate them. The method behind the production system on the product page.',
     url: 'https://arxiv.org/abs/2411.16767',
   },
   {

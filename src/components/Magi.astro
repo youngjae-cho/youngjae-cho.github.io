@@ -21,13 +21,16 @@
 //
 // Each plate is a link — the panel is the way into the site, not a decoration
 // beside it. Destinations follow the voice, not the page count: Research reads
-// the papers, Engineering the case studies, Product deep-links to the one
-// system that is a product decision rather than a method. The home page is the
-// hub these three lead out of, so they navigate in place rather than spawning
-// tabs: a cut you can watch needs the viewport it is cutting.
+// the papers, Engineering the tooling, Product the systems that shipped. The
+// lower two used to both land on /projects, so the panel promised three ways in
+// and delivered two; they are separate pages now, and membership is a `track`
+// field on each case rather than a list kept per page.
+//
+// The home page is the hub these three lead out of, so they navigate in place
+// rather than spawning tabs: a cut you can watch needs the viewport it cuts.
 const top = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness', href: '/publications', to: 'publications' };
-const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training · inference · serving', href: '/projects', to: 'case studies' };
-const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system design', href: '/projects#autolabel', to: 'the auto-labeling case study' };
+const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training · inference · serving', href: '/engineering', to: 'engineering cases' };
+const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis · OCR', href: '/product', to: 'product cases' };
 ---
 <nav class="magi" aria-label="Three sides of the work: research, engineering, product">
   <div class="magi-bar">

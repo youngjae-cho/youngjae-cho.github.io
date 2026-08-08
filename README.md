@@ -24,7 +24,7 @@ All content lives in plain data files — no framework knowledge needed:
 | What | File |
 |------|------|
 | Publications | `src/data/publications.ts` — add an object; `home: true` surfaces it on the homepage |
-| Projects / case studies | `src/data/projects.ts` |
+| Case studies | `src/data/projects.ts` — `track: 'product' \| 'engineering'` picks which page a case lands on (`/product` or `/engineering`); nothing else needs editing to move one |
 | Experience, education, skills, awards | `src/data/cv.ts` |
 | Hero headline / links | `src/components/Hero.astro` |
 | Stats strip | `src/components/Ledger.astro` |

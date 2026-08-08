@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import CaseStudy from '../components/CaseStudy.astro';
+import { projects } from '../data/projects';
+
+// BALTHASAR·2 on the console panel lands here — its sub-line reads
+// "training · inference · serving", which is precisely these two.
+const cases = projects.filter((p) => p.track === 'engineering');
+---
+<Base title="Engineering — Youngjae Cho" active="engineering">
+  <main class="wrap">
+    <header class="page-head">
+      <div class="eyebrow">Engineering</div>
+      <h1>Engineering</h1>
+      <p class="intro">Two systems built so other work could run: the serving layer beneath the moderation stack, and the RL post-training framework a 12B VLM didn't have. Neither is a model — one decides how a model reaches traffic, the other whether it can be trained at all.</p>
+    </header>
+    <section class="block" style="border-bottom:0">
+      <div class="cases">
+        {cases.map((p) => <CaseStudy project={p} />)}
+      </div>
+    </section>
+  </main>
+</Base>
