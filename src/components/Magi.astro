@@ -22,9 +22,9 @@
 // Each plate is a link — the panel is the way into the site, not a decoration
 // beside it. Destinations follow the voice, not the page count: Research reads
 // the papers, Engineering the case studies, Product deep-links to the one
-// system that is a product decision rather than a method. They open in a new
-// tab, so the home page a visitor is part-way down is still there behind them;
-// the ↗ on every plate says so, and keeps the three the same mass.
+// system that is a product decision rather than a method. The home page is the
+// hub these three lead out of, so they navigate in place rather than spawning
+// tabs: a cut you can watch needs the viewport it is cutting.
 const top = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness', href: '/publications', to: 'publications' };
 const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training · inference · serving', href: '/projects', to: 'case studies' };
 const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system design', href: '/projects#autolabel', to: 'the auto-labeling case study' };
@@ -52,25 +52,25 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system desig
       <line x1="26" y1="82" x2="74" y2="82" vector-effect="non-scaling-stroke" />
     </svg>
 
-    <a class="plate p-top" href={top.href} target="_blank" rel="noopener"
-       aria-label={`${top.fn} — ${top.to} (opens in a new tab)`}>
-      <span class="p-id">{top.id}<span class="p-out" aria-hidden="true">↗</span></span>
+    <a class="plate p-top" href={top.href}
+       aria-label={`${top.fn} — ${top.to}`}>
+      <span class="p-id">{top.id}<span class="p-out" aria-hidden="true">→</span></span>
       <span class="p-fn">{top.fn}</span>
       <span class="p-sub">{top.sub}</span>
     </a>
 
-    <a class="plate p-left" href={left.href} target="_blank" rel="noopener"
-       aria-label={`${left.fn} — ${left.to} (opens in a new tab)`}>
-      <span class="p-id">{left.id}<span class="p-out" aria-hidden="true">↗</span></span>
+    <a class="plate p-left" href={left.href}
+       aria-label={`${left.fn} — ${left.to}`}>
+      <span class="p-id">{left.id}<span class="p-out" aria-hidden="true">→</span></span>
       <span class="p-fn">{left.fn}</span>
       <span class="p-sub">{left.sub}</span>
     </a>
 
     <div class="magi-core" aria-hidden="true">MAGI</div>
 
-    <a class="plate p-right" href={right.href} target="_blank" rel="noopener"
-       aria-label={`${right.fn} — ${right.to} (opens in a new tab)`}>
-      <span class="p-id">{right.id}<span class="p-out" aria-hidden="true">↗</span></span>
+    <a class="plate p-right" href={right.href}
+       aria-label={`${right.fn} — ${right.to}`}>
+      <span class="p-id">{right.id}<span class="p-out" aria-hidden="true">→</span></span>
       <span class="p-fn">{right.fn}</span>
       <span class="p-sub">{right.sub}</span>
     </a>
@@ -82,6 +82,23 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system desig
     <span class="ms-val">3/3 Approved</span>
   </div>
 </nav>
+
+{/* The cut between the panel and its destination. The show never dissolves —
+    it hard-cuts, holds a stamped verdict on black, and moves. So every step
+    here is on steps() timing, not an ease: the ground snaps to black, the
+    verdict slams in over-size and lands, three bars sweep, the wipe closes.
+    Inert until a plate is clicked, and skipped entirely under reduced motion. */}
+<div class="magi-cut" id="magi-cut" aria-hidden="true">
+  {/* Bars before the readout so they sweep behind the verdict rather than
+      slicing through it — at 50% the thick one crosses the id line exactly. */}
+  <div class="mc-bars"><i></i><i></i><i></i></div>
+  <div class="mc-readout">
+    <span class="mc-lbl">MAGI · Deliberation</span>
+    <span class="mc-id" id="mc-id"></span>
+    <span class="mc-stamp"><b>可決</b><em>Approved</em></span>
+  </div>
+  <div class="mc-wipe"></div>
+</div>
 
 <script>
   // Seoul wall-clock in the MAGI bar. Intl does the zone, so this stays correct
@@ -98,4 +115,53 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling system desig
     setInterval(tick, 1000);
   }
   initMagiClock();
+
+  // Runs the cut, then navigates. The animation is decoration over a link that
+  // already works: modified clicks fall through to the browser, reduced motion
+  // goes straight there, and a stalled navigation still lands via the fallback
+  // timer — nothing here can leave a visitor stuck behind a black overlay.
+  function initMagiCut() {
+    const cut = document.getElementById('magi-cut');
+    const idEl = document.getElementById('mc-id');
+    const plates = document.querySelectorAll<HTMLAnchorElement>('.magi .plate');
+    if (!cut || !idEl || !plates.length) return;
+
+    const DUR = 820;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+    // The panel is authored inside .hero-in, which sets z-index:2 and so opens
+    // a stacking context — a fixed overlay declared in there resolves its
+    // z-index against .hero, not the page, and loses to the sticky nav (and
+    // .hero's overflow:hidden crops it to the hero box). Reparent to <body> so
+    // the cut covers the viewport it is supposed to cover.
+    if (cut.parentElement !== document.body) document.body.appendChild(cut);
+
+    // Back-navigation can restore this page from the bfcache mid-cut, so the
+    // overlay has to be cleared on the way back IN. Not on the way out —
+    // pagehide fires while the old page is still on screen, and lifting the
+    // black there flashes the page you just cut away from.
+    const clear = () => {
+      cut.removeAttribute('data-run');
+      document.querySelector('.plate.mc-sel')?.classList.remove('mc-sel');
+    };
+    window.addEventListener('pageshow', clear);
+
+    plates.forEach((a) => {
+      a.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        const href = a.getAttribute('href');
+        if (!href) return;
+        e.preventDefault();
+        if (reduce.matches) { window.location.href = href; return; }
+
+        // The plate's own id, minus the trailing arrow glyph.
+        idEl.textContent = a.querySelector('.p-id')?.firstChild?.textContent?.trim() ?? '';
+        a.classList.add('mc-sel');
+        cut.setAttribute('data-run', '');
+        window.setTimeout(() => { window.location.href = href; }, DUR - 40);
+        window.setTimeout(clear, DUR + 2500);
+      });
+    });
+  }
+  initMagiCut();
 </script>

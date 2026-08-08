@@ -288,6 +288,65 @@ nav{
   .magi-clock{letter-spacing:.06em}
 }
 
+/* ===== the cut ===== */
+/* Everything is steps() on purpose. An ease reads as a web page transitioning;
+   the reference cuts. 820ms total, and the numbers below are percentages of
+   that: ground at 6%, verdict at 26%, bars from 55%, wipe closes at 82%. */
+.magi-cut{position:fixed;inset:0;z-index:950;pointer-events:none;visibility:hidden}
+.magi-cut[data-run]{visibility:visible;pointer-events:all;animation:mc-ground .82s steps(1,end) forwards}
+@keyframes mc-ground{
+  0%{background:rgba(0,0,0,0)}
+  6%{background:rgba(0,0,0,.86)}
+  14%{background:rgba(0,0,0,.97)}
+  100%{background:#000}
+}
+.mc-readout{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-family:var(--mono);display:flex;flex-direction:column;align-items:center;gap:12px;
+  white-space:nowrap;opacity:0;
+}
+.magi-cut[data-run] .mc-readout{animation:mc-show .82s steps(1,end) forwards}
+@keyframes mc-show{0%,5%{opacity:0}6%,78%{opacity:1}79%,100%{opacity:0}}
+.mc-lbl{font-size:.64rem;letter-spacing:.34em;text-transform:uppercase;color:var(--ink-3)}
+.mc-id{font-size:clamp(1.5rem,5.4vw,2.7rem);font-weight:800;letter-spacing:.16em;color:var(--accent);line-height:1}
+/* The verdict lands late and over-size, the way a stamp hits paper. */
+.mc-stamp{display:flex;align-items:center;gap:15px;opacity:0}
+.magi-cut[data-run] .mc-stamp{animation:mc-stamp .82s steps(1,end) forwards}
+@keyframes mc-stamp{
+  0%,25%{opacity:0;transform:scale(1.5)}
+  26%,31%{opacity:1;transform:scale(1.14)}
+  32%,100%{opacity:1;transform:scale(1)}
+}
+.mc-stamp b{font-size:1.9rem;line-height:1;color:var(--alert);letter-spacing:.12em;
+  border:2px solid var(--alert);padding:5px 11px 7px}
+.mc-stamp em{font-style:normal;font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;color:var(--nominal)}
+/* Three bars across the field, staggered — the reference's hard inserts. */
+.mc-bars{position:absolute;inset:0;overflow:hidden}
+.mc-bars i{position:absolute;left:0;width:100%;display:block;background:var(--accent);transform:scaleX(0);transform-origin:0 50%}
+.mc-bars i:nth-child(1){top:26%;height:3px}
+.mc-bars i:nth-child(2){top:50%;height:8px;background:var(--nominal)}
+.mc-bars i:nth-child(3){top:73%;height:3px}
+.magi-cut[data-run] .mc-bars i{animation:mc-bar .82s steps(1,end) forwards}
+.magi-cut[data-run] .mc-bars i:nth-child(2){animation-delay:.05s}
+.magi-cut[data-run] .mc-bars i:nth-child(3){animation-delay:.1s}
+@keyframes mc-bar{
+  0%,54%{transform:scaleX(0)}
+  55%{transform:scaleX(.34)}
+  60%{transform:scaleX(.72)}
+  65%,74%{transform:scaleX(1)}
+  75%,100%{transform:scaleX(0);transform-origin:100% 50%}
+}
+/* Closes bottom-up onto pure black, so the next page paints behind it. */
+.mc-wipe{position:absolute;inset:0;background:var(--paper);transform:scaleY(0);transform-origin:50% 100%}
+.magi-cut[data-run] .mc-wipe{animation:mc-wipe .82s steps(1,end) forwards}
+@keyframes mc-wipe{0%,81%{transform:scaleY(0)}82%,100%{transform:scaleY(1)}}
+/* The clicked plate goes to alert for the first beat, before the ground lands. */
+.plate.mc-sel{background:var(--alert)}
+@media(prefers-reduced-motion:reduce){
+  .magi-cut,.magi-cut[data-run]{display:none}
+  .plate.mc-sel{background:var(--accent)}
+}
+
 .magi-status{
   display:flex;align-items:center;gap:11px;margin-top:14px;
   font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--nominal);
@@ -332,6 +391,11 @@ nav{
 /* ===== generic section ===== */
 section.block{padding:70px 0;border-bottom:1px solid var(--line)}
 .block:last-of-type{border-bottom:0}
+/* A summary block is a head and nothing else — the listing it used to carry
+   lives on the page its link points at. Drop the head's grid gap and pull the
+   padding in, or two of these read as a page of air. */
+.block.summary{padding:46px 0}
+.block.summary .head{margin-bottom:0}
 .head{display:flex;flex-direction:column;gap:14px;margin-bottom:36px;max-width:62ch}
 .head h2{font-size:clamp(1.6rem,3.2vw,2.15rem);font-weight:750;letter-spacing:-.02em;line-height:1.08;text-wrap:balance;margin:0}
 .head p{color:var(--ink-2);font-size:1.02rem;margin:0}
