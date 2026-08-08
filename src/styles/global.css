@@ -178,6 +178,12 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 .intro,.magi-panel{
   position:relative;overflow:hidden;border-bottom:1px solid var(--line);
   display:flex;flex-direction:column;justify-content:center;
+  /* Each panel needs its own ground. Panel one is sticky and panel two rides
+     over it, and a panel with no background is transparent — so during the
+     turn the pinned intro showed straight through the console. The vignette
+     over it is transparent at the centre, which is exactly where the reading
+     matter is, so the two read as one double-exposed screen. */
+  background:var(--paper);
 }
 .field{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.85}
 
