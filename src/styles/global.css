@@ -28,6 +28,7 @@
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Monaco,"Cascadia Code","Roboto Mono",monospace;
   --skew:-9deg;           /* the reference's plate rake */
   --maxw:1120px;
+  --nav-h:50px;          /* the sticky bar's flow height; panel one subtracts it */
 }
 
 *{box-sizing:border-box}
@@ -121,46 +122,116 @@ nav{
 .nav-links a.active{color:var(--accent)}
 @media(max-width:760px){.nav-links{display:none}}
 
-/* ===== HERO ===== */
-.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
-#field{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.85}
-.hero::after{ /* fade the field behind the text column */
+/* ===== THE TWO OPENING PANELS =====
+   Each holds a full viewport and they snap one to the next, so the console
+   arrives as a card being turned rather than as more of the intro.
+
+   Proximity, not mandatory, and the snap points stop after these two: past
+   them the article scrolls normally. Mandatory would fight the reader the
+   whole way down a page of case studies. The height guard keeps snapping off
+   where a 100svh panel is too cramped to be worth landing on — short windows
+   and phones held sideways. */
+@media(min-height:700px){
+  /* The nav is sticky but still takes flow space above panel one and only
+     panel one — every later panel scrolls under it. So the first panel is a
+     screen MINUS the bar, and the second is a whole screen; giving both 100svh
+     makes the first overhang by exactly the bar's height. */
+  .intro{min-height:calc(100vh - var(--nav-h));min-height:calc(100svh - var(--nav-h))}
+  .magi-panel{min-height:100vh;min-height:100svh}
+  html{scroll-snap-type:y proximity}
+  /* Only the console carries a snap point. Putting one on panel one too made
+     the browser snap it to the top on load — a 50px lurch that scrolled the
+     nav off screen before the visitor had touched anything. With one point,
+     the page rests naturally at zero and the console is the thing you land on. */
+  .magi-panel{scroll-snap-align:start;scroll-snap-stop:always}
+}
+/* scroll-behavior is already set, reduced-motion-guarded, at the top. */
+
+.intro,.magi-panel{
+  position:relative;overflow:hidden;border-bottom:1px solid var(--line);
+  display:flex;flex-direction:column;justify-content:center;
+}
+.field{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.85}
+
+/* --- panel one: who this is ---
+   The identity block stacks to about 680px at full size, which overflows a
+   laptop viewport once panel padding is added — and an overflowing panel puts
+   the cue below the fold, so the second panel stops announcing itself at
+   exactly the sizes most people run. Rather than tiered media queries, the
+   rhythm here is viewport-height aware: every vertical measure carries a vh
+   term, so the block shrinks with the window instead of at two step changes. */
+.intro{padding:clamp(72px,10vh,100px) 0 clamp(76px,11vh,108px)}
+/* Fades the field out from behind the text column, left to right. */
+.intro::after{
   content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(100deg,var(--paper) 26%,rgba(6,8,11,.7) 48%,rgba(6,8,11,.25) 78%);
 }
-.hero-in{
-  position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:76px 28px 64px;
-  /* The MAGI panel needs real width — the triangle arrangement collapses into
-     three stacked bricks below roughly 440px. */
-  display:grid;grid-template-columns:1fr 470px;gap:48px;align-items:center;
+.intro-in{position:relative;z-index:2;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+/* --- panel two: the way in --- */
+.magi-panel{padding:104px 28px 112px;align-items:center}
+/* A vignette rather than the intro's one-way fade — the console sits centred,
+   so the field has to fall off in every direction. */
+.magi-panel::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 48%,transparent 24%,rgba(0,0,0,.62) 68%,var(--paper) 100%);
 }
-@media(max-width:1040px){.hero-in{grid-template-columns:1fr;gap:44px;padding-top:60px}}
-@media(max-width:1040px){.hero-right{max-width:470px}}
+.magi-panel-in{position:relative;z-index:2;width:100%;max-width:680px}
+.magi-hint{
+  margin:26px 0 0;text-align:center;font-family:var(--mono);
+  font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-3);
+}
+/* The console is the whole panel here, so its type steps up with it. Held
+   above the 560px breakpoint so the small-screen shrink further down still
+   wins — .magi-panel .p-fn would otherwise out-specify the bare .p-fn
+   inside that media query. */
+@media(min-width:561px){
+  .magi-panel .magi-bar{font-size:.68rem}
+  .magi-panel .p-id{font-size:.62rem}
+  .magi-panel .p-fn{font-size:1.22rem}
+  .magi-panel .p-sub{font-size:.62rem}
+  .magi-panel .magi-core{font-size:.92rem}
+}
+
+/* --- the cue that says there is a second panel --- */
+.panel-cue{
+  position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ink-3);transition:color .2s;
+}
+.panel-cue:hover{color:var(--accent-ink)}
+.panel-cue i{font-style:normal;color:var(--accent);animation:cue-bob 1.9s ease-in-out infinite}
+@keyframes cue-bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(4px);opacity:1}}
+@media(prefers-reduced-motion:reduce){.panel-cue i{animation:none;opacity:.85}}
+
 .avatar{
-  width:112px;height:112px;object-fit:cover;object-position:50% 28%;
-  border:1.5px solid var(--accent);margin-bottom:22px;background:var(--panel);display:block;
+  width:clamp(76px,10vh,112px);height:clamp(76px,10vh,112px);
+  object-fit:cover;object-position:50% 28%;
+  border:1.5px solid var(--accent);margin-bottom:clamp(12px,2vh,22px);
+  background:var(--panel);display:block;
   filter:saturate(.55) contrast(1.08);
   clip-path:polygon(0 0,100% 0,100% 84%,84% 100%,0 100%);
 }
-@media(max-width:760px){.avatar{width:92px;height:92px;margin-bottom:18px}}
-.hero h1{
-  font-size:clamp(2.7rem,7.6vw,5.2rem);
+@media(max-width:760px){.avatar{width:clamp(76px,9vh,92px);height:clamp(76px,9vh,92px)}}
+.intro h1{
+  font-size:clamp(2rem,min(7.6vw,8.4vh),5.2rem);
   font-weight:800;letter-spacing:-.03em;line-height:.94;
-  margin:.3em 0 .26em;text-wrap:balance;
+  margin:clamp(6px,1.5vh,17px) 0 clamp(8px,1.7vh,19px);text-wrap:balance;
 }
 .thesis{
-  font-size:clamp(1.1rem,2.3vw,1.55rem);
+  font-size:clamp(1rem,min(2.3vw,2.7vh),1.55rem);
   font-weight:550;line-height:1.34;color:var(--ink);
   max-width:22ch;letter-spacing:-.008em;
 }
 .thesis b{color:var(--accent);font-weight:650}
-.lede{margin-top:18px;max-width:52ch;color:var(--ink-2);font-size:.98rem}
+.lede{margin-top:clamp(12px,2vh,18px);max-width:52ch;color:var(--ink-2);font-size:.98rem}
 .lede b{color:var(--accent-ink);font-weight:650}
-.affil{margin-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-2);letter-spacing:.02em}
+.affil{margin-top:clamp(12px,2vh,18px);font-family:var(--mono);font-size:.78rem;color:var(--ink-2);letter-spacing:.02em}
 .affil a{color:var(--ink);border-bottom:1px solid var(--line)}
 .affil a:hover{border-color:var(--accent);color:var(--accent-ink)}
 
-.links{margin-top:28px;display:flex;flex-wrap:wrap;gap:9px}
+.links{margin-top:clamp(18px,3vh,28px);display:flex;flex-wrap:wrap;gap:9px}
 .links a{
   font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
   border:1px solid var(--line);background:var(--card);
