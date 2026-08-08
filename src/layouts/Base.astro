@@ -7,11 +7,17 @@ interface Props {
   title?: string;
   description?: string;
   active?: string;
+  /** Drop the status bar. The home page navigates from the console instead, so
+   *  the bar there was a second copy of the same three destinations. Interior
+   *  pages keep it — they have no console, and without it there is no way from
+   *  one to another. */
+  nav?: boolean;
 }
 const {
   title = 'Youngjae Cho — ML Research Engineer',
   description = 'Youngjae Cho — ML Research Engineer. Alignment, robustness, and optimization geometry, plus the pipelines that ship it. ICML 2023, AAAI 2024, NVIDIA Nemotron Hackathon winner.',
   active,
+  nav = true,
 } = Astro.props;
 ---
 
@@ -30,9 +36,9 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
   </head>
-  <body>
+  <body class={nav ? undefined : 'no-nav'}>
     <div class="crt" aria-hidden="true"></div>
-    <Nav active={active} />
+    {nav && <Nav active={active} />}
     <slot />
     <Footer />
   </body>

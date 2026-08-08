@@ -30,6 +30,9 @@
   --maxw:1120px;
   --nav-h:50px;          /* the sticky bar's flow height; panel one subtracts it */
 }
+/* No bar on the home page, so nothing sits above panel one and it gets the
+   whole screen back. */
+body.no-nav{--nav-h:0px}
 
 *{box-sizing:border-box}
 html{background:var(--paper)}
