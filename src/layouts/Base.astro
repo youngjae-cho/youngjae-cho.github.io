@@ -37,8 +37,14 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    {/* favicon.ico exists so the browser's implicit /favicon.ico request
+        resolves instead of 404ing — that request is what bookmarks, history
+        and the OS icon store go by, and a 404 there leaves whatever was
+        cached before in place. The ?v= is a cache-bust: the file changed but
+        the URL did not, so nothing had reason to re-fetch it. */}
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2" />
     <meta name="theme-color" content="#06080b" />
     <meta name="color-scheme" content="dark" />
     <meta property="og:title" content={title} />
