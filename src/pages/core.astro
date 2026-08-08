@@ -19,14 +19,18 @@ const CHANNEL = 'https://youtube.com/@moodrainbow';
 // the console's ▸ ■ ▼ marks do — which is why the title is set in the body sans
 // and only the count is mono.
 //
-// TODO: href — the two watch URLs did not survive the paste (the links came
-// through as empty placeholders) and youtube.com is blocked by this
-// environment's egress proxy, so they could not be looked up either. Both rows
-// point at the channel until the real URLs are in hand; swap these two strings.
+// Canonical watch URLs, not the youtu.be share links they arrived as: the
+// ?si= those carry is a share-attribution token tied to whoever copied the
+// link, and there is no reason to publish one person's tracking parameter on
+// every visit to this page.
+//
+// Counts are point-in-time and rounded to 0.1M, so they drift slowly rather
+// than becoming wrong — but they are the one thing on this page that goes
+// stale on its own.
 const sets = [
-  { views: '3.5M', title: '코딩할 때 듣기 좋은 로파이 재즈 힙합', href: CHANNEL },
-  { views: '3.2M', title: '과제 할 때 집중 하기 좋은 로파이 재즈 힙합', href: CHANNEL },
-];
+  { views: '3.5M', title: '코딩할 때 듣기 좋은 로파이 재즈 힙합', id: 'nxKfi-6EtmY' },
+  { views: '3.2M', title: '과제 할 때 집중 하기 좋은 로파이 재즈 힙합', id: 'SyqyRv6NS_U' },
+].map((s) => ({ ...s, href: `https://www.youtube.com/watch?v=${s.id}` }));
 ---
 <Base
   title="Elsewhere — Youngjae Cho"
