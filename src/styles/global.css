@@ -937,22 +937,58 @@ html[data-boot] .boot-in > *{animation:boot-line 1.3s steps(1,end) var(--d,0s) f
 }
 
 /* One entry, sized like one entry. The temptation on a page this short is to
-   inflate it into a grid of cards; a single wide row says "there is one of
-   these" without pretending otherwise. */
-.offd{
-  display:grid;grid-template-columns:180px 1fr;gap:22px;
-  border:1px solid var(--line);background:var(--card);padding:24px 26px;
-}
-@media(max-width:700px){.offd{grid-template-columns:1fr;gap:14px}}
-.offd-meta{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+   inflate it into a grid of cards; a single column that runs sentence → work →
+   evidence says "there is one of these" without pretending otherwise.
+   Deliberately no thumbnails and no embed: this page reads as an index, and a
+   pair of video posters would turn one item into a showcase. */
+.offd{border:1px solid var(--line);background:var(--card);padding:24px 26px;max-width:64ch}
+.offd-top{display:flex;align-items:center;gap:12px}
 .offd-tag{
   font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ink-3);
+  color:var(--ink-3);margin-left:auto;
 }
-.offd-body h2{margin:0;font-size:1.5rem;font-weight:750;letter-spacing:-.02em;line-height:1.15}
-.offd-body h2 a:hover{color:var(--accent-ink)}
-.offd-body p{margin:10px 0 0;color:var(--ink-2);font-size:.96rem;line-height:1.6;max-width:62ch}
-.offd-body .more{margin-top:15px;text-transform:none;letter-spacing:.06em}
+.offd h2{margin:14px 0 0;font-size:1.5rem;font-weight:750;letter-spacing:-.02em;line-height:1.15}
+.offd h2 a:hover{color:var(--accent-ink)}
+.offd > p{margin:10px 0 0;color:var(--ink-2);font-size:.96rem;line-height:1.6}
+.offd .more{margin-top:18px;text-transform:none;letter-spacing:.06em}
+
+/* The evidence. Rows are hairline-separated rather than boxed — two counts and
+   two titles are a readout, and putting each in a card would make the numbers
+   compete with each other instead of stacking. */
+.offd-list{list-style:none;margin:20px 0 0;padding:0;border-top:1px solid var(--line-2)}
+.offd-list li{border-bottom:1px solid var(--line-2)}
+.offd-row{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:18px;
+  padding:13px 2px;transition:background .2s;
+}
+.offd-row:hover{background:var(--accent-soft)}
+/* The count carries the weight and the colour; the title stays ordinary. The
+   number is the thing a reader is meant to land on, and a title competing for
+   the same emphasis would flatten both. */
+.offd-n{
+  font-family:var(--mono);font-size:1.02rem;font-weight:800;color:var(--accent);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+  display:flex;align-items:baseline;gap:6px;
+}
+.offd-n i{font-style:normal;font-size:.58rem;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3)}
+/* Korean, and neither shipped font has Hangul — so this is deliberately on the
+   body sans, where the system's own Korean face takes over cleanly, rather
+   than on the mono, where it would fall out of a monospaced run mid-line. */
+.offd-t{font-size:.94rem;color:var(--ink);line-height:1.45}
+.offd-go{color:var(--accent);font-size:.9rem;transition:transform .22s}
+.offd-row:hover .offd-go{transform:translate(3px,-3px)}
+/* Narrow keeps all three columns. Dropping the mark to its own line left it
+   floating under a wrapped title with a row of dead space above it — and
+   baseline alignment means a title that wraps still lines its FIRST line up
+   with the count and the mark, which is the pairing that matters. */
+@media(max-width:620px){
+  .offd{padding:20px 18px}
+  .offd-row{gap:12px;padding:12px 0}
+  .offd-n{font-size:.94rem;gap:5px}
+  .offd-n i{font-size:.54rem;letter-spacing:.1em}
+  .offd-t{font-size:.9rem}
+}
 
 /* ===== primary link in the hero row ===== */
 .links a.primary{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);font-weight:600}
