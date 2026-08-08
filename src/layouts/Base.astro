@@ -12,17 +12,26 @@ interface Props {
    *  pages keep it — they have no console, and without it there is no way from
    *  one to another. */
   nav?: boolean;
+  /** Drop the contact footer. The home page is two panels and stops — anything
+   *  after the console would be content the console was supposed to lead to. */
+  footer?: boolean;
+  /** Marker class on <html> and <body>. Only the home page sets one ("home"),
+   *  and the scroll-snap rules key off it: snapping belongs to a page that is
+   *  exactly two panels tall, not to a page of case studies. */
+  pageClass?: string;
 }
 const {
   title = 'Youngjae Cho — ML Research Engineer',
   description = 'Youngjae Cho — ML Research Engineer. Alignment, robustness, and optimization geometry, plus the pipelines that ship it. ICML 2023, AAAI 2024, NVIDIA Nemotron Hackathon winner.',
   active,
   nav = true,
+  footer = true,
+  pageClass,
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class={pageClass}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,10 +45,10 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
   </head>
-  <body class={nav ? undefined : 'no-nav'}>
+  <body class={[nav ? null : 'no-nav', pageClass].filter(Boolean).join(' ') || undefined}>
     <div class="crt" aria-hidden="true"></div>
     {nav && <Nav active={active} />}
     <slot />
-    <Footer />
+    {footer && <Footer />}
   </body>
 </html>

@@ -14,7 +14,9 @@ const links = [
       {links.map((l) => (
         <a href={l.href} class={active === l.key ? 'active' : undefined}>{l.label}</a>
       ))}
-      <a href="/#contact">contact</a>
+      {/* Same-page, not "/#contact" — the home page has no footer to land on
+          any more, and the bar only renders on pages that do have one. */}
+      <a href="#contact">contact</a>
     </div>
   </div>
 </nav>
