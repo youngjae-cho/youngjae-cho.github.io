@@ -138,15 +138,26 @@ nav{
   /* The nav is sticky but still takes flow space above panel one and only
      panel one — every later panel scrolls under it. So the first panel is a
      screen MINUS the bar, and the second is a whole screen; giving both 100svh
-     makes the first overhang by exactly the bar's height. */
+     makes the first overhang by exactly the bar's height. On the home page
+     there is no bar, so --nav-h is zero and panel one gets the whole screen. */
   .intro{min-height:calc(100vh - var(--nav-h));min-height:calc(100svh - var(--nav-h))}
   .magi-panel{min-height:100vh;min-height:100svh}
-  html{scroll-snap-type:y proximity}
-  /* Only the console carries a snap point. Putting one on panel one too made
-     the browser snap it to the top on load — a 50px lurch that scrolled the
-     nav off screen before the visitor had touched anything. With one point,
-     the page rests naturally at zero and the console is the thing you land on. */
-  .magi-panel{scroll-snap-align:start;scroll-snap-stop:always}
+
+  /* Mandatory, and only on the home page — which is exactly two panels tall
+     with nothing after them. Everywhere else there is a page of case studies
+     below, and mandatory would fight the reader the whole way down.
+     Proximity was the earlier compromise and it read as ordinary scrolling:
+     the panels moved together, so the second felt like more of the first. */
+  html.home{scroll-snap-type:y mandatory}
+  .home .intro,.home .magi-panel{scroll-snap-align:start;scroll-snap-stop:always}
+
+  /* What actually makes it a swipe rather than a scroll: panel one pins and
+     panel two rides up OVER it, so the console arrives as a card dealt on top
+     instead of the page sliding along underneath. The accent rule is the
+     card's leading edge — the one bright line crossing the screen as it
+     lands. */
+  .home .intro{position:sticky;top:0;z-index:0}
+  .home .magi-panel{position:relative;z-index:1;border-top:1.5px solid var(--accent)}
 }
 /* scroll-behavior is already set, reduced-motion-guarded, at the top. */
 
