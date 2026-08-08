@@ -32,33 +32,6 @@ const top = { id: 'MELCHIOR·1', fn: 'Research', sub: 'Alignment · robustness',
 const left = { id: 'BALTHASAR·2', fn: 'Engineering', sub: 'Training · inference · serving', href: '/engineering', to: 'engineering cases' };
 const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis · OCR', href: '/product', to: 'product cases' };
 
-// The honeycomb for the field cut. Generated rather than hand-listed: a hex
-// lattice is two spacings and an odd-row offset, and writing 50 polygons out
-// by hand is how you get one that doesn't tile.
-//
-// Pointy-top, circumradius r: neighbours sit √3·r apart across and 1.5·r down,
-// with alternate rows shifted half a column. Generated past the viewBox on
-// every side because the SVG is sliced to fill the viewport, so the edges of
-// this grid are never where the edges of the screen are.
-// r is in viewBox units against a 100-unit box that is SLICED to fill the
-// screen, so it is a fraction of the viewport's long edge, not a pixel size.
-// At 11 the field came out as eight cells the size of dinner plates; ~16
-// across is what reads as a mesh.
-const R = 3.6;
-const DX = Math.sqrt(3) * R;
-const DY = 1.5 * R;
-const hexes: string[] = [];
-for (let row = -2; row * DY < 118; row++) {
-  for (let col = -2; col * DX < 118; col++) {
-    const cx = col * DX + (row % 2 ? DX / 2 : 0);
-    const cy = row * DY;
-    hexes.push(
-      [[0, -1], [0.866, -0.5], [0.866, 0.5], [0, 1], [-0.866, 0.5], [-0.866, -0.5]]
-        .map(([ux, uy]) => `${(cx + ux * R).toFixed(2)},${(cy + uy * R).toFixed(2)}`)
-        .join(' ')
-    );
-  }
-}
 ---
 <nav class="magi" aria-label="Research, engineering, product — and the person they are sides of">
   <div class="magi-bar">
@@ -163,9 +136,21 @@ for (let row = -2; row * DY < 118; row++) {
     that one's ground and wipe keyframes, swaps red for the field's amber, and
     stamps 中和 where the other stamps 可決. */}
 <div class="at-cut" id="at-cut" aria-hidden="true">
-  <svg class="at-hex" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    {hexes.map((pts) => <polygon points={pts} />)}
-  </svg>
+  {/* Two fields, because that is the mechanism: a field is brought down by
+      another field, never by itself. A holds and B punches out through it.
+      It is also the only way to make this read as motion — the first cut of
+      this had one mesh scaling 1.75 → 1.28 → 1.0, and a honeycomb at 1.28x
+      looks exactly like a honeycomb at 1.0x. Two meshes crossing in opposite
+      directions cannot be mistaken for a still frame. */}
+  {/* Empty on purpose — the mesh is built by buildField() below.
+      Authored as markup it was 1009 <polygon> nodes and 112KB of HTML on the
+      one page that is the site's front door, against 8.7KB for /publications.
+      None of it can ever be seen without JS either: with scripts off, clicking
+      a node just navigates and no overlay exists at all. So it is dead weight
+      in the document for every visitor, and dead weight twice over for the
+      ones who never click. */}
+  <svg class="at-hex at-a" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+  <svg class="at-hex at-b" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
   <div class="at-readout">
     <span class="mc-lbl">A.T. Field</span>
     <span class="at-stamp"><b>中和</b><em>Neutralized</em></span>
@@ -198,6 +183,40 @@ for (let row = -2; row * DY < 118; row++) {
   // work is deliberated and stamped; the person behind it is behind a field.
   // Which one runs is the ONLY difference between the two paths, so the arming
   // is written once and handed an overlay.
+  // The field's honeycomb, drawn once into both meshes.
+  //
+  // A hex lattice is two spacings and an odd-row offset — pointy-top with
+  // circumradius r puts neighbours √3·r apart across and 1.5·r down, alternate
+  // rows shifted half a column. It runs past the viewBox on every side because
+  // the SVG is sliced to fill the viewport: the edges of this grid are never
+  // where the edges of the screen are, and the animation scales it to 2.6x on
+  // top of that.
+  //
+  // r is in viewBox units against a 100-unit box, so it is a fraction of the
+  // viewport's long edge rather than a pixel size. At 11 the field came out as
+  // eight cells the size of dinner plates; 3.6 gives about sixteen across,
+  // which is what reads as a mesh rather than as a shape.
+  function buildField() {
+    const meshes = document.querySelectorAll('.at-hex');
+    if (!meshes.length) return;
+    const R = 3.6, DX = Math.sqrt(3) * R, DY = 1.5 * R;
+    const NS = 'http://www.w3.org/2000/svg';
+    const unit = [[0, -1], [0.866, -0.5], [0.866, 0.5], [0, 1], [-0.866, 0.5], [-0.866, -0.5]];
+    const frag = document.createDocumentFragment();
+    for (let row = -2; row * DY < 118; row++) {
+      for (let col = -2; col * DX < 118; col++) {
+        const cx = col * DX + (row % 2 ? DX / 2 : 0);
+        const cy = row * DY;
+        const p = document.createElementNS(NS, 'polygon');
+        p.setAttribute('points', unit
+          .map(([ux, uy]) => (cx + ux * R).toFixed(2) + ',' + (cy + uy * R).toFixed(2))
+          .join(' '));
+        frag.appendChild(p);
+      }
+    }
+    meshes.forEach((m) => m.appendChild(frag.cloneNode(true)));
+  }
+
   function initCuts() {
     const DUR = 820;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)');
@@ -251,7 +270,10 @@ for (let row = -2; row * DY < 118; row++) {
       });
     });
 
-    arm(document.querySelector<HTMLAnchorElement>('.magi-core'), document.getElementById('at-cut'));
+    const core = document.querySelector<HTMLAnchorElement>('.magi-core');
+    const at = document.getElementById('at-cut');
+    // Only worth drawing 500 polygons if there is something to run them.
+    if (core && at) { buildField(); arm(core, at); }
   }
   initCuts();
 </script>
