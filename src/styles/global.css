@@ -151,14 +151,14 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
      screen MINUS the bar, and the second is a whole screen; giving both 100svh
      makes the first overhang by exactly the bar's height. On the home page
      there is no bar, so --nav-h is zero and panel one gets the whole screen. */
-  .intro{min-height:calc(100vh - var(--nav-h));min-height:calc(100svh - var(--nav-h))}
+  .intro-panel{min-height:calc(100vh - var(--nav-h));min-height:calc(100svh - var(--nav-h))}
   .magi-panel{min-height:100vh;min-height:100svh}
 
   /* Panel one pins and panel two rides up OVER it, so the console arrives as
      a card dealt on top instead of the page sliding along underneath. The
      accent rule is the card's leading edge — the one bright line crossing the
      screen as it lands. */
-  .home .intro{position:sticky;top:0;z-index:0}
+  .home .intro-panel{position:sticky;top:0;z-index:0}
   .home .magi-panel{position:relative;z-index:1;border-top:1.5px solid var(--accent)}
 
   /* No scroll-snap here, deliberately, and it took measuring to see why.
@@ -175,7 +175,7 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 }
 /* scroll-behavior is already set, reduced-motion-guarded, at the top. */
 
-.intro,.magi-panel{
+.intro-panel,.magi-panel{
   position:relative;overflow:hidden;border-bottom:1px solid var(--line);
   display:flex;flex-direction:column;justify-content:center;
   /* Each panel needs its own ground. Panel one is sticky and panel two rides
@@ -194,13 +194,13 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
    exactly the sizes most people run. Rather than tiered media queries, the
    rhythm here is viewport-height aware: every vertical measure carries a vh
    term, so the block shrinks with the window instead of at two step changes. */
-.intro{padding:clamp(72px,10vh,100px) 0 clamp(76px,11vh,108px)}
+.intro-panel{padding:clamp(72px,10vh,100px) 0 clamp(76px,11vh,108px)}
 /* Fades the field out from behind the text column, left to right. */
-.intro::after{
+.intro-panel::after{
   content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(100deg,var(--paper) 26%,rgba(6,8,11,.7) 48%,rgba(6,8,11,.25) 78%);
 }
-.intro-in{position:relative;z-index:2;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.intro-panel-in{position:relative;z-index:2;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 28px}
 
 /* --- panel two: the way in --- */
 .magi-panel{padding:104px 28px 112px;align-items:center}
@@ -248,7 +248,7 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
   clip-path:polygon(0 0,100% 0,100% 84%,84% 100%,0 100%);
 }
 @media(max-width:760px){.avatar{width:clamp(76px,9vh,92px);height:clamp(76px,9vh,92px)}}
-.intro h1{
+.intro-panel h1{
   font-size:clamp(2rem,min(7.6vw,8.4vh),5.2rem);
   font-weight:800;letter-spacing:-.03em;line-height:.94;
   margin:clamp(6px,1.5vh,17px) 0 clamp(8px,1.7vh,19px);text-wrap:balance;
