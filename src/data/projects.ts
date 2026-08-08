@@ -25,7 +25,7 @@ export const projects: Project[] = [
     blurb: `The auto-labeling system I own at Pyler — mined the implicit labeling decision tree from 299K VLM reasoning traces; macro F1 0.777 → 0.857.`,
     problemHtml: `Content-safety scoring — 5 categories × severity — drifted between labelers. The written guidelines were flat ladder tables, but the decision logic that actually produced a score lived unwritten in each labeler's head, so the same clip scored differently depending on who saw it.`,
     ownershipHtml: `End-to-end ownership: problem framing, the mining pipeline, the tree design, and the prompts now in production.`,
-    resultHtml: `Macro <b>F1 0.777 → 0.857</b> (+0.080) — precision 0.731 → 0.834, recall 0.833 → 0.883. And every score became auditable: you can point at the node that fired.`,
+    resultHtml: `Macro <b>F1 0.777 → 0.857</b> (+0.080), and <b>over 4× the labeling throughput</b> of the process it replaced. Every score is auditable now: you can point at the node that fired.`,
     visual: 'tree',
     micro: 'My contribution',
     approachHtml: [
@@ -33,7 +33,7 @@ export const projects: Project[] = [
       `<b>A pipeline over 299K traces.</b> Group into <span class="m">30 buckets</span> (5 categories × 6 scores), a small LLM extracts the decisive signals, another synthesizes them into a yes/no tree (YAML) injected back into the prompt.`,
       `<b>Engineered the trees.</b> Merged equivalent signals into single axes, pulled exceptions to the front as <span class="m">early gates</span>, and collapsed the fuzzy 2-vs-3 / 4-vs-5 bands into a stable <span class="m">0 / 1 / 3 / 5</span> scale.`,
     ],
-    chips: ['Macro F1 +0.080', 'Precision +0.103', 'Recall +0.050', '299K traces', 'VLM reasoning', 'YAML trees'],
+    chips: ['Macro F1 +0.080', 'Throughput 4×+', 'Precision +0.103', 'Recall +0.050', '299K traces', 'YAML trees'],
   },
   {
     key: 'hackathon',
