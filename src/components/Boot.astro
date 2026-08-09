@@ -1,23 +1,109 @@
 ---
-// The console boots before it answers.
+// The console boots before it answers, and on the way up it reads his file.
 //
 // Deliberately dumb markup: every moving part is a CSS animation with a
-// delay, and JS does exactly one thing — decide whether this session has
-// already seen it. That split is the point. If the teardown were JS's job and
-// the script threw, a visitor would be left staring at a locked black screen
-// with the site behind it; because the overlay's exit is a keyframe with
-// fill-mode forwards, it leaves whether or not anything else works.
+// delay, and JS does exactly two things — decide whether this session has
+// already seen it, and let you skip it. That split is the point. If the
+// teardown were JS's job and the script threw, a visitor would be left staring
+// at a locked black screen with the site behind it; because the overlay's exit
+// is a keyframe with fill-mode forwards, it leaves whether or not anything
+// else works.
 //
 // The gate is in Base's <head> rather than here: an Astro component <script>
 // is bundled as a module and runs deferred, which is after first paint — the
 // page would flash before the boot covered it.
+import { readout, lockIndices } from '../data/readout';
+
+// The tape's geometry, and the keyframes that drive it, are COMPUTED from the
+// line list. Hand-numbering them would mean that adding one publication parks
+// the tape on the wrong row — and a readout stopping confidently on the wrong
+// line looks exactly like one stopping on the right one.
+const LH = 15;                       // line box, px — must match .rdo-line
+const VIS = 11;                      // lines the window shows
+const ROW = 5;                       // window row a lock parks on
+const N = readout.length;
+const park = (i: number) => -(i - ROW) * LH;
+const START = VIS * LH;              // tape sits below the window, empty
+const END = -(N - VIS) * LH;
+
+// Alternating run / hold, ending parked. Runs are stepped line-by-line — the
+// reference's text does not glide, it jumps.
+//
+// The trailing END is dropped when the last lock already parks there — with a
+// short enough list it does, and the zero-length run that produced put two
+// keyframes on the same percentage. Same failure as the off-by-one before it:
+// still valid CSS, still looks like an animation, silently wrong.
+const raw = [START, ...lockIndices.flatMap((i) => [park(i), park(i)]), END];
+const stops = raw.filter((v, i) => !(i >= 2 && v === raw[i - 1] && v === raw[i - 2]));
+const spans = stops.slice(1).map((v, i) => Math.abs(v - stops[i]));
+const travel = spans.reduce((a, b) => a + b, 0);
+const HOLD = 5;                      // % of the boot, per lock
+const STREAM = 54;                   // % at which the tape is done
+const runBudget = STREAM - HOLD * lockIndices.length;
+
+// A stop's timing function governs the segment that STARTS there, so whether
+// that segment is a hold depends on the NEXT stop, not the previous one.
+// Comparing backwards put every hold one segment late: the runs collapsed to
+// zero duration, two keyframes landed on the same percentage, and the whole
+// tape finished at 23% instead of 54% — while still looking like a plausible
+// animation in the stylesheet.
+let at = 0;
+const frames: string[] = [];
+stops.forEach((v, i) => {
+  const last = i === stops.length - 1;
+  if (last) { frames.push(`${STREAM}%{transform:translateY(${v}px)}`); return; }
+  const span = spans[i];
+  const isHold = v === stops[i + 1];
+  const timing = isHold
+    ? 'animation-timing-function:step-end'
+    : `animation-timing-function:steps(${Math.max(1, Math.round(span / LH))},end)`;
+  frames.push(`${at.toFixed(2)}%{transform:translateY(${v}px);${timing}}`);
+  at += isHold ? HOLD : (span / travel) * runBudget;
+});
+frames.push(`100%{transform:translateY(${END}px)}`);
+
+// Two generator bugs have now shipped keyframes that were valid CSS and wrong,
+// and neither showed up as anything but a transition that felt off. Percentages
+// that do not strictly increase are the signature of both, so fail the build
+// instead of rendering them.
+const pcts = frames.map((f) => parseFloat(f));
+pcts.forEach((p, i) => {
+  if (i && p <= pcts[i - 1])
+    throw new Error(`Boot.astro: keyframe stops are not increasing (${pcts[i - 1]}% then ${p}%) — the tape would jump.`);
+});
+
+const css = `@keyframes boot-tape{${frames.join('')}}
+.rdo-win{height:${VIS * LH}px}
+.rdo-line{height:${LH}px;line-height:${LH}px}`;
 ---
 <div class="boot" aria-hidden="true">
   <div class="boot-in rdo">
     <span class="boot-h">MAGI System</span>
-    <span class="rdo-l" style="--d:.16s"><i>Melchior·1</i><s></s><b>Online</b></span>
-    <span class="rdo-l" style="--d:.30s"><i>Balthasar·2</i><s></s><b>Online</b></span>
-    <span class="rdo-l" style="--d:.44s"><i>Casper·3</i><s></s><b>Online</b></span>
-    <span class="boot-f" style="--d:.62s">3/3 Nominal</span>
+
+    {/* The profile, streamed. Masked top and bottom so lines arrive and leave
+        rather than popping at a hard edge. */}
+    <div class="rdo-win">
+      <div class="rdo-tape">
+        {readout.map((l) => <span class={`rdo-line rdo-${l.k}`}>{l.t}</span>)}
+      </div>
+    </div>
+
+    <span class="rdo-l" style="--d:1.34s"><i>Melchior·1</i><s></s><b>Online</b></span>
+    <span class="rdo-l" style="--d:1.48s"><i>Balthasar·2</i><s></s><b>Online</b></span>
+    <span class="rdo-l" style="--d:1.62s"><i>Casper·3</i><s></s><b>Online</b></span>
+    <span class="boot-f" style="--d:1.80s">3/3 Nominal</span>
   </div>
 </div>
+<style is:inline set:html={css}></style>
+<script>
+  // The one thing worth adding JS for: letting someone leave. Removing the
+  // attribute is enough — every rule that shows the overlay is gated on it, so
+  // this cannot get stuck half-torn-down the way a manual teardown could.
+  (() => {
+    const skip = () => document.documentElement.removeAttribute('data-boot');
+    if (!document.documentElement.hasAttribute('data-boot')) return;
+    addEventListener('pointerdown', skip, { once: true });
+    addEventListener('keydown', skip, { once: true });
+    addEventListener('wheel', skip, { once: true, passive: true });
+  })();
+</script>
