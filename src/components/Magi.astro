@@ -115,14 +115,26 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
     verdict slams in over-size and lands, three bars sweep, the wipe closes.
     Inert until a plate is clicked, and skipped entirely under reduced motion. */}
 <div class="magi-cut" id="magi-cut" aria-hidden="true">
-  {/* Bars before the readout so they sweep behind the verdict rather than
-      slicing through it — at 50% the thick one crosses the id line exactly. */}
-  <div class="mc-bars"><i></i><i></i><i></i></div>
-  <div class="mc-readout">
+  <div class="mc-flash"></div>
+  {/* The three units deliberate, which is the thing the console has been
+      claiming in its status line all along and never showing. Same readout
+      form as the boot — see .rdo — and the same per-element --d beat, because
+      an nth-of-type rule over same-tag siblings is the trap that skipped
+      Balthasar in the boot sequence. */}
+  <div class="mc-delib rdo">
     <span class="mc-lbl">MAGI · Deliberation</span>
-    <span class="mc-id" id="mc-id"></span>
-    <span class="mc-stamp"><b>可決</b><em>Approved</em></span>
+    <span class="mc-unit rdo-l" style="--d:.14s"><i>Melchior·1</i><s></s>
+      <span class="mc-st"><em>Deliberating</em><b>Approved</b></span></span>
+    <span class="mc-unit rdo-l" style="--d:.175s"><i>Balthasar·2</i><s></s>
+      <span class="mc-st"><em>Deliberating</em><b>Approved</b></span></span>
+    <span class="mc-unit rdo-l" style="--d:.21s"><i>Casper·3</i><s></s>
+      <span class="mc-st"><em>Deliberating</em><b>Approved</b></span></span>
+    <span class="mc-tally" style="--d:.34s">3 / 3 Approved</span>
   </div>
+  {/* No destination name here on purpose. The cut reports a verdict; which page
+      that verdict opens is the page's own business, and naming it turned a
+      stamp into a signpost. */}
+  <div class="mc-verdict"><b>可決</b></div>
   <div class="mc-wipe"></div>
 </div>
 
@@ -218,6 +230,9 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
   }
 
   function initCuts() {
+    // Matches the .magi-cut / .at-cut durations in the stylesheet. The
+    // deliberation cut is .78s and the field cut .82s; the longer one sets this
+    // so neither navigates out from under its own wipe.
     const DUR = 820;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -262,11 +277,15 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
     };
 
     const cut = document.getElementById('magi-cut');
-    const idEl = document.getElementById('mc-id');
-    document.querySelectorAll<HTMLAnchorElement>('.magi .plate').forEach((a) => {
-      // The plate's own id, minus the trailing arrow glyph.
+    const units = document.querySelectorAll<HTMLElement>('.mc-unit');
+    const plates = Array.from(document.querySelectorAll<HTMLAnchorElement>('.magi .plate'));
+    plates.forEach((a, i) => {
+      // Mark the unit that answered for this plate. The plates are authored in
+      // MAGI order — Melchior, Balthasar, Casper — and so are the rows, so the
+      // index is the pairing; nothing needs to parse a label to find it.
       arm(a, cut, () => {
-        if (idEl) idEl.textContent = a.querySelector('.p-id')?.firstChild?.textContent?.trim() ?? '';
+        units.forEach((u) => u.classList.remove('mc-on'));
+        units[i]?.classList.add('mc-on');
       });
     });
 
