@@ -20,7 +20,16 @@ import { publications, inProgress } from './publications';
 
 
 export type LineKind = 'head' | 'row' | 'lock';
-export interface Line { k: LineKind; t: string; }
+export interface Line {
+  k: LineKind;
+  t: string;
+  /** Whether the tape STOPS here, which is separate from whether the line is
+   *  highlighted. The education answer is two degrees, so both are marked — but
+   *  they sit two rows apart, and parking on each in turn would be two holds
+   *  with no run between them: one hold that stutters. Park on the first; the
+   *  second is in the window anyway. */
+  park?: boolean;
+}
 
 /** Source strings carry markup (titleHtml, resultHtml, summary). Strip it, and
  *  flatten the arrows and dashes the prose uses into console-safe glyphs. */
@@ -43,7 +52,7 @@ const up = (s: string) => plain(s).toUpperCase();
 
 const head = (t: string): Line => ({ k: 'head', t: '> ' + t });
 const row = (t: string): Line => ({ k: 'row', t: '  ' + clip(t) });
-const lock = (t: string): Line => ({ k: 'lock', t: '* ' + clip(t) });
+const lock = (t: string, park = true): Line => ({ k: 'lock', t: '* ' + clip(t), park });
 
 /** Pad so the columns line up the way a readout's do. The left cell is clipped
  *  to its own width, not just padded — a venue like "ICML 2022 Workshop" ran
@@ -82,7 +91,8 @@ function build(): Line[] {
     // clip and the lock lost its dates — the exact half of the fact that makes
     // it worth parking on.
     const line = col(up(e.org), `${deg}  ${e.start.slice(0, 4)}-${e.end.slice(0, 4)}`, 8);
-    L.push(i === 0 ? lock(line) : row(line));
+    // Both degrees are the answer, so both are marked; only the first is a stop.
+    L.push(lock(line, i === 0));
     if (e.note) L.push(row(col('', up(e.note), 8)));
   });
 
@@ -119,5 +129,5 @@ export const readout: Line[] = build();
  *  anywhere above a lock would otherwise silently park the tape on the wrong
  *  row, and nothing about the finished animation would look wrong. */
 export const lockIndices: number[] = readout
-  .map((l, i) => (l.k === 'lock' ? i : -1))
+  .map((l, i) => (l.park ? i : -1))
   .filter((i) => i >= 0);
