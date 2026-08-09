@@ -591,10 +591,15 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 /* One frame of the alert red across the whole screen — the reference's hard
    colour insert. Exactly one, ~40ms: repeated full-field flashes are a
    photosensitivity hazard above 3Hz, and the whole cut is already skipped
-   under prefers-reduced-motion. */
+   under prefers-reduced-motion.
+   Held at .55 rather than full. At opacity 1 it measured a 92-point jump on the
+   frame-difference profile — the single most violent thing on the site by a
+   wide margin, and it read as a blank red screen rather than as a hit. Partial
+   opacity keeps the console faintly under it, so the frame still shows what is
+   being seized. */
 .mc-flash{position:absolute;inset:0;background:var(--alert);opacity:0}
 .magi-cut[data-run] .mc-flash{animation:mc-flash .78s steps(1,end) forwards}
-@keyframes mc-flash{0%,4%{opacity:0}5%,9%{opacity:1}10%,100%{opacity:0}}
+@keyframes mc-flash{0%,4%{opacity:0}5%,9%{opacity:.55}10%,100%{opacity:0}}
 
 /* The deliberation. Same readout form as the boot — see .rdo — because they are
    the same object: a console reporting three units one beat at a time. */
