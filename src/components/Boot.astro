@@ -28,7 +28,13 @@ const END = -(N - VIS) * LH;
 
 // Alternating run / hold, ending parked. Runs are stepped line-by-line — the
 // reference's text does not glide, it jumps.
-const stops = [START, ...lockIndices.flatMap((i) => [park(i), park(i)]), END];
+//
+// The trailing END is dropped when the last lock already parks there — with a
+// short enough list it does, and the zero-length run that produced put two
+// keyframes on the same percentage. Same failure as the off-by-one before it:
+// still valid CSS, still looks like an animation, silently wrong.
+const raw = [START, ...lockIndices.flatMap((i) => [park(i), park(i)]), END];
+const stops = raw.filter((v, i) => !(i >= 2 && v === raw[i - 1] && v === raw[i - 2]));
 const spans = stops.slice(1).map((v, i) => Math.abs(v - stops[i]));
 const travel = spans.reduce((a, b) => a + b, 0);
 const HOLD = 5;                      // % of the boot, per lock
@@ -55,6 +61,16 @@ stops.forEach((v, i) => {
   at += isHold ? HOLD : (span / travel) * runBudget;
 });
 frames.push(`100%{transform:translateY(${END}px)}`);
+
+// Two generator bugs have now shipped keyframes that were valid CSS and wrong,
+// and neither showed up as anything but a transition that felt off. Percentages
+// that do not strictly increase are the signature of both, so fail the build
+// instead of rendering them.
+const pcts = frames.map((f) => parseFloat(f));
+pcts.forEach((p, i) => {
+  if (i && p <= pcts[i - 1])
+    throw new Error(`Boot.astro: keyframe stops are not increasing (${pcts[i - 1]}% then ${p}%) — the tape would jump.`);
+});
 
 const css = `@keyframes boot-tape{${frames.join('')}}
 .rdo-win{height:${VIS * LH}px}

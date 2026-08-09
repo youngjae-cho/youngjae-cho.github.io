@@ -6,14 +6,18 @@
 // the pages render from. Change a venue in publications.ts and the boot changes
 // with it; there is no second copy to drift.
 //
-// Three of the rows are marked `lock`. The stream holds on each one long enough
-// to read, and they are chosen to be things the intro panel does NOT already
-// say: the degree, the auto-labeling delta, the hackathon result. The panel
-// behind this overlay covers ICML/AAAI and the four-paper line already, and a
-// boot that repeats the page it is covering is worth nothing.
-import { basics, work, education, skills, awards } from './cv';
+// It answers three questions and stops: where he studied, what he researched,
+// what he works with. Employment, per-project metrics and the channel came out
+// — the boot is an index, not a second copy of the site.
+//
+// One row in each of the three sections is marked `lock`, and the stream holds
+// on it long enough to read: the degree, the throughline the four led papers
+// share, and the serving stack. They are chosen against the panel underneath —
+// it already carries ICML/AAAI and the four-paper line, and a boot that repeats
+// the page it is covering is worth nothing.
+import { basics, education, skills } from './cv';
 import { publications, inProgress } from './publications';
-import { projects } from './projects';
+
 
 export type LineKind = 'head' | 'row' | 'lock';
 export interface Line { k: LineKind; t: string; }
@@ -47,16 +51,18 @@ const lock = (t: string): Line => ({ k: 'lock', t: '* ' + clip(t) });
 const col = (a: string, b: string, w = 15) =>
   (a.length > w - 2 ? a.slice(0, w - 2) : a).padEnd(w) + b;
 
-/** The two numeric locks are quoted from the case studies rather than derived,
- *  because the figures live inside prose there. So they are VERIFIED instead:
- *  if the sentence they came from stops containing them, the build fails rather
- *  than the boot quietly asserting a number the site no longer makes. */
-function assertQuoted(key: string, needles: string[]) {
-  const src = plain(projects.find((p) => p.key === key)?.resultHtml ?? '');
-  for (const n of needles) {
-    if (!src.includes(n))
-      throw new Error(`readout.ts: "${n}" is no longer in the ${key} result — the boot would be quoting a figure the site dropped.`);
+/** Break a list across rows instead of clipping it. The serving stack is nine
+ *  tools; as one row it lost four of them to the ellipsis, and a readout that
+ *  truncates the answer to "what do you work with" is answering badly. */
+function wrap(items: string[], w = 56): string[] {
+  const out: string[] = [];
+  let cur = '';
+  for (const it of items) {
+    const next = cur ? `${cur}  ${it}` : it;
+    if (next.length > w && cur) { out.push(cur); cur = it; } else cur = next;
   }
+  if (cur) out.push(cur);
+  return out;
 }
 
 function build(): Line[] {
@@ -65,8 +71,6 @@ function build(): Line[] {
   L.push(head('MAGI / PROFILE'));
   L.push(row(col('SUBJECT', up(basics.name))));
   L.push(row(col('DESIGNATION', up(basics.label))));
-  L.push(row(col('LOCATION', up(basics.location))));
-  L.push(row(col('CONTACT', basics.email.toUpperCase())));
 
   L.push(head('RECORD / EDUCATION'));
   education.forEach((e, i) => {
@@ -82,50 +86,30 @@ function build(): Line[] {
     if (e.note) L.push(row(col('', up(e.note), 8)));
   });
 
-  L.push(head('RECORD / SERVICE'));
-  work.forEach((w) =>
-    L.push(row(col(up(w.org), `${up(w.role)}  ${w.start}-${w.end.toUpperCase()}`))));
-
   const withVenue = publications.filter((p) => p.venue);
   const led = withVenue.filter((p) => !p.minor);
-  L.push(head(`PUB / ${String(withVenue.length).padStart(2, '0')}   LED ${String(led.length).padStart(2, '0')}`));
+  L.push(head(`RESEARCH / ${String(withVenue.length).padStart(2, '0')}   LED ${String(led.length).padStart(2, '0')}`));
   withVenue.forEach((p) => {
-    L.push(row(col(p.venue!.toUpperCase(), `${(p.acronym ?? '--').padEnd(6)} ${(p.role ?? '').toUpperCase()}`)));
+    L.push(row(col(p.venue!.toUpperCase().replace(' WORKSHOP',' WS'), `${(p.acronym ?? '--').padEnd(6)} ${(p.role ?? '').toUpperCase()}`)));
     L.push(row(col('', up(p.title))));
     if (p.angle) L.push(row(col('', up(p.angle))));
   });
 
-  L.push(head(`PUB / OPEN   ${String(inProgress.length).padStart(2, '0')}   WITHHELD`));
+  // The throughline, assembled from the levers the four led papers name — the
+  // one line that says what the research IS rather than listing what it was.
+  L.push(lock(led.map((p) => up(p.angle ?? '').split(' / ')[0]).filter(Boolean).join(' / ')));
+
+  L.push(head(`RESEARCH / OPEN   ${String(inProgress.length).padStart(2, '0')}   WITHHELD`));
   inProgress.forEach((w) => L.push(row(col(up(w.topic), '████████████', 30))));
 
-  const chipsOf = (key: string) => (projects.find((p) => p.key === key)?.chips ?? []).map(up);
-  assertQuoted('autolabel', ['0.777', '0.857', '+0.080']);
-  L.push(head('METRIC / CONTENT-SAFETY'));
-  L.push(lock('MACRO F1  0.777 -> 0.857   DELTA +0.080'));
-  L.push(row(chipsOf('autolabel').slice(2).join('   ')));
-
-  L.push(head('OWNERSHIP'));
-  projects.forEach((p) => {
-    L.push(row(col(p.track.toUpperCase(), up(p.titleHtml))));
-    L.push(row(col('', up(p.resultHtml))));
-  });
-
-  // Deliberately after OWNERSHIP rather than next to the other metric block.
-  // Back to back, two of the three locks sat three lines apart and the tape
-  // barely moved between them — two holds with no run in between is one hold
-  // that stutters.
-  assertQuoted('hackathon', ['0.927']);
-  L.push(head('METRIC / NEMOTRON'));
-  L.push(lock('TEMPORAL IOU 0.927   TRACK B  1ST'));
-  awards.forEach((a) => L.push(row(col(a.date, up(a.name)))));
-
+  // Serving is the group that gets held: it is the longest list and the one
+  // that says he takes a model all the way out to traffic.
   skills.forEach((g) => {
     L.push(head('STACK / ' + up(g.name)));
-    L.push(row(g.items.map(up).join('  ')));
+    const rows = wrap(g.items.map(up));
+    const hold = /SERVING/.test(up(g.name));
+    rows.forEach((r, i) => L.push(hold && i === 0 ? lock(r) : row('  ' + r)));
   });
-
-  L.push(head('ELSEWHERE'));
-  L.push(row(col('MOODRAINBOW', 'LO-FI / JAZZ   3.5M + 3.2M VIEWS')));
 
   return L;
 }
