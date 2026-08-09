@@ -890,10 +890,10 @@ footer{padding:74px 0 44px}
   html[data-boot] .boot{
     display:grid;place-items:center;
     position:fixed;inset:0;z-index:960;background:var(--paper);
-    animation:boot-out 1.3s steps(1,end) forwards;
+    animation:boot-out 2.4s steps(1,end) forwards;
   }
 }
-@keyframes boot-out{0%,86%{opacity:1;visibility:visible}87%,100%{opacity:0;visibility:hidden}}
+@keyframes boot-out{0%,92%{opacity:1;visibility:visible}93%,100%{opacity:0;visibility:hidden}}
 
 /* ---- console readout ----
    A label, three units reporting one beat at a time down a dotted leader, and a
@@ -915,14 +915,48 @@ footer{padding:74px 0 44px}
 }
 .rdo-l b{color:var(--nominal);font-weight:700;white-space:nowrap}
 
-.boot-in{width:min(340px,76vw)}
+/* Wider than it was: the profile stream sets the measure now, and the unit
+   rows sit under it at the same width. */
+.boot-in{width:min(560px,88vw)}
 .boot-in > *{opacity:0}
+
+/* ---- the profile stream ----
+   Dozens of rows going past faster than anyone reads, which is the reference's
+   whole texture — and would be pure decoration if the rows were invented. They
+   are generated from the same data the pages render (see data/readout.ts), and
+   the tape parks three times on a line worth reading. Without those stops this
+   is a screensaver; with them it is a machine telling you three things.
+
+   Height and keyframes are emitted by Boot.astro, computed from the line count
+   and the lock positions, so adding a paper cannot park the tape mid-row. */
+.rdo-win{
+  position:relative;overflow:hidden;width:100%;
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 18%,#000 82%,transparent);
+  mask-image:linear-gradient(to bottom,transparent,#000 18%,#000 82%,transparent);
+}
+html[data-boot] .rdo-win{animation:boot-line 2.4s steps(1,end) .10s forwards}
+.rdo-tape{display:flex;flex-direction:column;will-change:transform}
+html[data-boot] .rdo-tape{animation:boot-tape 2.4s forwards}
+.rdo-line{
+  font-size:.62rem;letter-spacing:.06em;white-space:pre;color:var(--ink-3);
+  overflow:hidden;text-overflow:clip;
+}
+.rdo-head{color:var(--accent)}
+/* The parked lines. Marked in the type as well as the colour, because during
+   the fast run everything is a blur and the eye needs something to catch when
+   the tape finally stops. */
+.rdo-lock{color:var(--nominal);font-weight:700}
+/* The rows are fixed-width strings built at BUILD time, so they cannot reflow
+   for a narrow screen — the type has to shrink to them instead. Measured at
+   390px: .54rem put the widest line at 347px inside a 343px box, clipping its
+   last character. */
+@media(max-width:620px){.rdo-line{font-size:.48rem;letter-spacing:0}}
 /* Each line lands on its own beat rather than the block fading in as one.
    The beat is --d on the element, not an nth-of-type rule: every child here is
    a <span>, so nth-of-type counted the header and the footer too — it skipped
    Balthasar entirely and fired Casper with no delay at all. Positional
    selectors over same-tag siblings are a trap; the beat belongs to the line. */
-html[data-boot] .boot-in > *{animation:boot-line 1.3s steps(1,end) var(--d,0s) forwards}
+html[data-boot] .boot-in > *{animation:boot-line 2.4s steps(1,end) var(--d,0s) forwards}
 @keyframes boot-line{0%{opacity:0}1%,100%{opacity:1}}
 
 .boot-h{color:var(--nominal);font-weight:700;letter-spacing:.42em}
