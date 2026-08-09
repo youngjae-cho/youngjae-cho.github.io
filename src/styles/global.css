@@ -562,57 +562,95 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 
 /* ===== the cut ===== */
 /* Everything is steps() on purpose. An ease reads as a web page transitioning;
-   the reference cuts. 820ms total, and the numbers below are percentages of
-   that: ground at 6%, verdict at 26%, bars from 55%, wipe closes at 82%. */
+   the reference cuts. 780ms total and the numbers below are percentages of it:
+   flash at 5%, black at 10%, the units deliberate 18-44%, the verdict lands at
+   53%, wipe closes at 87%.
+
+   The previous cut was measured before it was rewritten — stepped at 20ms and
+   diffed frame to frame — and two things came out of that:
+   300-440ms was a static hold on a 可決 stamp occupying about 3% of the frame,
+   which is what "dead" actually meant; and the three bars that filled 451-715ms
+   (a THIRD of the cut) were 3px and 8px lines registering barely above noise.
+   The bars are gone rather than thickened: they carried no information, and a
+   bigger decoration is still a decoration. What replaced them is the beat that
+   was missing all along — the MAGI deliberating, which is the one thing the
+   console has been claiming ("3/3 Approved") and never showing.
+   Holding a frame is now fine. Holding an EMPTY frame is not: the verdict fills
+   about a third of the screen where the old stamp filled a thirtieth. */
 .magi-cut{position:fixed;inset:0;z-index:950;pointer-events:none;visibility:hidden}
-.magi-cut[data-run]{visibility:visible;pointer-events:all;animation:mc-ground .82s steps(1,end) forwards}
+.magi-cut[data-run]{visibility:visible;pointer-events:all;animation:mc-ground .78s steps(1,end) forwards}
+/* Solid black, not .97. The old value let the destination page show through at
+   3% for the whole cut, which muddied every frame of it for no gain. */
 @keyframes mc-ground{
   0%{background:rgba(0,0,0,0)}
-  6%{background:rgba(0,0,0,.86)}
-  14%{background:rgba(0,0,0,.97)}
+  5%{background:rgba(0,0,0,.5)}
+  10%{background:#000}
   100%{background:#000}
 }
-.mc-readout{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  font-family:var(--mono);display:flex;flex-direction:column;align-items:center;gap:12px;
-  white-space:nowrap;opacity:0;
-}
-.magi-cut[data-run] .mc-readout{animation:mc-show .82s steps(1,end) forwards}
-@keyframes mc-show{0%,5%{opacity:0}6%,78%{opacity:1}79%,100%{opacity:0}}
+
+/* One frame of the alert red across the whole screen — the reference's hard
+   colour insert. Exactly one, ~40ms: repeated full-field flashes are a
+   photosensitivity hazard above 3Hz, and the whole cut is already skipped
+   under prefers-reduced-motion.
+   Held at .55 rather than full. At opacity 1 it measured a 92-point jump on the
+   frame-difference profile — the single most violent thing on the site by a
+   wide margin, and it read as a blank red screen rather than as a hit. Partial
+   opacity keeps the console faintly under it, so the frame still shows what is
+   being seized. */
+.mc-flash{position:absolute;inset:0;background:var(--alert);opacity:0}
+.magi-cut[data-run] .mc-flash{animation:mc-flash .78s steps(1,end) forwards}
+@keyframes mc-flash{0%,4%{opacity:0}5%,9%{opacity:.55}10%,100%{opacity:0}}
+
+/* The deliberation. Same readout form as the boot — see .rdo — because they are
+   the same object: a console reporting three units one beat at a time. */
+/* Shared by both cuts' headers — the deliberation's and the field's. */
 .mc-lbl{font-size:.64rem;letter-spacing:.34em;text-transform:uppercase;color:var(--ink-3)}
-.mc-id{font-size:clamp(1.5rem,5.4vw,2.7rem);font-weight:800;letter-spacing:.16em;color:var(--accent);line-height:1}
-/* The verdict lands late and over-size, the way a stamp hits paper. */
-.mc-stamp{display:flex;align-items:center;gap:15px;opacity:0}
-.magi-cut[data-run] .mc-stamp{animation:mc-stamp .82s steps(1,end) forwards}
-@keyframes mc-stamp{
-  0%,25%{opacity:0;transform:scale(1.5)}
-  26%,31%{opacity:1;transform:scale(1.14)}
-  32%,100%{opacity:1;transform:scale(1)}
+.mc-delib{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(460px,80vw);opacity:0;
 }
-/* The verdict is the one place on the site with Japanese type, so it is the one
-   place that gets a Japanese face rather than whatever the platform hands a
-   stray kanji. Optical size correction comes with it: a Mincho at 800 carries
-   far more ink than the gothic it replaces, so the box tightens and the
-   letter-spacing comes down — .12em was set for a face that no longer sets it. */
-.mc-stamp b{font-family:var(--jp);font-size:1.9rem;line-height:1;color:var(--alert);
-  letter-spacing:.08em;font-weight:800;
-  border:2px solid var(--alert);padding:6px 12px 8px}
-.mc-stamp em{font-style:normal;font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;color:var(--nominal)}
-/* Three bars across the field, staggered — the reference's hard inserts. */
-.mc-bars{position:absolute;inset:0;overflow:hidden}
-.mc-bars i{position:absolute;left:0;width:100%;display:block;background:var(--accent);transform:scaleX(0);transform-origin:0 50%}
-.mc-bars i:nth-child(1){top:26%;height:3px}
-.mc-bars i:nth-child(2){top:50%;height:8px;background:var(--nominal)}
-.mc-bars i:nth-child(3){top:73%;height:3px}
-.magi-cut[data-run] .mc-bars i{animation:mc-bar .82s steps(1,end) forwards}
-.magi-cut[data-run] .mc-bars i:nth-child(2){animation-delay:.05s}
-.magi-cut[data-run] .mc-bars i:nth-child(3){animation-delay:.1s}
-@keyframes mc-bar{
-  0%,54%{transform:scaleX(0)}
-  55%{transform:scaleX(.34)}
-  60%{transform:scaleX(.72)}
-  65%,74%{transform:scaleX(1)}
-  75%,100%{transform:scaleX(0);transform-origin:100% 50%}
+.magi-cut[data-run] .mc-delib{animation:mc-delib .78s steps(1,end) forwards}
+@keyframes mc-delib{0%,14%{opacity:0}15%,51%{opacity:1}52%,100%{opacity:0}}
+.mc-unit,.mc-tally{opacity:0}
+.magi-cut[data-run] .mc-unit,
+.magi-cut[data-run] .mc-tally{animation:mc-line .78s steps(1,end) var(--d,0s) forwards}
+@keyframes mc-line{0%{opacity:0}1%,100%{opacity:1}}
+/* Each unit sits at DELIBERATING, then flips. The two words are stacked in one
+   grid cell so the dotted leader does not jump when the shorter one replaces
+   the longer. The flip is 12% of the run after that row's own --d. */
+.mc-st{display:grid;justify-items:end}
+.mc-st > *{grid-area:1/1}
+.mc-st em{font-style:normal;color:var(--ink-3);white-space:nowrap}
+.magi-cut[data-run] .mc-st em{animation:mc-pend .78s steps(1,end) var(--d,0s) forwards}
+.magi-cut[data-run] .mc-st b{animation:mc-appr .78s steps(1,end) var(--d,0s) forwards}
+@keyframes mc-pend{0%{opacity:0}1%{opacity:1}12%,100%{opacity:0}}
+@keyframes mc-appr{0%,11%{opacity:0}12%,100%{opacity:1}}
+.mc-tally{color:var(--gold);font-weight:700;letter-spacing:.3em;margin-top:5px}
+/* The unit you actually picked. The cut does not name the destination — it
+   names which of the three answered for it. */
+.mc-unit.mc-on i{color:var(--gold)}
+
+/* The verdict. Over-size on landing, raked by the same --skew every plate on
+   this site is cut with, and sized in vw so it fills the frame rather than
+   sitting in the middle of it. */
+.mc-verdict{
+  position:absolute;left:50%;top:50%;opacity:0;
+  transform:translate(-50%,-50%) rotate(var(--skew)) scale(1.7);
+}
+.magi-cut[data-run] .mc-verdict{animation:mc-verdict .78s steps(1,end) forwards}
+@keyframes mc-verdict{
+  0%,52%{opacity:0;transform:translate(-50%,-50%) rotate(var(--skew)) scale(1.7)}
+  53%,55%{opacity:1;transform:translate(-50%,-50%) rotate(var(--skew)) scale(1.18)}
+  56%,100%{opacity:1;transform:translate(-50%,-50%) rotate(var(--skew)) scale(1)}
+}
+/* The one place on the site with Japanese type, so the one place that gets a
+   Japanese face rather than whatever the platform hands a stray kanji. Border
+   and padding are in em so the seal scales with the glyph instead of turning
+   into a hairline around a 200px character. */
+.mc-verdict b{
+  font-family:var(--jp);font-size:clamp(3.2rem,17vw,13rem);font-weight:800;
+  line-height:1;color:var(--alert);letter-spacing:.04em;display:block;
+  border:.055em solid var(--alert);padding:.05em .1em .09em;
 }
 /* Closes bottom-up onto pure black, so the next page paints behind it. */
 .mc-wipe{position:absolute;inset:0;background:var(--paper);transform:scaleY(0);transform-origin:50% 100%}
@@ -621,9 +659,11 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
    readable through the ground, and the destination painted in over a 97% black
    instead of a solid one. Caught by stepping the animation frame by frame —
    nothing about the finished transition looks wrong at speed. */
-.magi-cut[data-run] .mc-wipe,
+/* Each cut times its own wipe: the field cut still runs .82s, the deliberation
+   cut is .78s now. The percentage is shared, the duration is not. */
+.magi-cut[data-run] .mc-wipe{animation:mc-wipe .78s steps(1,end) forwards}
 .at-cut[data-run] .mc-wipe{animation:mc-wipe .82s steps(1,end) forwards}
-@keyframes mc-wipe{0%,81%{transform:scaleY(0)}82%,100%{transform:scaleY(1)}}
+@keyframes mc-wipe{0%,86%{transform:scaleY(0)}87%,100%{transform:scaleY(1)}}
 /* The clicked plate goes to alert for the first beat, before the ground lands. */
 .plate.mc-sel{background:var(--alert)}
 @media(prefers-reduced-motion:reduce){
@@ -863,10 +903,27 @@ footer{padding:74px 0 44px}
 }
 @keyframes boot-out{0%,86%{opacity:1;visibility:visible}87%,100%{opacity:0;visibility:hidden}}
 
-.boot-in{
+/* ---- console readout ----
+   A label, three units reporting one beat at a time down a dotted leader, and a
+   tally. The boot uses it and so does the cut's deliberation, because they are
+   the same object seen twice — one on the way in, one on the way through. Kept
+   as a shared class rather than copied: two consoles that drift apart is how a
+   system stops looking like a system. */
+.rdo{
   font-family:var(--mono);display:flex;flex-direction:column;gap:9px;
-  width:min(340px,76vw);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
 }
+.rdo-l{display:flex;align-items:baseline;gap:9px;color:var(--ink-3)}
+.rdo-l i{font-style:normal;color:var(--accent);white-space:nowrap}
+/* The dotted leader, same run-of-dots the panel's rules use. */
+.rdo-l s{
+  flex:1;height:3px;text-decoration:none;opacity:.7;
+  background-image:radial-gradient(circle at 50% 50%,var(--nominal) 40%,transparent 42%);
+  background-size:3px 3px;background-repeat:repeat-x;background-position:center;
+}
+.rdo-l b{color:var(--nominal);font-weight:700;white-space:nowrap}
+
+.boot-in{width:min(340px,76vw)}
 .boot-in > *{opacity:0}
 /* Each line lands on its own beat rather than the block fading in as one.
    The beat is --d on the element, not an nth-of-type rule: every child here is
@@ -877,15 +934,6 @@ html[data-boot] .boot-in > *{animation:boot-line 1.3s steps(1,end) var(--d,0s) f
 @keyframes boot-line{0%{opacity:0}1%,100%{opacity:1}}
 
 .boot-h{color:var(--nominal);font-weight:700;letter-spacing:.42em}
-.boot-l{display:flex;align-items:baseline;gap:9px;color:var(--ink-3)}
-.boot-l i{font-style:normal;color:var(--accent);white-space:nowrap}
-/* The dotted leader, same run-of-dots the panel's rules use. */
-.boot-l s{
-  flex:1;height:3px;text-decoration:none;opacity:.7;
-  background-image:radial-gradient(circle at 50% 50%,var(--nominal) 40%,transparent 42%);
-  background-size:3px 3px;background-repeat:repeat-x;background-position:center;
-}
-.boot-l b{color:var(--nominal);font-weight:700;white-space:nowrap}
 .boot-f{color:var(--gold);font-weight:700;letter-spacing:.28em;margin-top:4px}
 
 /* ===== in progress — stated, not described =====
