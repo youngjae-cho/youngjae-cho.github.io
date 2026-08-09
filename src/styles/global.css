@@ -890,7 +890,7 @@ footer{padding:74px 0 44px}
   html[data-boot] .boot{
     display:grid;place-items:center;
     position:fixed;inset:0;z-index:960;background:var(--paper);
-    animation:boot-out 2.4s steps(1,end) forwards;
+    animation:boot-out var(--boot-dur,2.4s) steps(1,end) forwards;
   }
 }
 @keyframes boot-out{0%,92%{opacity:1;visibility:visible}93%,100%{opacity:0;visibility:hidden}}
@@ -934,9 +934,9 @@ footer{padding:74px 0 44px}
   -webkit-mask-image:linear-gradient(to bottom,transparent,#000 18%,#000 82%,transparent);
   mask-image:linear-gradient(to bottom,transparent,#000 18%,#000 82%,transparent);
 }
-html[data-boot] .rdo-win{animation:boot-line 2.4s steps(1,end) .10s forwards}
+html[data-boot] .rdo-win{animation:boot-line var(--boot-dur,2.4s) steps(1,end) .10s forwards}
 .rdo-tape{display:flex;flex-direction:column;will-change:transform}
-html[data-boot] .rdo-tape{animation:boot-tape 2.4s forwards}
+html[data-boot] .rdo-tape{animation:boot-tape var(--boot-dur,2.4s) forwards}
 .rdo-line{
   font-size:.62rem;letter-spacing:.06em;white-space:pre;color:var(--ink-3);
   overflow:hidden;text-overflow:clip;
@@ -956,7 +956,7 @@ html[data-boot] .rdo-tape{animation:boot-tape 2.4s forwards}
    a <span>, so nth-of-type counted the header and the footer too — it skipped
    Balthasar entirely and fired Casper with no delay at all. Positional
    selectors over same-tag siblings are a trap; the beat belongs to the line. */
-html[data-boot] .boot-in > *{animation:boot-line 2.4s steps(1,end) var(--d,0s) forwards}
+html[data-boot] .boot-in > *{animation:boot-line var(--boot-dur,2.4s) steps(1,end) var(--d,0s) forwards}
 @keyframes boot-line{0%{opacity:0}1%,100%{opacity:1}}
 
 .boot-h{color:var(--nominal);font-weight:700;letter-spacing:.42em}
