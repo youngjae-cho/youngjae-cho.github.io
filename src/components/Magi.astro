@@ -194,38 +194,46 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
   // work is deliberated and stamped; the person behind it is behind a field.
   // Which one runs is the ONLY difference between the two paths, so the arming
   // is written once and handed an overlay.
-  // The field's honeycomb, drawn once into both meshes.
+  // The field: octagons nested about one centre, growth-ring fashion.
   //
-  // A hex lattice is two spacings and an odd-row offset — pointy-top with
-  // circumradius r puts neighbours √3·r apart across and 1.5·r down, alternate
-  // rows shifted half a column. It runs past the viewBox on every side because
-  // the SVG is sliced to fill the viewport: the edges of this grid are never
-  // where the edges of the screen are, and the animation scales it to 2.6x on
-  // top of that.
+  // This was a hexagonal LATTICE first, and a lattice was the wrong object. A
+  // tiling has no centre — it is the same everywhere, which is why it read as a
+  // sheet of graphene rather than as a field: there was nothing for it to be a
+  // field AROUND. The reference's is a stack of octagons about the point of
+  // contact, and once the rings are concentric, scaling them is no longer a
+  // zoom — it is the field closing in, or coming apart.
   //
-  // r is in viewBox units against a 100-unit box, so it is a fraction of the
-  // viewport's long edge rather than a pixel size. At 11 the field came out as
-  // eight cells the size of dinner plates; 3.6 gives about sixteen across,
-  // which is what reads as a mesh rather than as a shape.
+  // Radii are viewBox units against a 100-unit box that is sliced to fill the
+  // viewport, so they are fractions of the long edge rather than pixels. The
+  // outermost has to clear the corner of the visible region — about 59 units on
+  // a 16:10 screen — and the animation pushes past that again at 2.6x.
   function buildField() {
-    const meshes = document.querySelectorAll('.at-hex');
-    if (!meshes.length) return;
-    const R = 3.6, DX = Math.sqrt(3) * R, DY = 1.5 * R;
+    const fields = document.querySelectorAll('.at-hex');
+    if (!fields.length) return;
     const NS = 'http://www.w3.org/2000/svg';
-    const unit = [[0, -1], [0.866, -0.5], [0.866, 0.5], [0, 1], [-0.866, 0.5], [-0.866, -0.5]];
+    const CX = 50, CY = 50, R0 = 4, GAP = 4, RINGS = 19;
+    // Vertices at 22.5° + k·45° put a flat edge top and bottom, which is how the
+    // reference's sit.
+    const unit = Array.from({ length: 8 }, (_, k) => {
+      const a = (Math.PI / 8) + (k * Math.PI) / 4;
+      return [Math.cos(a), Math.sin(a)];
+    });
     const frag = document.createDocumentFragment();
-    for (let row = -2; row * DY < 118; row++) {
-      for (let col = -2; col * DX < 118; col++) {
-        const cx = col * DX + (row % 2 ? DX / 2 : 0);
-        const cy = row * DY;
-        const p = document.createElementNS(NS, 'polygon');
-        p.setAttribute('points', unit
-          .map(([ux, uy]) => (cx + ux * R).toFixed(2) + ',' + (cy + uy * R).toFixed(2))
-          .join(' '));
-        frag.appendChild(p);
-      }
+    for (let i = 0; i < RINGS; i++) {
+      const r = R0 + i * GAP;
+      const p = document.createElementNS(NS, 'polygon');
+      p.setAttribute('points', unit
+        .map(([ux, uy]) => (CX + ux * r).toFixed(2) + ',' + (CY + uy * r).toFixed(2))
+        .join(' '));
+      // Falls off outward, so the figure reads as centred on something rather
+      // than as a flat pattern that happens to be round.
+      p.setAttribute('stroke-opacity', (1 - (i / RINGS) * 0.62).toFixed(2));
+      // Ring index, which the collapse staggers on: the field gives from the
+      // inside out, so what it leaves behind is an opening rather than nothing.
+      p.style.setProperty('--i', String(i));
+      frag.appendChild(p);
     }
-    meshes.forEach((m) => m.appendChild(frag.cloneNode(true)));
+    fields.forEach((m) => m.appendChild(frag.cloneNode(true)));
   }
 
   function initCuts() {

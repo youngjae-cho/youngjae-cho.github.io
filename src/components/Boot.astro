@@ -18,6 +18,11 @@ import { readout, lockIndices } from '../data/readout';
 // line list. Hand-numbering them would mean that adding one publication parks
 // the tape on the wrong row — and a readout stopping confidently on the wrong
 // line looks exactly like one stopping on the right one.
+// One duration, and everything else is derived from it — the stylesheet reads
+// it as --boot-dur and the unit rows get their beats computed below. It used to
+// live in four CSS rules and four hand-written --d values, which meant changing
+// it desynced the units into the middle of the stream with nothing complaining.
+const DUR = 3.4;                     // seconds
 const LH = 15;                       // line box, px — must match .rdo-line
 const VIS = 11;                      // lines the window shows
 const ROW = 5;                       // window row a lock parks on
@@ -38,7 +43,11 @@ const stops = raw.filter((v, i) => !(i >= 2 && v === raw[i - 1] && v === raw[i -
 const spans = stops.slice(1).map((v, i) => Math.abs(v - stops[i]));
 const travel = spans.reduce((a, b) => a + b, 0);
 const HOLD = 5;                      // % of the boot, per lock
-const STREAM = 54;                   // % at which the tape is done
+// Raised from 54 so the runs get a bigger share of a longer boot: the text was
+// going past at 43 lines/second, which is texture and not much else. At 62% of
+// 3.4s the runs have 1.6s for 40 lines — about 25/second, still a stream, but
+// one where a word occasionally lands before it leaves.
+const STREAM = 62;                   // % at which the tape is done
 const runBudget = STREAM - HOLD * lockIndices.length;
 
 // A stop's timing function governs the segment that STARTS there, so whether
@@ -72,7 +81,18 @@ pcts.forEach((p, i) => {
     throw new Error(`Boot.astro: keyframe stops are not increasing (${pcts[i - 1]}% then ${p}%) — the tape would jump.`);
 });
 
+// The units report after the tape has stopped, so their beats are measured
+// from where the stream ends rather than from zero.
+const after = (s: number) => ((STREAM / 100) * DUR + s).toFixed(2) + 's';
+const units = [
+  { id: 'Melchior·1', d: after(0.10) },
+  { id: 'Balthasar·2', d: after(0.26) },
+  { id: 'Casper·3', d: after(0.42) },
+];
+const tallyD = after(0.62);
+
 const css = `@keyframes boot-tape{${frames.join('')}}
+.boot{--boot-dur:${DUR}s}
 .rdo-win{height:${VIS * LH}px}
 .rdo-line{height:${LH}px;line-height:${LH}px}`;
 ---
@@ -88,10 +108,10 @@ const css = `@keyframes boot-tape{${frames.join('')}}
       </div>
     </div>
 
-    <span class="rdo-l" style="--d:1.34s"><i>Melchior·1</i><s></s><b>Online</b></span>
-    <span class="rdo-l" style="--d:1.48s"><i>Balthasar·2</i><s></s><b>Online</b></span>
-    <span class="rdo-l" style="--d:1.62s"><i>Casper·3</i><s></s><b>Online</b></span>
-    <span class="boot-f" style="--d:1.80s">3/3 Nominal</span>
+    {units.map((u) => (
+      <span class="rdo-l" style={`--d:${u.d}`}><i>{u.id}</i><s></s><b>Online</b></span>
+    ))}
+    <span class="boot-f" style={`--d:${tallyD}`}>3/3 Nominal</span>
   </div>
 </div>
 <style is:inline set:html={css}></style>
