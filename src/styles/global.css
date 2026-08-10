@@ -68,6 +68,14 @@
   --gold:#ffb000;         /* award / emphasis */
   --nominal:#00e83c;      /* structural green — grids, lines, OK states */
   --nominal-dim:rgba(0,232,60,.34);
+  /* A plate under the pointer. Deliberately NOT --nominal: that one is a status
+     the console reports, and it is also the colour of the lines that run behind
+     the plates, so a plate wearing it swallows its own connector. Picked for
+     luminance rather than hue — 0.241 against --accent's 0.244, so hovering
+     changes what a plate IS without changing how much of the panel it weighs.
+     --nominal and --gold both sit near 0.52 and make the hovered plate the
+     heaviest object on screen, which reads as an alert rather than a pointer. */
+  --armed:#0f9c2e;
   --alert:#ff1d0d;
   --punch:#000000;        /* text punched out of a filled plate */
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
@@ -394,17 +402,18 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 .plate .p-id{color:rgba(0,0,0,.6)}
 .plate .p-fn{color:var(--punch)}
 .plate .p-sub{color:rgba(0,0,0,.74)}
-/* Amber, not green. Green is load-bearing on this site: it is what the console
-   says when things are fine — the connector lines, the MAGI wordmark, 3/3
-   Approved, ONLINE in the boot, APPROVED in the deliberation. Turning a plate
-   green on hover would make hover mean "nominal", which is a status, and these
-   plates are the one thing on the panel that is navigation rather than status.
-   It would also put green plates around a green wordmark and dissolve the
-   connector lines into the shapes they run behind.
-   Amber is already the site's "this one is singled out": the award badge, the
-   tally, the A.T. field and everything on /core. And it gives the plate three
-   distinct states instead of two — accent at rest, amber armed, alert committed. */
-.plate:hover,.plate:focus-visible{--plate:var(--gold)}
+/* Green, but not the console's green. This was amber first, on the argument
+   that green is load-bearing here — it is what the console says when things are
+   fine, and a hovered plate is navigation, not status. Rendered side by side
+   that argument survived and the colour did not: --gold takes the plate from
+   luminance 0.244 to 0.523, so the plate under the pointer becomes the heaviest
+   thing in the triptych and reads as an alarm rather than as a cursor. --nominal
+   is worse on the same count, and it is also the colour of the connector lines,
+   which vanish where they cross it.
+   --armed is the resting red's own luminance in a different hue, so hover moves
+   the colour and nothing else, and the connector stays visible across it. Three
+   states, still distinct: accent at rest, green armed, alert committed. */
+.plate:hover,.plate:focus-visible{--plate:var(--armed)}
 /* The id line carries the outbound mark at its far edge — same glyph on all
    three, so making them links doesn't disturb the equal mass. */
 .p-id{font-size:.58rem;letter-spacing:.18em;font-weight:700;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
@@ -486,27 +495,27 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
    line 1px whatever the field is scaled to — including mid-animation, when it
    is at 2.4x. */
 .at-hex polygon{vector-effect:non-scaling-stroke;stroke-width:1}
-/* Both sets form together and hold — that is the wall going up. Scale is the
-   whole motion and it means something now the rings are concentric: closing in
-   IS the field asserting itself. The lattice this replaced needed rotation
-   bolted on to read as moving at all, because a tiling looks the same at every
-   size; measured then, the frames at 120ms, 175ms and 205ms were identical.
-   The second set is offset half a facet so its vertices land on the other's
-   edges and the two interleave. One keyframe drives both — the offset rides in
-   as a custom property, which substitutes inside keyframes. */
-.at-hex{--rot:0deg}
-.at-b{--rot:22.5deg}
-.at-cut[data-run] .at-a,
-.at-cut[data-run] .at-b{animation:at-form .82s steps(1,end) forwards}
+/* The field forms and holds — that is the wall going up. Scale is the whole
+   motion and it means something now the rings are concentric: closing in IS the
+   field asserting itself. The lattice this replaced needed rotation bolted on to
+   read as moving at all, because a tiling looks the same at every size; measured
+   then, the frames at 120ms, 175ms and 205ms were identical.
+   There were two sets for a while, the second turned 22.5° so its vertices sat
+   on the other's edges. Rendered side by side that turn does not read as
+   octagons at all — the corners of one land in the flats of the next and the
+   whole thing rounds off into a spirograph, which is the lattice problem
+   wearing a different hat. Growth rings share an orientation; the density that
+   turn was buying is bought instead by halving the gap in ONE set. */
+.at-cut[data-run] .at-hex{animation:at-form .82s steps(1,end) forwards}
 @keyframes at-form{
-  0%,5%{opacity:0;transform:scale(2.6) rotate(var(--rot))}
-  6%,12%{opacity:.4;transform:scale(1.9) rotate(var(--rot))}
-  13%,19%{opacity:.72;transform:scale(1.42) rotate(var(--rot))}
-  20%,26%{opacity:1;transform:scale(1.08) rotate(var(--rot))}
-  27%,33%{opacity:1;transform:scale(1) rotate(var(--rot))}      /* the wall is up */
-  34%,48%{opacity:1;transform:scale(1.05) rotate(var(--rot))}
-  49%,70%{opacity:1;transform:scale(1.14) rotate(var(--rot))}
-  71%,100%{opacity:1;transform:scale(1.26) rotate(var(--rot))}
+  0%,5%{opacity:0;transform:scale(2.6)}
+  6%,12%{opacity:.4;transform:scale(1.9)}
+  13%,19%{opacity:.72;transform:scale(1.42)}
+  20%,26%{opacity:1;transform:scale(1.08)}
+  27%,33%{opacity:1;transform:scale(1)}      /* the wall is up */
+  34%,48%{opacity:1;transform:scale(1.05)}
+  49%,70%{opacity:1;transform:scale(1.14)}
+  71%,100%{opacity:1;transform:scale(1.26)}
 }
 /* The strike, on the centre, one beat before the first ring lets go. Lances are
    filled wedges rather than strokes so they thicken as they are driven out; a
@@ -541,7 +550,11 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 .at-cut[data-run] .at-hex polygon{
   transform-box:view-box;transform-origin:50% 50%;
   animation:at-give .82s steps(1,end) forwards;
-  animation-delay:calc(var(--i,0) * 13ms);
+  /* Per RING, not per polygon — halved when the ring count doubled, so the tear
+     still crosses the field in the same ~250ms. Tied to the count it staggers:
+     at 13ms the outermost of 38 would start 481ms in and give at 817ms, two
+     frames before the overlay is gone. */
+  animation-delay:calc(var(--i,0) * 7ms);
 }
 @keyframes at-give{
   0%,38%{opacity:1;transform:scale(1)}
@@ -563,8 +576,8 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 .at-cut[data-run] .at-readout{animation:mc-show .82s steps(1,end) forwards}
 /* Each line carries its own black rather than the readout carrying one big
    radial. The radial was a hole punched in the middle of the field for the
-   whole 820ms — it blacked out the exact centre, which is where the two
-   meshes cross and the only part of this worth watching. */
+   whole 820ms — it blacked out the exact centre, which is where the strike
+   lands and the only part of this worth watching. */
 .at-readout .mc-lbl{background:var(--paper);padding:4px 13px}
 .at-stamp{display:flex;align-items:center;gap:15px;opacity:0}
 /* Lands at 42%, one beat after the innermost ring goes — so it appears IN the
