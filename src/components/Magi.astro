@@ -162,6 +162,10 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
       ones who never click. */}
   <svg class="at-hex at-a" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
   <svg class="at-hex at-b" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+  {/* The strike. The field used to come apart for no stated reason — it simply
+      began to go. This lands on the centre one beat before the first ring lets
+      go, so the collapse reads as caused rather than scheduled. */}
+  <svg class="at-hit" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
   <div class="at-readout">
     <span class="mc-lbl">A.T. Field</span>
     <span class="at-stamp"><b>中和</b><em>Neutralized</em></span>
@@ -234,6 +238,28 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
       frag.appendChild(p);
     }
     fields.forEach((m) => m.appendChild(frag.cloneNode(true)));
+
+    // The point of contact: a hot core and eight lances driven out of it.
+    // Wedges rather than strokes, because a stroked line held at 1px by
+    // non-scaling-stroke stays a hairline however hard it is meant to be
+    // hitting — the lances have to thicken as they go.
+    const hit = document.querySelector('.at-hit');
+    if (!hit) return;
+    const poly = (pts: string, cls?: string) => {
+      const e = document.createElementNS(NS, 'polygon');
+      e.setAttribute('points', pts);
+      if (cls) e.setAttribute('class', cls);
+      hit.appendChild(e);
+    };
+    for (let k = 0; k < 8; k++) {
+      const a = (k * Math.PI) / 4, d = 0.05, L = 24;
+      poly([
+        `${CX},${CY}`,
+        `${(CX + Math.cos(a - d) * L).toFixed(2)},${(CY + Math.sin(a - d) * L).toFixed(2)}`,
+        `${(CX + Math.cos(a + d) * L).toFixed(2)},${(CY + Math.sin(a + d) * L).toFixed(2)}`,
+      ].join(' '));
+    }
+    poly(unit.map(([ux, uy]) => (CX + ux * 2.4).toFixed(2) + ',' + (CY + uy * 2.4).toFixed(2)).join(' '), 'at-core');
   }
 
   function initCuts() {

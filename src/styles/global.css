@@ -381,16 +381,30 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
   stroke:var(--nominal);stroke-width:1.3;opacity:.85;
 }
 /* All three plates are identical in treatment — peers, not a hierarchy. */
+/* The fill is a token so hover can move it rather than just brighten it.
+   .plate.mc-sel still overrides outright and is declared later, so the selected
+   state during the cut wins over the pointer. */
 .plate{
   position:relative;z-index:1;   /* above the links, so it masks their ends */
   padding:11px 15px 13px;display:flex;flex-direction:column;gap:1px;
-  background:var(--accent);
-  transition:filter .2s;
+  --plate:var(--accent);
+  background:var(--plate);
+  transition:background .18s;
 }
 .plate .p-id{color:rgba(0,0,0,.6)}
 .plate .p-fn{color:var(--punch)}
 .plate .p-sub{color:rgba(0,0,0,.74)}
-.plate:hover{filter:brightness(1.14)}
+/* Amber, not green. Green is load-bearing on this site: it is what the console
+   says when things are fine — the connector lines, the MAGI wordmark, 3/3
+   Approved, ONLINE in the boot, APPROVED in the deliberation. Turning a plate
+   green on hover would make hover mean "nominal", which is a status, and these
+   plates are the one thing on the panel that is navigation rather than status.
+   It would also put green plates around a green wordmark and dissolve the
+   connector lines into the shapes they run behind.
+   Amber is already the site's "this one is singled out": the award badge, the
+   tally, the A.T. field and everything on /core. And it gives the plate three
+   distinct states instead of two — accent at rest, amber armed, alert committed. */
+.plate:hover,.plate:focus-visible{--plate:var(--gold)}
 /* The id line carries the outbound mark at its far edge — same glyph on all
    three, so making them links doesn't disturb the equal mass. */
 .p-id{font-size:.58rem;letter-spacing:.18em;font-weight:700;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
@@ -494,17 +508,46 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
   49%,70%{opacity:1;transform:scale(1.14) rotate(var(--rot))}
   71%,100%{opacity:1;transform:scale(1.26) rotate(var(--rot))}
 }
+/* The strike, on the centre, one beat before the first ring lets go. Lances are
+   filled wedges rather than strokes so they thicken as they are driven out; a
+   non-scaling-stroke line would stay a hairline however hard it is meant to be
+   hitting. */
+.at-hit{
+  position:absolute;inset:0;width:100%;height:100%;
+  fill:var(--gold);stroke:none;opacity:0;
+  transform-box:view-box;transform-origin:50% 50%;
+}
+.at-hit .at-core{fill:#fff}
+.at-cut[data-run] .at-hit{animation:at-strike .82s steps(1,end) forwards}
+@keyframes at-strike{
+  0%,29%{opacity:0;transform:scale(.18)}
+  30%,32%{opacity:1;transform:scale(.5)}    /* contact */
+  33%,36%{opacity:.9;transform:scale(1)}    /* driven through */
+  37%,41%{opacity:.4;transform:scale(1.6)}
+  42%,100%{opacity:0;transform:scale(2.4)}
+}
+
 /* And it gives from the INSIDE OUT, one ring at a time.
    The field used to vanish all at once, which reads as switched off rather than
    as breached — nothing was opened, the picture simply stopped. Staggering the
    departure by ring index means the centre clears first and the gap widens
    outward, so what the collapse leaves behind is a way through. The verdict
-   lands in the hole it makes. */
+   lands in the hole it makes.
+   A ring does not simply switch off either: it whitens for one frame and is
+   thrown outward as it goes, so the field reads as torn apart from the point of
+   contact rather than faded down. transform-box:view-box puts every ring's
+   origin on the shared centre — the default box origin would blow each one
+   apart about itself. */
 .at-cut[data-run] .at-hex polygon{
+  transform-box:view-box;transform-origin:50% 50%;
   animation:at-give .82s steps(1,end) forwards;
   animation-delay:calc(var(--i,0) * 13ms);
 }
-@keyframes at-give{0%,40%{opacity:1}41%,100%{opacity:0}}
+@keyframes at-give{
+  0%,38%{opacity:1;transform:scale(1)}
+  39%,40%{opacity:1;transform:scale(1.05);stroke:#fff}  /* the frame it gives */
+  41%,100%{opacity:0;transform:scale(1.34)}
+}
 .at-readout{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   font-family:var(--mono);display:flex;flex-direction:column;align-items:center;gap:14px;
