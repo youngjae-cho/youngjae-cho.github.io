@@ -147,21 +147,18 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
     that one's ground and wipe keyframes, swaps red for the field's amber, and
     stamps 中和 where the other stamps 可決. */}
 <div class="at-cut" id="at-cut" aria-hidden="true">
-  {/* Two fields, because that is the mechanism: a field is brought down by
-      another field, never by itself. A holds and B punches out through it.
-      It is also the only way to make this read as motion — the first cut of
-      this had one mesh scaling 1.75 → 1.28 → 1.0, and a honeycomb at 1.28x
-      looks exactly like a honeycomb at 1.0x. Two meshes crossing in opposite
-      directions cannot be mistaken for a still frame. */}
-  {/* Empty on purpose — the mesh is built by buildField() below.
+  {/* Empty on purpose — the rings are built by buildField() below.
       Authored as markup it was 1009 <polygon> nodes and 112KB of HTML on the
       one page that is the site's front door, against 8.7KB for /publications.
       None of it can ever be seen without JS either: with scripts off, clicking
       a node just navigates and no overlay exists at all. So it is dead weight
       in the document for every visitor, and dead weight twice over for the
       ones who never click. */}
-  <svg class="at-hex at-a" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
-  <svg class="at-hex at-b" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+  <svg class="at-hex" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+  {/* The strike. The field used to come apart for no stated reason — it simply
+      began to go. This lands on the centre one beat before the first ring lets
+      go, so the collapse reads as caused rather than scheduled. */}
+  <svg class="at-hit" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
   <div class="at-readout">
     <span class="mc-lbl">A.T. Field</span>
     <span class="at-stamp"><b>中和</b><em>Neutralized</em></span>
@@ -203,15 +200,23 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
   // contact, and once the rings are concentric, scaling them is no longer a
   // zoom — it is the field closing in, or coming apart.
   //
+  // Every ring keeps the SAME orientation. There was a second set turned 22.5°
+  // for a while — that was mine, not the reference's, added to make one set look
+  // denser. Rendered against an aligned one it loses the shape entirely: the
+  // corners of a turned octagon land in the flats of its neighbours and the
+  // stack rounds off into a spirograph, which is the lattice problem again in
+  // another form. Growth rings do not turn against each other, so neither do
+  // these; the density comes from a smaller gap in one set instead.
+  //
   // Radii are viewBox units against a 100-unit box that is sliced to fill the
   // viewport, so they are fractions of the long edge rather than pixels. The
   // outermost has to clear the corner of the visible region — about 59 units on
   // a 16:10 screen — and the animation pushes past that again at 2.6x.
   function buildField() {
-    const fields = document.querySelectorAll('.at-hex');
-    if (!fields.length) return;
+    const field = document.querySelector('.at-hex');
+    if (!field) return;
     const NS = 'http://www.w3.org/2000/svg';
-    const CX = 50, CY = 50, R0 = 4, GAP = 4, RINGS = 19;
+    const CX = 50, CY = 50, R0 = 4, GAP = 2, RINGS = 38;
     // Vertices at 22.5° + k·45° put a flat edge top and bottom, which is how the
     // reference's sit.
     const unit = Array.from({ length: 8 }, (_, k) => {
@@ -226,14 +231,41 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
         .map(([ux, uy]) => (CX + ux * r).toFixed(2) + ',' + (CY + uy * r).toFixed(2))
         .join(' '));
       // Falls off outward, so the figure reads as centred on something rather
-      // than as a flat pattern that happens to be round.
+      // than as a flat pattern that happens to be round. Smooth across the whole
+      // stack now it is one set — interleaving two made every other ring a step
+      // brighter than the one just inside it.
       p.setAttribute('stroke-opacity', (1 - (i / RINGS) * 0.62).toFixed(2));
       // Ring index, which the collapse staggers on: the field gives from the
       // inside out, so what it leaves behind is an opening rather than nothing.
+      // The per-ring delay in the stylesheet is tuned to RINGS — doubling the
+      // count without halving it would leave the outermost giving after the
+      // overlay has gone.
       p.style.setProperty('--i', String(i));
       frag.appendChild(p);
     }
-    fields.forEach((m) => m.appendChild(frag.cloneNode(true)));
+    field.appendChild(frag);
+
+    // The point of contact: a hot core and eight lances driven out of it.
+    // Wedges rather than strokes, because a stroked line held at 1px by
+    // non-scaling-stroke stays a hairline however hard it is meant to be
+    // hitting — the lances have to thicken as they go.
+    const hit = document.querySelector('.at-hit');
+    if (!hit) return;
+    const poly = (pts: string, cls?: string) => {
+      const e = document.createElementNS(NS, 'polygon');
+      e.setAttribute('points', pts);
+      if (cls) e.setAttribute('class', cls);
+      hit.appendChild(e);
+    };
+    for (let k = 0; k < 8; k++) {
+      const a = (k * Math.PI) / 4, d = 0.05, L = 24;
+      poly([
+        `${CX},${CY}`,
+        `${(CX + Math.cos(a - d) * L).toFixed(2)},${(CY + Math.sin(a - d) * L).toFixed(2)}`,
+        `${(CX + Math.cos(a + d) * L).toFixed(2)},${(CY + Math.sin(a + d) * L).toFixed(2)}`,
+      ].join(' '));
+    }
+    poly(unit.map(([ux, uy]) => (CX + ux * 2.4).toFixed(2) + ',' + (CY + uy * 2.4).toFixed(2)).join(' '), 'at-core');
   }
 
   function initCuts() {

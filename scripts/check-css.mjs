@@ -24,7 +24,24 @@ function walk(dir) {
   });
 }
 const files = walk('src');
-// Strip comments first — the prose in here names animations on purpose.
+
+// Comment markers must pair up. An unmatched */ leaves the prose after it
+// sitting at top level as garbage, which is a parse error that silently eats
+// the NEXT rule — that is how the per-ring collapse stopped applying while the
+// stylesheet still looked correct and every animation name still resolved.
+for (const f of files.filter((f) => f.endsWith('.css'))) {
+  const t = readFileSync(f, 'utf8');
+  const open = (t.match(/\/\*/g) || []).length;
+  const close = (t.match(/\*\//g) || []).length;
+  if (open !== close) {
+    console.error(`\n${f}: ${open} "/*" against ${close} "*/".\n` +
+      `An unmatched marker turns the prose after it into top-level garbage and\n` +
+      `the rule that follows is dropped without a warning.\n`);
+    process.exit(1);
+  }
+}
+
+// Strip comments — the prose in here names animations on purpose.
 const src = files
   .map((f) => readFileSync(f, 'utf8'))
   .join('\n')
