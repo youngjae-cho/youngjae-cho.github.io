@@ -472,39 +472,47 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
    line 1px whatever the field is scaled to — including mid-animation, when it
    is at 2.4x. */
 .at-hex polygon{vector-effect:non-scaling-stroke;stroke-width:1}
-/* Rotation is doing the work that scale could not. Every step turns as well as
-   closes, because a repeating lattice gives the eye nothing to track when it
-   only changes size — measured on the first cut of this: the frames at 120ms,
-   175ms and 205ms were indistinguishable. A few degrees between steps is
-   unmistakable on the same mesh.
-   Scale never drops below 1 while rotated, or the corners swing into frame. */
+/* Scale is the whole motion now, and it means something: the rings are
+   concentric, so shrinking them is the field closing in and growing them is it
+   coming apart. The lattice this replaced needed rotation bolted on to read as
+   moving at all — measured then, the frames at 120ms, 175ms and 205ms were
+   indistinguishable, because a tiling looks the same at every size. */
 .at-cut[data-run] .at-a{animation:at-hold .82s steps(1,end) forwards}
 @keyframes at-hold{
-  0%,5%{opacity:0;transform:scale(2.6) rotate(-9deg)}
-  6%,12%{opacity:.45;transform:scale(1.9) rotate(-6deg)}
-  13%,19%{opacity:.75;transform:scale(1.42) rotate(-3.5deg)}
-  20%,26%{opacity:1;transform:scale(1.08) rotate(-1.5deg)}
-  27%,32%{opacity:1;transform:scale(1) rotate(0deg)}   /* it holds. this is the beat */
-  33%,37%{opacity:.5;transform:scale(1.5) rotate(4deg)}  /* and gives */
-  38%,100%{opacity:0;transform:scale(2.4) rotate(8deg)}
+  0%,5%{opacity:0;transform:scale(2.6)}
+  6%,12%{opacity:.45;transform:scale(1.9)}
+  13%,19%{opacity:.75;transform:scale(1.42)}
+  20%,26%{opacity:1;transform:scale(1.08)}
+  27%,32%{opacity:1;transform:scale(1)}    /* it holds. this is the beat */
+  33%,37%{opacity:.5;transform:scale(1.5)} /* and gives */
+  38%,100%{opacity:0;transform:scale(2.4)}
 }
-/* The second field, arriving from inside and counter-turning. It carries the
-   stretch that used to be dead air: 290ms to 670ms of the old timing was one
-   frozen frame — the two screenshots were byte-identical. */
+/* The second field, punching out from the centre. Offset by half a facet, so
+   its vertices sit on the other's edges and the two read as interleaved rather
+   than as one figure drawn twice. It carries the stretch that used to be dead
+   air: 290ms to 670ms of the old timing was one frozen frame — the two
+   screenshots were byte-identical. */
 .at-cut[data-run] .at-b{animation:at-break .82s steps(1,end) forwards}
 @keyframes at-break{
-  0%,26%{opacity:0;transform:scale(.15) rotate(14deg)}
-  27%,31%{opacity:.9;transform:scale(.42) rotate(9deg)}
-  32%,36%{opacity:.8;transform:scale(.95) rotate(5deg)}
-  37%,42%{opacity:.5;transform:scale(1.7) rotate(2deg)}
-  43%,49%{opacity:.2;transform:scale(2.7) rotate(0deg)}
-  50%,100%{opacity:0;transform:scale(3.6)}
+  0%,26%{opacity:0;transform:scale(.12) rotate(22.5deg)}
+  27%,31%{opacity:.9;transform:scale(.4) rotate(22.5deg)}
+  32%,36%{opacity:.8;transform:scale(.95) rotate(22.5deg)}
+  37%,42%{opacity:.5;transform:scale(1.7) rotate(22.5deg)}
+  43%,49%{opacity:.2;transform:scale(2.7) rotate(22.5deg)}
+  50%,100%{opacity:0;transform:scale(3.6) rotate(22.5deg)}
 }
 .at-readout{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   font-family:var(--mono);display:flex;flex-direction:column;align-items:center;gap:14px;
   white-space:nowrap;opacity:0;
 }
+/* Lives here because this is now its only consumer. It was defined over in the
+   .magi-cut block and got deleted with the markup it belonged to, while this
+   line kept referring to it — so the field cut lost its label AND its 中和
+   stamp, which sits inside the readout and was being hidden by the parent's
+   opacity:0 despite running its own animation perfectly. A dangling
+   @keyframes reference is silent: the animation simply does not apply. */
+@keyframes mc-show{0%,5%{opacity:0}6%,78%{opacity:1}79%,100%{opacity:0}}
 .at-cut[data-run] .at-readout{animation:mc-show .82s steps(1,end) forwards}
 /* Each line carries its own black rather than the readout carrying one big
    radial. The radial was a hole punched in the middle of the field for the
