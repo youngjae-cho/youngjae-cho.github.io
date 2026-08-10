@@ -472,35 +472,39 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
    line 1px whatever the field is scaled to — including mid-animation, when it
    is at 2.4x. */
 .at-hex polygon{vector-effect:non-scaling-stroke;stroke-width:1}
-/* Scale is the whole motion now, and it means something: the rings are
-   concentric, so shrinking them is the field closing in and growing them is it
-   coming apart. The lattice this replaced needed rotation bolted on to read as
-   moving at all — measured then, the frames at 120ms, 175ms and 205ms were
-   indistinguishable, because a tiling looks the same at every size. */
-.at-cut[data-run] .at-a{animation:at-hold .82s steps(1,end) forwards}
-@keyframes at-hold{
-  0%,5%{opacity:0;transform:scale(2.6)}
-  6%,12%{opacity:.45;transform:scale(1.9)}
-  13%,19%{opacity:.75;transform:scale(1.42)}
-  20%,26%{opacity:1;transform:scale(1.08)}
-  27%,32%{opacity:1;transform:scale(1)}    /* it holds. this is the beat */
-  33%,37%{opacity:.5;transform:scale(1.5)} /* and gives */
-  38%,100%{opacity:0;transform:scale(2.4)}
+/* Both sets form together and hold — that is the wall going up. Scale is the
+   whole motion and it means something now the rings are concentric: closing in
+   IS the field asserting itself. The lattice this replaced needed rotation
+   bolted on to read as moving at all, because a tiling looks the same at every
+   size; measured then, the frames at 120ms, 175ms and 205ms were identical.
+   The second set is offset half a facet so its vertices land on the other's
+   edges and the two interleave. One keyframe drives both — the offset rides in
+   as a custom property, which substitutes inside keyframes. */
+.at-hex{--rot:0deg}
+.at-b{--rot:22.5deg}
+.at-cut[data-run] .at-a,
+.at-cut[data-run] .at-b{animation:at-form .82s steps(1,end) forwards}
+@keyframes at-form{
+  0%,5%{opacity:0;transform:scale(2.6) rotate(var(--rot))}
+  6%,12%{opacity:.4;transform:scale(1.9) rotate(var(--rot))}
+  13%,19%{opacity:.72;transform:scale(1.42) rotate(var(--rot))}
+  20%,26%{opacity:1;transform:scale(1.08) rotate(var(--rot))}
+  27%,33%{opacity:1;transform:scale(1) rotate(var(--rot))}      /* the wall is up */
+  34%,48%{opacity:1;transform:scale(1.05) rotate(var(--rot))}
+  49%,70%{opacity:1;transform:scale(1.14) rotate(var(--rot))}
+  71%,100%{opacity:1;transform:scale(1.26) rotate(var(--rot))}
 }
-/* The second field, punching out from the centre. Offset by half a facet, so
-   its vertices sit on the other's edges and the two read as interleaved rather
-   than as one figure drawn twice. It carries the stretch that used to be dead
-   air: 290ms to 670ms of the old timing was one frozen frame — the two
-   screenshots were byte-identical. */
-.at-cut[data-run] .at-b{animation:at-break .82s steps(1,end) forwards}
-@keyframes at-break{
-  0%,26%{opacity:0;transform:scale(.12) rotate(22.5deg)}
-  27%,31%{opacity:.9;transform:scale(.4) rotate(22.5deg)}
-  32%,36%{opacity:.8;transform:scale(.95) rotate(22.5deg)}
-  37%,42%{opacity:.5;transform:scale(1.7) rotate(22.5deg)}
-  43%,49%{opacity:.2;transform:scale(2.7) rotate(22.5deg)}
-  50%,100%{opacity:0;transform:scale(3.6) rotate(22.5deg)}
+/* And it gives from the INSIDE OUT, one ring at a time.
+   The field used to vanish all at once, which reads as switched off rather than
+   as breached — nothing was opened, the picture simply stopped. Staggering the
+   departure by ring index means the centre clears first and the gap widens
+   outward, so what the collapse leaves behind is a way through. The verdict
+   lands in the hole it makes. */
+.at-cut[data-run] .at-hex polygon{
+  animation:at-give .82s steps(1,end) forwards;
+  animation-delay:calc(var(--i,0) * 13ms);
 }
+@keyframes at-give{0%,40%{opacity:1}41%,100%{opacity:0}}
 .at-readout{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   font-family:var(--mono);display:flex;flex-direction:column;align-items:center;gap:14px;
@@ -520,13 +524,14 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
    meshes cross and the only part of this worth watching. */
 .at-readout .mc-lbl{background:var(--paper);padding:4px 13px}
 .at-stamp{display:flex;align-items:center;gap:15px;opacity:0}
-/* Lands at 36%, on the frame the field gives — not at 26% like the other cut,
+/* Lands at 42%, one beat after the innermost ring goes — so it appears IN the
+   opening rather than on top of an intact wall. Not at 26% like the other cut,
    where it would be stamping a verdict on a barrier that is still holding. */
 .at-cut[data-run] .at-stamp{animation:at-stamp-in .82s steps(1,end) forwards}
 @keyframes at-stamp-in{
-  0%,35%{opacity:0;transform:scale(1.5)}
-  36%,41%{opacity:1;transform:scale(1.14)}
-  42%,100%{opacity:1;transform:scale(1)}
+  0%,41%{opacity:0;transform:scale(1.5)}
+  42%,47%{opacity:1;transform:scale(1.14)}
+  48%,100%{opacity:1;transform:scale(1)}
 }
 .at-stamp b{
   font-family:var(--jp);font-size:1.9rem;line-height:1;color:var(--gold);

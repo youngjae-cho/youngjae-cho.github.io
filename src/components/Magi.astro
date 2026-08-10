@@ -228,6 +228,9 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
       // Falls off outward, so the figure reads as centred on something rather
       // than as a flat pattern that happens to be round.
       p.setAttribute('stroke-opacity', (1 - (i / RINGS) * 0.62).toFixed(2));
+      // Ring index, which the collapse staggers on: the field gives from the
+      // inside out, so what it leaves behind is an opening rather than nothing.
+      p.style.setProperty('--i', String(i));
       frag.appendChild(p);
     }
     fields.forEach((m) => m.appendChild(frag.cloneNode(true)));
