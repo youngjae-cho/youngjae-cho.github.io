@@ -517,23 +517,32 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
   49%,70%{opacity:1;transform:scale(1.14)}
   71%,100%{opacity:1;transform:scale(1.26)}
 }
-/* The strike, on the centre, one beat before the first ring lets go. Lances are
-   filled wedges rather than strokes so they thicken as they are driven out; a
-   non-scaling-stroke line would stay a hairline however hard it is meant to be
-   hitting. */
+/* The strike, on the centre, one beat before the first ring lets go. One point,
+   no starburst: eight lances used to be driven out of here, and they arrived as
+   a second figure laid over the rings at the exact moment the rings became the
+   thing to watch — pulling the eye outward along the spikes while the tear they
+   were meant to explain opens inward. */
 .at-hit{
   position:absolute;inset:0;width:100%;height:100%;
-  fill:var(--gold);stroke:none;opacity:0;
+  fill:none;stroke:none;opacity:0;
   transform-box:view-box;transform-origin:50% 50%;
 }
 .at-hit .at-core{fill:#fff}
 .at-cut[data-run] .at-hit{animation:at-strike .82s steps(1,end) forwards}
+/* Carries the whole strike now the lances are gone, so it travels further than
+   it did as their hub — out to 2.6x rather than 2.4x, and from a 3-unit octagon
+   rather than 2.4. Out at 39%, the frame the first ring gives: the flash ends as
+   the tear starts, which is the causal order, and it also gets the core off the
+   screen before it grows past the label. Held dim and large it did not read as
+   light — a half-opacity white octagon is a grey solid, and the label's own
+   black plate cut a rectangular notch out of it, the same artifact the core
+   node's background used to cut in the connector lines. */
 @keyframes at-strike{
-  0%,29%{opacity:0;transform:scale(.18)}
-  30%,32%{opacity:1;transform:scale(.5)}    /* contact */
-  33%,36%{opacity:.9;transform:scale(1)}    /* driven through */
-  37%,41%{opacity:.4;transform:scale(1.6)}
-  42%,100%{opacity:0;transform:scale(2.4)}
+  0%,29%{opacity:0;transform:scale(.2)}
+  30%,32%{opacity:1;transform:scale(.6)}    /* contact */
+  33%,36%{opacity:.9;transform:scale(1.2)}  /* driven through */
+  37%,38%{opacity:.35;transform:scale(1.8)}
+  39%,100%{opacity:0;transform:scale(2.6)}
 }
 
 /* And it gives from the INSIDE OUT, one ring at a time.
