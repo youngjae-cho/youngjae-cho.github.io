@@ -155,9 +155,9 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
       in the document for every visitor, and dead weight twice over for the
       ones who never click. */}
   <svg class="at-hex" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
-  {/* The strike. The field used to come apart for no stated reason — it simply
-      began to go. This lands on the centre one beat before the first ring lets
-      go, so the collapse reads as caused rather than scheduled. */}
+  {/* The strike: one point, lighting on the centre one beat before the first
+      ring lets go, so the collapse reads as caused rather than scheduled. The
+      field used to come apart for no stated reason — it simply began to go. */}
   <svg class="at-hit" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
   <div class="at-readout">
     <span class="mc-lbl">A.T. Field</span>
@@ -245,27 +245,22 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
     }
     field.appendChild(frag);
 
-    // The point of contact: a hot core and eight lances driven out of it.
-    // Wedges rather than strokes, because a stroked line held at 1px by
-    // non-scaling-stroke stays a hairline however hard it is meant to be
-    // hitting — the lances have to thicken as they go.
+    // The point of contact, and nothing else. There were eight lances driven out
+    // of it — a starburst, which put a second figure over the rings at the exact
+    // moment the rings became the thing worth watching, and drew the eye outward
+    // along the spikes while the tear it was supposed to explain opens inward.
+    // A field is breached at a point. The point is enough: it lights, the rings
+    // whiten as they let go, and the collapse still reads as caused.
     const hit = document.querySelector('.at-hit');
     if (!hit) return;
-    const poly = (pts: string, cls?: string) => {
-      const e = document.createElementNS(NS, 'polygon');
-      e.setAttribute('points', pts);
-      if (cls) e.setAttribute('class', cls);
-      hit.appendChild(e);
-    };
-    for (let k = 0; k < 8; k++) {
-      const a = (k * Math.PI) / 4, d = 0.05, L = 24;
-      poly([
-        `${CX},${CY}`,
-        `${(CX + Math.cos(a - d) * L).toFixed(2)},${(CY + Math.sin(a - d) * L).toFixed(2)}`,
-        `${(CX + Math.cos(a + d) * L).toFixed(2)},${(CY + Math.sin(a + d) * L).toFixed(2)}`,
-      ].join(' '));
-    }
-    poly(unit.map(([ux, uy]) => (CX + ux * 2.4).toFixed(2) + ',' + (CY + uy * 2.4).toFixed(2)).join(' '), 'at-core');
+    const core = document.createElementNS(NS, 'polygon');
+    // Same eight facets as the rings, so what strikes the field is the same
+    // shape as the field — one octagon, at the centre, going the other way.
+    core.setAttribute('points', unit
+      .map(([ux, uy]) => (CX + ux * 3).toFixed(2) + ',' + (CY + uy * 3).toFixed(2))
+      .join(' '));
+    core.setAttribute('class', 'at-core');
+    hit.appendChild(core);
   }
 
   function initCuts() {
