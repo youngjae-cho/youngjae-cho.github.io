@@ -58,14 +58,20 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
 
     <a class="plate p-top" href={top.href}
        aria-label={`${top.fn} — ${top.to}`}>
-      <span class="p-id">{top.id}<span class="p-out" aria-hidden="true">→</span></span>
+      <svg class="p-frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <polygon points="7.4,5 92.6,5 98.4,95 1.6,95" vector-effect="non-scaling-stroke" />
+      </svg>
+      <span class="p-id"><span>{top.id}</span><span class="p-meta" aria-hidden="true"><span class="p-unit">01</span><span class="p-out">→</span></span></span>
       <span class="p-fn">{top.fn}</span>
       <span class="p-sub">{top.sub}</span>
     </a>
 
     <a class="plate p-left" href={left.href}
        aria-label={`${left.fn} — ${left.to}`}>
-      <span class="p-id">{left.id}<span class="p-out" aria-hidden="true">→</span></span>
+      <svg class="p-frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <polygon points="1.6,5 97.6,5 88.6,95 1.6,95" vector-effect="non-scaling-stroke" />
+      </svg>
+      <span class="p-id"><span>{left.id}</span><span class="p-meta" aria-hidden="true"><span class="p-unit">02</span><span class="p-out">→</span></span></span>
       <span class="p-fn">{left.fn}</span>
       <span class="p-sub">{left.sub}</span>
     </a>
@@ -96,7 +102,10 @@ const right = { id: 'CASPER·3', fn: 'Product', sub: 'Auto-labeling · synthesis
 
     <a class="plate p-right" href={right.href}
        aria-label={`${right.fn} — ${right.to}`}>
-      <span class="p-id">{right.id}<span class="p-out" aria-hidden="true">→</span></span>
+      <svg class="p-frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <polygon points="2.4,5 98.4,5 98.4,95 11.4,95" vector-effect="non-scaling-stroke" />
+      </svg>
+      <span class="p-id"><span>{right.id}</span><span class="p-meta" aria-hidden="true"><span class="p-unit">03</span><span class="p-out">→</span></span></span>
       <span class="p-fn">{right.fn}</span>
       <span class="p-sub">{right.sub}</span>
     </a>

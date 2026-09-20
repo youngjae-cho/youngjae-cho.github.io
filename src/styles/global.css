@@ -51,6 +51,15 @@
   src:url('/fonts/shippori-mincho-b1-800-jp.woff2') format('woff2');
   unicode-range:U+53EF,U+6C7A,U+4E2D,U+548C;
 }
+/* Condensed, heavy lettering only for the three MAGI function labels.
+   Self-hosted from Google Fonts; license in public/fonts/BarlowCondensed-OFL.txt. */
+@font-face{
+  font-family:'Barlow Condensed';
+  font-style:normal;
+  font-weight:800;
+  font-display:swap;
+  src:url('/fonts/barlow-condensed-800.woff2') format('woff2');
+}
 
 :root{
   --paper:#000000;        /* pure black. the reference has no other ground */
@@ -284,7 +293,7 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 @media(min-width:561px){
   .magi-panel .magi-bar{font-size:.68rem}
   .magi-panel .p-id{font-size:.62rem}
-  .magi-panel .p-fn{font-size:1.22rem}
+  .magi-panel .p-fn{font-size:1.7rem}
   .magi-panel .p-sub{font-size:.62rem}
   .magi-panel .magi-core{font-size:.92rem}
 }
@@ -339,15 +348,8 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 .links a .dot{width:5px;height:5px;background:var(--accent);flex:none}
 
 /* ===== MAGI triptych — raked plates, text punched out of filled colour =====
-   Type here is the plain system mono. Two dot-matrix treatments were tried and
-   both are gone: a repeating radial-gradient through background-clip:text
-   (a hack that lost on specificity and washed out at actual size), and then
-   DotGothic16, a real bitmap face. Each one read correctly as hardware and
-   each one made the panel worse to actually read — the display feel is carried
-   by the palette, the plates and the rules, and it doesn't need the lettering
-   to carry it too.
-
-   The rules keep their dot gradient: those are marks, not type. */
+   Mono identifiers sit above a ruled division; the larger condensed function
+   names read as instrument labels. The rules keep their dot gradient. */
 .magi{font-family:var(--mono);background:var(--paper);padding:2px 0 0}
 .magi-bar{
   display:flex;align-items:center;gap:12px;margin-bottom:14px;
@@ -399,9 +401,12 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
   background:var(--plate);
   transition:background .18s;
 }
-.plate .p-id{color:rgba(0,0,0,.6)}
+.plate .p-id{color:rgba(0,0,0,.82)}
 .plate .p-fn{color:var(--punch)}
 .plate .p-sub{color:rgba(0,0,0,.74)}
+/* An inset follows each plate's existing rake. SVG keeps the hairline at one
+   pixel as the three plates change width; it never intercepts a link click. */
+.p-frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;fill:none;stroke:var(--punch);stroke-width:1;opacity:.52}
 /* Green, but not the console's green. This was amber first, on the argument
    that green is load-bearing here — it is what the console says when things are
    fine, and a hovered plate is navigation, not status. Rendered side by side
@@ -416,10 +421,19 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 .plate:hover,.plate:focus-visible{--plate:var(--armed)}
 /* The id line carries the outbound mark at its far edge — same glyph on all
    three, so making them links doesn't disturb the equal mass. */
-.p-id{font-size:.58rem;letter-spacing:.18em;font-weight:700;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.p-id{
+  font-size:.58rem;letter-spacing:.14em;font-weight:700;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  border-bottom:1px solid rgba(0,0,0,.65);padding-bottom:4px;margin-bottom:5px;
+}
+.p-meta{display:flex;align-items:center;gap:7px;flex:none}
+.p-unit{background:var(--punch);color:var(--plate);padding:1px 3px;font-size:.6rem;line-height:1.3;letter-spacing:.02em;font-variant-numeric:tabular-nums}
 .p-out{letter-spacing:0;opacity:.5}
 .plate:hover .p-out{opacity:.85}
-.p-fn{font-size:1rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;line-height:1.25}
+.p-fn{
+  font-family:'Barlow Condensed','Arial Narrow',var(--sans);
+  font-size:1.5rem;font-weight:800;letter-spacing:.055em;text-transform:uppercase;line-height:1;
+}
 .p-sub{font-size:.58rem;letter-spacing:.03em;line-height:1.45;margin-top:3px}
 
 /* Top point: centred over the pair. Kept narrow — at full width it stopped
@@ -427,19 +441,19 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 .plate.p-top{
   grid-column:1 / -1;justify-self:center;width:min(100%,54%);
   clip-path:polygon(6% 0,94% 0,100% 100%,0 100%);
-  padding-left:20px;padding-right:20px;
+  padding-left:30px;padding-right:30px;
 }
 /* Lower points: each rakes its INNER edge toward the centre, so the pair leans
    in on the wordmark instead of sitting as two parallel bricks. */
 .plate.p-left{
   grid-column:1 / 2;
   clip-path:polygon(0 0,100% 0,90% 100%,0 100%);
-  padding-right:28px;
+  padding-right:34px;
 }
 .plate.p-right{
   grid-column:2 / 3;
   clip-path:polygon(0 0,100% 0,100% 100%,10% 100%);
-  padding-left:28px;
+  padding-left:34px;
 }
 /* The wordmark sits at the centre of the figure, above the links, with the
    page ground behind it so the links read as passing behind rather than
@@ -622,12 +636,14 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 @media(max-width:560px){
   .magi-tri{gap:30px 22px}
   .plate{padding:8px 10px 9px}
-  .plate.p-top{width:min(100%,62%);padding-left:14px;padding-right:14px}
+  .plate.p-top{width:min(100%,62%);padding-left:20px;padding-right:20px}
   .plate.p-left{padding-right:18px}
-  .plate.p-right{padding-left:18px}
+  .plate.p-right{padding-left:22px}
   .p-sub{display:none}
-  .p-id{font-size:.5rem;letter-spacing:.12em}
-  .p-fn{font-size:.78rem;letter-spacing:.08em}
+  .p-id{font-size:.5625rem;letter-spacing:.06em;gap:5px;padding-bottom:3px;margin-bottom:4px}
+  .p-meta{gap:4px}
+  .p-unit{font-size:.5625rem;padding:1px 2px}
+  .p-fn{font-size:1.125rem;letter-spacing:.025em}
   /* Wider than the old rectangle needed. A hexagon's straight edge is only the
      middle 82% of its box — the points eat the rest — so 7px of padding left
      the wordmark 2.5px from a sloping corner. Measured: 36.7px of text in a
@@ -637,6 +653,7 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
   .magi-bar{gap:8px;font-size:.58rem}
   .magi-clock{letter-spacing:.06em}
 }
+@media(max-width:360px){.plate .p-out{display:none}}
 
 /* ===== the cut ===== */
 /* Everything is steps() on purpose. An ease reads as a web page transitioning;
