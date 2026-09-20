@@ -4,35 +4,14 @@
    RGB primaries, no midtones in the chrome. Signal elements are FILLED
    plates with black text punched out of them — not outlined boxes.
    Flat only: no gradients, no blur, no rounded corners, no shadows.
-   Long-form copy is the one exception; it stays legible grey.
+   Long-form copy uses a restrained phosphor tint and comfortable line spacing.
    ============================================================ */
-/* ---- the two faces the console owns ----
-   Everything else stays on the operating system's own type. Body copy is the
-   part that has to be read, and the OS ships the face it hinted and spaced for
-   its own screens; nothing self-hosted beats that. So only the two places
-   where the lettering IS the instrument get a file of their own.
-
-   Azeret Mono carries the chrome. It matters because the mono is not a detail
-   here — var(--mono) is on 31 rules against var(--sans)'s 1, so the console's
-   whole voice was being set by a stack that resolves to a DIFFERENT face on
-   every platform: SF Mono on a Mac, Cascadia on Windows, Roboto Mono on
-   Android. One variable file at 26KB fixes the identity in place, and being
-   variable it carries a real 800 — the weight nine of those rules ask for, and
-   the reason a 400/700 face like Space Mono or a single-weight one like Share
-   Tech Mono could not take the job without the browser faking the bold.
-
-   Shippori Mincho B1 carries four glyphs and no more: 可決, the verdict the
-   work cut stamps, and 中和, the one the field cut stamps. Japanese display
-   type here is a Mincho — heavy vertical stress, chisel serifs — not the brush
-   scripts that get filed under "anime font"; the reference's own title cards
-   are set in Matisse EB, a Mincho. Every system fallback is a GOTHIC, so those
-   stamps would otherwise render in the same sans as a button label. Subset to
-   the four codepoints actually used, the file is 2KB — the two extra glyphs
-   cost 540 bytes, which is what subsetting is for.
-
-   Neither file covers the symbol marks — the ▸ ■ ▼ ★ → ✓ ✕ the chrome draws
-   with. Those fall through to the stacks below on a per-glyph basis and render
-   exactly as they do now; the fallback list is load-bearing, not decoration. */
+/* ---- console typography ----
+   Azeret Mono sets identifiers and prose; its variable weights distinguish
+   labels, normal sentences, and emphasis. Barlow Condensed carries identity,
+   page headings, and the three MAGI functions. Shippori Mincho B1 is reserved
+   for the four verdict glyphs 可決 / 中和. The system stacks retain coverage
+   for symbols, Korean titles, and the print-friendly résumé. */
 @font-face{
   font-family:'Azeret Mono';
   font-style:normal;
@@ -51,7 +30,7 @@
   src:url('/fonts/shippori-mincho-b1-800-jp.woff2') format('woff2');
   unicode-range:U+53EF,U+6C7A,U+4E2D,U+548C;
 }
-/* Condensed, heavy lettering only for the three MAGI function labels.
+/* Condensed, heavy lettering for identity, page headings, and MAGI labels.
    Self-hosted from Google Fonts; license in public/fonts/BarlowCondensed-OFL.txt. */
 @font-face{
   font-family:'Barlow Condensed';
@@ -89,6 +68,8 @@
   --punch:#000000;        /* text punched out of a filled plate */
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
   --mono:'Azeret Mono',ui-monospace,"SF Mono",SFMono-Regular,Menlo,Monaco,"Cascadia Code","Roboto Mono",monospace;
+  --display:'Barlow Condensed','Arial Narrow',var(--sans);
+  --readout:#bcc8b6;       /* quiet phosphor tint for prose on the console */
   /* The stamp's face, applied at exactly one site. Kept as a token rather than
      inlined so the fallback chain is stated once: if the 1.5KB file never
      arrives, 可決 lands on the platform gothic, which is where it is today. */
@@ -320,17 +301,19 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 }
 @media(max-width:760px){.avatar{width:clamp(76px,9vh,92px);height:clamp(76px,9vh,92px)}}
 .intro-panel h1{
+  font-family:var(--display);text-transform:uppercase;
   font-size:clamp(2rem,min(7.6vw,8.4vh),5.2rem);
-  font-weight:800;letter-spacing:-.03em;line-height:.94;
+  font-weight:800;letter-spacing:.025em;line-height:.94;
   margin:clamp(6px,1.5vh,17px) 0 clamp(8px,1.7vh,19px);text-wrap:balance;
 }
 .thesis{
-  font-size:clamp(1rem,min(2.3vw,2.7vh),1.55rem);
-  font-weight:550;line-height:1.34;color:var(--ink);
-  max-width:22ch;letter-spacing:-.008em;
+  font-family:var(--mono);font-size:clamp(1rem,min(2vw,2.5vh),1.24rem);
+  font-weight:450;line-height:1.5;color:var(--readout);
+  max-width:30ch;letter-spacing:-.025em;
+  border-left:2px solid var(--nominal-dim);padding-left:14px;
 }
 .thesis b{color:var(--accent);font-weight:650}
-.lede{margin-top:clamp(12px,2vh,18px);max-width:52ch;color:var(--ink-2);font-size:.98rem}
+.lede{margin-top:clamp(12px,2vh,18px);max-width:58ch;color:var(--readout);font-family:var(--mono);font-size:.875rem;line-height:1.75;letter-spacing:-.02em}
 .lede b{color:var(--accent-ink);font-weight:650}
 .affil{margin-top:clamp(12px,2vh,18px);font-family:var(--mono);font-size:.78rem;color:var(--ink-2);letter-spacing:.02em}
 .affil a{color:var(--ink);border-bottom:1px solid var(--line)}
@@ -431,7 +414,7 @@ body:not(.no-nav) [id]{scroll-margin-top:calc(var(--nav-h) + 18px)}
 .p-out{letter-spacing:0;opacity:.5}
 .plate:hover .p-out{opacity:.85}
 .p-fn{
-  font-family:'Barlow Condensed','Arial Narrow',var(--sans);
+  font-family:var(--display);
   font-size:1.5rem;font-weight:800;letter-spacing:.055em;text-transform:uppercase;line-height:1;
 }
 .p-sub{font-size:.58rem;letter-spacing:.03em;line-height:1.45;margin-top:3px}
@@ -798,8 +781,8 @@ section.block::after{
 .block.summary{padding:46px 0}
 .block.summary .head{margin-bottom:0}
 .head{display:flex;flex-direction:column;gap:14px;margin-bottom:36px;max-width:62ch}
-.head h2{font-size:clamp(1.6rem,3.2vw,2.15rem);font-weight:750;letter-spacing:-.02em;line-height:1.08;text-wrap:balance;margin:0}
-.head p{color:var(--ink-2);font-size:1.02rem;margin:0}
+.head h2{font-family:var(--display);font-size:clamp(1.8rem,3.2vw,2.3rem);font-weight:800;letter-spacing:.04em;text-transform:uppercase;line-height:1.08;text-wrap:balance;margin:0}
+.head p{color:var(--readout);font-family:var(--mono);font-size:.875rem;line-height:1.75;letter-spacing:-.02em;margin:0}
 .head em{color:var(--accent-ink);font-style:normal}
 
 /* page header (inner pages) */
@@ -852,13 +835,13 @@ section.block::after{
 /* Card index. Zero-padded and monospaced so the column never shifts. */
 .idx{
   font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap;
+  color:var(--nominal);font-variant-numeric:tabular-nums;white-space:nowrap;
 }
 .case-meta > .idx{align-self:flex-start}
 
 .page-head{padding:76px 0 8px}
-.page-head h1{font-size:clamp(2rem,4.6vw,3rem);font-weight:800;letter-spacing:-.028em;line-height:1;margin:.3em 0 0;text-wrap:balance}
-.page-head .intro{margin-top:18px;max-width:60ch;color:var(--ink-2);font-size:1.02rem}
+.page-head h1{font-family:var(--display);font-size:clamp(2.4rem,5.5vw,3.5rem);font-weight:800;letter-spacing:.04em;text-transform:uppercase;line-height:1;margin:.3em 0 0;text-wrap:balance}
+.page-head .intro{margin-top:18px;max-width:72ch;color:var(--readout);font-family:var(--mono);font-size:.9rem;line-height:1.75;letter-spacing:-.02em}
 
 /* ===== research cards ===== */
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -878,7 +861,8 @@ section.block::after{
 .card:hover{border-color:#2c3a49;background:var(--card-2)}
 .card:hover::before,.card:hover::after{opacity:1}
 .card.feature{grid-column:1 / -1}
-.card-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--nominal-dim);padding-bottom:12px;margin-bottom:4px}
+.card-top .status{font-family:var(--mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--readout)}
 /* Signal badges are filled plates with the label punched out in black — the
    reference never outlines a status block. Muted ones stay outlined. */
 .badge{
@@ -889,10 +873,10 @@ section.block::after{
 .badge.alt{background:transparent;border:1px solid var(--nominal);color:var(--nominal);font-weight:600}
 .role-tag{font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-left:auto}
 .role-tag.first{color:var(--gold)}
-.card h3{font-size:1.28rem;font-weight:700;letter-spacing:-.015em;line-height:1.2;margin:0}
-.card.feature h3{font-size:clamp(1.45rem,2.8vw,1.9rem)}
+.card h3{font-family:var(--mono);font-size:1.05rem;font-weight:650;letter-spacing:-.035em;line-height:1.45;margin:0;overflow-wrap:anywhere}
+.card.feature h3{font-size:clamp(1.25rem,2.2vw,1.55rem)}
 .acro{font-family:var(--mono);color:var(--accent);letter-spacing:.02em}
-.card p{color:var(--ink-2);font-size:.96rem;margin:0;max-width:62ch}
+.card p{color:var(--readout);font-family:var(--mono);font-size:.875rem;line-height:1.75;letter-spacing:-.02em;margin:0;max-width:72ch}
 .card p b{color:var(--ink)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
 .chip{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;color:var(--ink-2);background:var(--panel);border:1px solid var(--line-2);padding:4px 9px;font-variant-numeric:tabular-nums}
@@ -910,16 +894,16 @@ section.block::after{
 @media(max-width:780px){.case-grid{grid-template-columns:1fr}}
 .case-meta{padding:26px;border-right:1px solid var(--line-2);display:flex;flex-direction:column;gap:13px;background:var(--panel)}
 @media(max-width:780px){.case-meta{border-right:0;border-bottom:1px solid var(--line-2)}}
-.case-meta h3{font-size:1.24rem;font-weight:700;letter-spacing:-.015em;line-height:1.24;margin:0}
-.case .prob{color:var(--ink-2);font-size:.94rem;margin:0;line-height:1.55}
+.case-meta h3{font-family:var(--mono);font-size:1.1rem;font-weight:650;letter-spacing:-.035em;line-height:1.45;margin:0;overflow-wrap:anywhere}
+.case .prob{color:var(--readout);font-family:var(--mono);font-size:.875rem;margin:0;line-height:1.75;letter-spacing:-.02em}
 .case .result{margin-top:auto;font-family:var(--mono);font-size:.75rem;color:var(--accent-ink);display:flex;gap:9px;line-height:1.55}
 .case .result::before{content:"\25b8";color:var(--accent);flex:none}
 .case .result b{color:var(--gold)}
 .case-body{padding:26px;display:flex;flex-direction:column;gap:15px}
-.micro-label{font-family:var(--mono);font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
+.micro-label{font-family:var(--mono);font-size:.6875rem;letter-spacing:.16em;text-transform:uppercase;color:var(--nominal)}
 .micro-label::before{content:"// ";color:var(--accent)}
 .approach{list-style:none;display:flex;flex-direction:column;gap:12px;margin:0;padding:0}
-.approach li{position:relative;padding-left:20px;font-size:.94rem;color:var(--ink-2);line-height:1.58}
+.approach li{position:relative;padding-left:20px;font-family:var(--mono);font-size:.875rem;color:var(--readout);line-height:1.75;letter-spacing:-.02em}
 .approach li::before{content:"";position:absolute;left:0;top:.66em;width:8px;height:1.5px;background:var(--accent)}
 .approach b{font-weight:650;color:var(--ink)}
 .approach .m{font-family:var(--mono);font-size:.86em;color:var(--accent-ink)}
@@ -957,7 +941,7 @@ footer{padding:74px 0 44px}
 
 /* ===== publication metadata ===== */
 /* Status sits next to the venue badge so the pair reads as one fact. */
-.authors{font-size:.84rem;color:var(--ink-3);line-height:1.5;margin:-4px 0 0;max-width:70ch}
+.card .authors{font-size:.8125rem;color:var(--ink-2);line-height:1.65;margin:-4px 0 0;max-width:76ch}
 .authors b{color:var(--ink-2);font-weight:650}
 /* The lever the paper pulls on data efficiency — the research throughline.
    Reads as a console readout tag: amber rule, mono, uppercase. */
@@ -1075,8 +1059,8 @@ html[data-boot] .boot-in > *{animation:boot-line var(--boot-dur,2.4s) steps(1,en
   color:var(--ink-2);border:1px solid var(--line);padding:3px 10px;
 }
 .wip-id{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
-.wip-row h3{margin:0;font-size:1.05rem;font-weight:700;letter-spacing:-.015em}
-.wip-q{margin:7px 0 0;color:var(--ink-2);font-size:.93rem;line-height:1.5;max-width:60ch}
+.wip-row h3{margin:0;font-family:var(--mono);font-size:1.05rem;font-weight:650;letter-spacing:-.035em}
+.wip-q{margin:7px 0 0;color:var(--readout);font-family:var(--mono);font-size:.875rem;line-height:1.75;letter-spacing:-.02em;max-width:72ch}
 .wip-redact{display:flex;flex-direction:column;gap:6px;margin-top:15px;max-width:60ch}
 .wip-redact i{height:9px;background:var(--line-2);display:block}
 .wip-redact i:nth-child(2){width:88%}
@@ -1088,7 +1072,7 @@ html[data-boot] .boot-in > *{animation:boot-line var(--boot-dur,2.4s) steps(1,en
 
 /* ===== case study: scope of credit ===== */
 .ownership{
-  margin:0;font-size:.88rem;color:var(--ink-2);line-height:1.5;
+  margin:0;font-family:var(--mono);font-size:.8125rem;color:var(--ink-2);line-height:1.7;letter-spacing:-.02em;
   border-left:2px solid var(--line);padding-left:11px;
 }
 
@@ -1116,9 +1100,9 @@ html[data-boot] .boot-in > *{animation:boot-line var(--boot-dur,2.4s) steps(1,en
   font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
   color:var(--ink-3);margin-left:auto;
 }
-.offd h2{margin:14px 0 0;font-size:1.5rem;font-weight:750;letter-spacing:-.02em;line-height:1.15}
+.offd h2{margin:14px 0 0;font-family:var(--mono);font-size:1.25rem;font-weight:650;letter-spacing:-.035em;line-height:1.4}
 .offd h2 a:hover{color:var(--accent-ink)}
-.offd > p{margin:10px 0 0;color:var(--ink-2);font-size:.96rem;line-height:1.6}
+.offd > p{margin:10px 0 0;color:var(--readout);font-family:var(--mono);font-size:.875rem;line-height:1.75;letter-spacing:-.02em}
 .offd .more{margin-top:18px;text-transform:none;letter-spacing:.06em}
 
 /* The evidence. Rows are hairline-separated rather than boxed — two counts and
