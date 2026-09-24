@@ -2,9 +2,9 @@
 //
 // Metadata rule — keep these three in lockstep everywhere they surface:
 //   venue   the canonical venue string, e.g. "ICML 2023", "arXiv 2026"
-//   status  'Published' | 'Preprint' | 'Workshop'   (never invent a review status)
+//   status  'Accepted' | 'Published' | 'Preprint' | 'Workshop'
 //   date    YYYY-MM, used for ordering only
-export type PubStatus = 'Published' | 'Preprint' | 'Workshop';
+export type PubStatus = 'Accepted' | 'Published' | 'Preprint' | 'Workshop';
 
 export interface Pub {
   key: string;
@@ -37,8 +37,8 @@ export const publications: Pub[] = [
     title: 'Learning Where It Matters: Geometric Anchoring for Robust Preference Alignment',
     acronym: 'GAPO',
     authors: '**Youngjae Cho**, Jongsuk Kim, Ji-Hoon Kim',
-    venue: 'arXiv 2026',
-    status: 'Preprint',
+    venue: 'NeurIPS 2026',
+    status: 'Accepted',
     date: '2026-02',
     role: 'First author',
     roleFirst: true,
