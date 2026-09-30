@@ -13,6 +13,7 @@ export const basics = {
   // Longer form, for the resume header.
   summaryLong:
     'ML Research Engineer working on robust learning under imperfect supervision — six papers, four first- or co-first-author, including GAPO accepted to NeurIPS 2026 and work published at ICML 2023 and AAAI 2024. Currently on RL post-training for MLLMs at Pyler, alongside the LLM/VLM auto-labeling system I own there.',
+  researchInterests: 'Robust and data-efficient machine learning, with an emphasis on preference optimization, active learning, Bayesian adaptation, and multimodal learning.',
   resume: '/resume',
   links: {
     github: 'https://github.com/youngjae-cho',
@@ -29,6 +30,7 @@ export interface Job {
   end: string;
   /** Ordered by weight, not chronology: ownership → research → award → infra. */
   highlights: string[];
+  researchHighlights?: string[];
 }
 
 export const work: Job[] = [
@@ -38,6 +40,11 @@ export const work: Job[] = [
     note: 'alternative military service',
     start: '2025.10',
     end: 'present',
+    researchHighlights: [
+      'Developed GAPO, a geometric anchoring method for robust preference optimization under noisy supervision (NeurIPS 2026, accepted; first author). Improved AlpacaEval 2.0 length-controlled win rate by 3.6 percentage points over SimPO.',
+      'Built multimodal preference-optimization methods and training infrastructure for Nemotron-Nano-12B-v2-VL using SimPO and Megatron-Bridge; designed preference data for video temporal localization and content safety.',
+      'Developed auditable LLM/VLM supervision by recovering decision trees from 299K reasoning traces, improving content-safety macro F1 from 0.777 to 0.857.',
+    ],
     highlights: [
       'Own the LLM/VLM auto-labeling system for content-safety scoring (5 categories × severity): mined the implicit decision tree from 299K VLM reasoning traces and turned it into auditable, tree-structured prompts — macro F1 0.777 → 0.857 (precision +0.103, recall +0.050) and over 4× the labeling throughput of the process it replaced, retiring logic that lived unwritten in each labeler\'s head',
       'First-author alignment research (GAPO, accepted to NeurIPS 2026) — geometric anchoring that stabilizes preference optimization under noisy labels, +3.6pp AlpacaEval 2.0 LC over SimPO',
@@ -52,6 +59,10 @@ export const work: Job[] = [
     note: 'alternative military service',
     start: '2024.03',
     end: '2025.10',
+    researchHighlights: [
+      'Led research on background-aware diffusion for industrial anomaly detection (arXiv 2024; first author), using defect/background disentanglement to synthesize scarce anomalies.',
+      'Evaluated generation quality on MVTec-AD and LOCO against DFMGAN and AnomalyDiffusion, then deployed the method to improve detector precision and recall on production data.',
+    ],
     highlights: [
       'Diffusion-based defect synthesis for industrial anomaly detection — background-aware disentanglement; best FID/LPIPS over DFMGAN and AnomalyDiffusion on MVTec-AD and LOCO, and higher detector precision/recall on the production line',
       'Shipped real-time OCR for steel-plate IDs on NVIDIA Triton — ONNX→TensorRT, CUDA graphs, and test-time augmentation for outdoor CCTV conditions',
@@ -88,6 +99,20 @@ export const education: Edu[] = [
 
 export interface SkillGroup { name: string; items: string[]; }
 
+export const researchExperience: Job[] = [
+  ...work.map((job) => ({ ...job, highlights: job.researchHighlights ?? job.highlights })),
+  {
+    org: 'KAIST',
+    role: 'Graduate Research',
+    start: education[0].start,
+    end: education[0].end,
+    highlights: [
+      'Developed Bayesian vision-language prompt learning with data-dependent priors for input-adaptive prompts under limited data and distribution shift (APP, AAAI 2024; first author).',
+      'Developed a sharpness-aware acquisition strategy for active learning to improve generalization under a limited labeling budget (SAAL, ICML 2023; co-first author).',
+    ],
+  },
+];
+
 export const skills: SkillGroup[] = [
   { name: 'Research & Modeling', items: ['PyTorch', 'Hugging Face', 'TensorFlow', 'JAX'] },
   { name: 'Post-training & Alignment', items: ['SimPO / DPO', 'RL frameworks (Megatron-Bridge, Nemo-RL)', 'Preference data design'] },
@@ -97,10 +122,17 @@ export const skills: SkillGroup[] = [
 
 export interface Award { name: string; detail: string; date: string; }
 
+export interface Service { venue: string; role: string; date: string; }
+
+export const academicService: Service[] = [
+  { venue: 'ICML', role: 'Gold Reviewer', date: '2026' },
+  { venue: 'NeurIPS', role: 'Reviewer', date: '2026' },
+];
+
 export const awards: Award[] = [
   {
     name: 'NVIDIA Nemotron Hackathon — Winner, Track B',
-    detail: 'Domain-Specialized Model track. Implemented the preference-optimization post-training (SimPO on Megatron-Bridge) behind the team\'s winning video content-safety VLM.',
+    detail: 'Team winner in Track B (Domain-Specialized Model). Implemented the preference-optimization post-training (SimPO on Megatron-Bridge) behind the team\'s winning video content-safety VLM.',
     date: '2026',
   },
 ];

@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import PubCard from '../components/PubCard.astro';
 import PageHead from '../components/PageHead.astro';
 import { publications, inProgress } from '../data/publications';
+import { academicService, awards } from '../data/cv';
 
 // The four papers I led. Co-authored workshop and conference work is kept in
 // the data — the résumé lists every publication — but held back from here,
@@ -21,6 +22,26 @@ const pubs = publications
       <div class="grid">
         {pubs.map((p, i) => <PubCard pub={p} index={i + 1} total={pubs.length} />)}
       </div>
+    </section>
+
+    <section class="block" id="service-and-awards" aria-labelledby="service-heading">
+      <div class="head">
+        <div class="eyebrow">Community</div>
+        <h2 id="service-heading">Academic Service</h2>
+      </div>
+      <ul class="approach">
+        {academicService.map((s) => <li><b>{s.venue} {s.date}</b> — {s.role}</li>)}
+      </ul>
+      <div class="head" style="margin-top:32px">
+        <div class="eyebrow">Recognition</div>
+        <h2>Awards</h2>
+      </div>
+      {awards.map((a) => (
+        <div class="head">
+          <p><b>{a.date} · {a.name}</b></p>
+          <p>{a.detail}</p>
+        </div>
+      ))}
     </section>
 
     {/* Stated, not described. Each row gives the topic and the question and
