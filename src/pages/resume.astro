@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { basics, work, education, skills, awards } from '../data/cv';
+import { basics, researchExperience, education, awards, academicService } from '../data/cv';
 import { publications } from '../data/publications';
 
 // One-to-two pages. Everything here comes from the same data files that drive the
@@ -8,10 +8,10 @@ import { publications } from '../data/publications';
 const pubs = [...publications].sort((a, b) => b.date.localeCompare(a.date));
 const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 ---
-<Base title="Résumé — Youngjae Cho" active="resume">
+<Base title="Academic CV — Youngjae Cho" active="resume">
   <main class="wrap resume">
     <div class="resume-actions">
-      <div class="eyebrow">Résumé · 2 pages</div>
+      <div class="eyebrow">Academic CV</div>
       <div class="ra-links">
         <button class="ra-btn" id="print-resume" type="button">Print / Save as PDF</button>
         <a class="ra-btn alt" href="/publications">All publications →</a>
@@ -21,29 +21,14 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
     <article class="sheet">
       <header class="sheet-head">
         <h1>{basics.name}</h1>
-        <p class="role">{basics.label}</p>
+        <p class="role">Machine Learning Researcher</p>
         <p class="contact">
           <a href={`mailto:${basics.email}`}>{basics.email}</a> · {basics.location} ·
           <a href={basics.links.github}>github.com/youngjae-cho</a> ·
-          <a href={basics.links.scholar}>Google Scholar</a> ·
-          <a href={basics.links.linkedin}>linkedin.com/in/offonoff</a>
+          <a href={basics.links.scholar}>Google Scholar</a>
         </p>
-        <p class="summary">{basics.summaryLong}</p>
+        <p class="summary"><b>Research interests.</b> {basics.researchInterests}</p>
       </header>
-
-      <section class="rs">
-        <h2>Experience</h2>
-        {work.map((j) => (
-          <div class="rs-item">
-            <div class="rs-line">
-              <span class="rs-title">{j.role} · {j.org}</span>
-              <span class="rs-when">{j.start} — {j.end}</span>
-            </div>
-            {j.note && <p class="rs-note">{j.note}</p>}
-            <ul>{j.highlights.map((h) => <li>{h}</li>)}</ul>
-          </div>
-        ))}
-      </section>
 
       <section class="rs">
         <h2>Education</h2>
@@ -54,13 +39,14 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
               <span class="rs-when">{e.start} — {e.end}</span>
             </div>
             {e.note && <p class="rs-note">{e.note}</p>}
-            {e.detail && <p class="rs-detail">{e.detail}</p>}
+
           </div>
         ))}
       </section>
 
       <section class="rs">
         <h2>Publications</h2>
+        <p class="rs-note">* Equal contribution.</p>
         <ul class="rs-pubs">
           {pubs.map((p) => (
             <li>
@@ -70,6 +56,29 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
             </li>
           ))}
         </ul>
+      </section>
+
+      <section class="rs">
+        <h2>Research Experience</h2>
+        {researchExperience.map((j) => (
+          <div class="rs-item">
+            <div class="rs-line">
+              <span class="rs-title">{j.role} · {j.org}</span>
+              <span class="rs-when">{j.start} — {j.end}</span>
+            </div>
+
+            <ul>{j.highlights.map((h) => <li>{h}</li>)}</ul>
+          </div>
+        ))}
+      </section>
+
+      <section class="rs">
+        <h2>Academic Service</h2>
+        {academicService.map((s) => (
+          <div class="rs-item rs-line">
+            <span class="rs-title">{s.venue} {s.date} · {s.role}</span>
+          </div>
+        ))}
       </section>
 
       <section class="rs">
@@ -85,17 +94,6 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
         ))}
       </section>
 
-      <section class="rs">
-        <h2>Skills</h2>
-        <dl class="rs-skills">
-          {skills.map((s) => (
-            <>
-              <dt>{s.name}</dt>
-              <dd>{s.items.join(' · ')}</dd>
-            </>
-          ))}
-        </dl>
-      </section>
     </article>
   </main>
 </Base>
