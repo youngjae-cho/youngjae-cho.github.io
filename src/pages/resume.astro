@@ -3,8 +3,8 @@ import Base from '../layouts/Base.astro';
 import { basics, researchExperience, education, awards, academicService } from '../data/cv';
 import { publications } from '../data/publications';
 
-// One-to-two pages. Everything here comes from the same data files that drive the
-// site, so the résumé and the pages can never drift apart.
+// The HTML CV uses the site's shared data. The downloadable PDF is separately
+// typeset for predictable fonts, margins, and page breaks.
 const pubs = [...publications].sort((a, b) => b.date.localeCompare(a.date));
 const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 ---
@@ -13,7 +13,8 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
     <div class="resume-actions">
       <div class="eyebrow">Academic CV</div>
       <div class="ra-links">
-        <button class="ra-btn" id="print-resume" type="button">Print / Save as PDF</button>
+        <a class="ra-btn" href="/cv/Youngjae_Cho_CV.pdf" download="Youngjae_Cho_CV.pdf">Download PDF</a>
+        <button class="ra-btn alt" id="print-resume" type="button">Print CV</button>
         <a class="ra-btn alt" href="/publications">All publications →</a>
       </div>
     </div>
