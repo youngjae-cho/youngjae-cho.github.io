@@ -99,19 +99,19 @@ def publication(pub, contribution=None):
     global y
     x, width = LEFT + 94, WIDTH - 94
     # The venue rail makes year and publication status scannable independently.
-    draw(pub['venue'], width=81, style='rail')
+    rail_bottom = draw(pub['venue'], width=81, style='rail')
     status = 'Accepted' if pub['status'] == 'Accepted' else ('Preprint' if pub['status'] == 'Preprint' else '')
     if status:
-        draw(status, top=y - 27 if 'Workshop' in pub['venue'] else y - 15, width=81, style='small')
+        rail_bottom = draw(status, top=rail_bottom - 3, width=81, style='small')
+    if pub.get('role') in ('First author', 'Co-first author'):
+        rail_bottom = draw(pub['role'], top=rail_bottom - 4, width=81, style='small')
     bottom = draw(linked(pub['title'], pub['url']), x=x, width=width, style='title', html=True)
     bottom = draw(pub['authors'], x=x, top=bottom - 4, width=width, style='meta')
-    if pub.get('role') in ('First author', 'Co-first author'):
-        bottom = draw(pub['role'], x=x, top=bottom - 3, width=width, style='small')
     if contribution:
         bottom = draw(contribution, x=x, top=bottom - 6, width=width)
     if pub['key'] == 'group':
         bottom = draw('Workshop on Spurious Correlations, Invariance and Stability', x=x, top=bottom - 3, width=width, style='small')
-    y = bottom - 16
+    y = min(bottom, rail_bottom) - 14
 
 def footer(page):
     c.setFillColor(MUTED)
@@ -131,7 +131,7 @@ y = draw(' &nbsp; | &nbsp; '.join([
     linked('youngjae-cho.github.io', 'https://youngjae-cho.github.io/'),
     linked('GitHub', b['links']['github']), linked('Google Scholar', b['links']['scholar'])
 ]), style='meta', html=True) - 17
-y = draw('My research focuses on **robust and data-efficient machine learning** under imperfect supervision, spanning preference optimization, active learning, Bayesian adaptation, and multimodal learning.')
+y = draw('I study **robust and data-efficient machine learning**, with a focus on preference optimization, active learning, Bayesian adaptation, and video understanding.')
 
 heading('Education')
 for e in data['education']:
@@ -143,11 +143,13 @@ for e in data['education']:
 
 heading('Selected Publications')
 pubs = {p['key']: p for p in data['publications']}
-for key, contribution in [
+selected = [
     ('gapo', 'Geometric anchoring for robust preference optimization; **+3.6 percentage points** in AlpacaEval 2.0 LC win rate over SimPO.'),
-    ('app', 'Bayesian prompt adaptation with data-dependent priors for vision-language learning with scarce data and distribution shift.'),
-    ('saal', 'Sharpness-aware sample acquisition to improve generalization under a limited labeling budget.'),
-]:
+    ('suture', '**SUTURE:** Rollout-group verification for video temporal grounding, improving performance across five benchmarks.'),
+    ('app', 'Bayesian prompt adaptation under scarce data and distribution shift.'),
+    ('saal', 'Sharpness-aware acquisition for label-efficient learning.'),
+]
+for key, contribution in selected:
     publication(pubs[key], contribution)
 y = draw('* Equal contribution. Additional publications appear on page 2.', style='small')
 footer(1)
@@ -159,6 +161,7 @@ heading('Research Experience', first=True)
 experience = [
     ('Pyler', 'Research Scientist', 'Oct 2025 - Present', [
         ('Preference optimization', 'Developed GAPO (NeurIPS 2026, accepted) and multimodal preference-optimization methods for Nemotron-Nano-12B-v2-VL using SimPO and Megatron-Bridge.'),
+        ('Video understanding', 'Developed SUTURE, a rollout-group verifier for video temporal grounding (arXiv 2026; first author).'),
         ('Auditable supervision', 'Recovered decision trees from 299K LLM/VLM reasoning traces; improved content-safety macro F1 from **0.777 to 0.857**.'),
     ]),
     ('Aiv Co.', 'ML Research Scientist', 'Mar 2024 - Oct 2025', [
@@ -175,8 +178,12 @@ for org, role, period, projects in experience:
     y -= 7
 
 heading('Additional Publications')
-for key in ['defect', 'group', 'vade']:
-    publication(pubs[key])
+selected_keys = {key for key, _ in selected}
+# Include every remaining paper rather than silently omitting new entries.
+additional = sorted((p for p in data['publications'] if p['key'] not in selected_keys),
+                    key=lambda p: p['date'], reverse=True)
+for pub in additional:
+    publication(pub)
 
 # Short parallel records share the last band without interrupting the reading flow.
 band_top = y - 8

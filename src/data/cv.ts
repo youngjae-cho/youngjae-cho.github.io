@@ -42,6 +42,7 @@ export const work: Job[] = [
     end: 'present',
     researchHighlights: [
       'Developed GAPO, a geometric anchoring method for robust preference optimization under noisy supervision (NeurIPS 2026, accepted; first author). Improved AlpacaEval 2.0 length-controlled win rate by 3.6 percentage points over SimPO.',
+      'Developed SUTURE, a rollout-group verifier for video temporal grounding (arXiv 2026; first author), improving performance across five temporal grounding benchmarks.',
       'Built multimodal preference-optimization methods and training infrastructure for Nemotron-Nano-12B-v2-VL using SimPO and Megatron-Bridge; designed preference data for video temporal localization and content safety.',
       'Developed auditable LLM/VLM supervision by recovering decision trees from 299K reasoning traces, improving content-safety macro F1 from 0.777 to 0.857.',
     ],
