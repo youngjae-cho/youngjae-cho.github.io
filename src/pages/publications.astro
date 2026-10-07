@@ -5,18 +5,16 @@ import PageHead from '../components/PageHead.astro';
 import { publications, inProgress } from '../data/publications';
 import { academicService, awards } from '../data/cv';
 
-// The four papers I led. Co-authored workshop and conference work is kept in
-// the data — the résumé lists every publication — but held back from here,
-// because four papers answering one question read as a body of work and six
-// papers with two of them unrelated read as a list.
+// Led papers form the main research record. The résumé also includes the
+// co-authored workshop and conference publications kept in the shared data.
 const pubs = publications
   .filter((p) => !p.minor)
-  .sort((a, b) => b.date.localeCompare(a.date));
+  .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || b.date.localeCompare(a.date));
 ---
 <Base title="Publications — Youngjae Cho" active="publications">
   <main class="wrap">
     <PageHead section="Research" count={`${pubs.length} papers`} eyebrow="Research" title="Publications">
-      <p class="intro">Four papers, one question: how do you train well when the data is too little or the labels are wrong? Each pulls a different lever — <em>which</em> samples to label, how to <em>adapt</em> when there are few, how to <em>synthesize</em> what's missing, and how to keep the optimization <em>stable</em> when the signal is noisy. First or co-first author on all four: GAPO accepted to NeurIPS 2026, two papers published at ICML 2023 and AAAI 2024, and one preprint.</p>
+      <p class="intro">Five papers on learning under imperfect supervision — selecting useful samples, adapting with scarce data, synthesizing missing examples, stabilizing preference optimization, and verifying temporal predictions in video. First or co-first author on all five: GAPO accepted to NeurIPS 2026, work published at ICML 2023 and AAAI 2024, and two preprints, including SUTURE on video temporal grounding.</p>
     </PageHead>
     <section class="block">
       <div class="grid">
@@ -51,8 +49,8 @@ const pubs = publications
     <section class="block" id="in-progress" style="border-bottom:0">
       <div class="head">
         <div class="eyebrow">In progress</div>
-        <h2>Two lines still open.</h2>
-        <p>Neither is public and neither has a result to report. They're here because they're where the work is going, and because both extend threads already on this site — the temporal localization behind the hackathon entry, and the safety side of the moderation stack.</p>
+        <h2>{inProgress.length === 1 ? 'One line still open.' : `${inProgress.length} lines still open.`}</h2>
+        <p>Safe diffusion remains in progress, extending the safety side of the moderation stack. Findings are withheld until the work is public.</p>
       </div>
       <div class="wip">
         {inProgress.map((w) => (

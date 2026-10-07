@@ -11,9 +11,9 @@
 // — the boot is an index, not a second copy of the site.
 //
 // One row in each of the three sections is marked `lock`, and the stream holds
-// on it long enough to read: the degree, the throughline the four led papers
+// on it long enough to read: the degree, the throughline the led papers
 // share, and the serving stack. They are chosen against the panel underneath —
-// it already carries ICML/AAAI and the four-paper line, and a boot that repeats
+// it already carries ICML/AAAI and the research profile, and a boot that repeats
 // the page it is covering is worth nothing.
 import { basics, education, skills } from './cv';
 import { publications, inProgress } from './publications';
@@ -105,7 +105,7 @@ function build(): Line[] {
     if (p.angle) L.push(row(col('', up(p.angle))));
   });
 
-  // The throughline, assembled from the levers the four led papers name — the
+  // The throughline, assembled from the levers the led papers name — the
   // one line that says what the research IS rather than listing what it was.
   L.push(lock(led.map((p) => up(p.angle ?? '').split(' / ')[0]).filter(Boolean).join(' / ')));
 
