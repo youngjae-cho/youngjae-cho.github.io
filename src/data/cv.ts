@@ -12,7 +12,7 @@ export const basics = {
     'I design learning methods for noisy, scarce, and shifting supervision — and ship them to production.',
   // Longer form, for the resume header.
   summaryLong:
-    'ML Research Engineer working on robust learning under imperfect supervision — six papers, four first- or co-first-author, including GAPO accepted to NeurIPS 2026 and work published at ICML 2023 and AAAI 2024. Currently on RL post-training for MLLMs at Pyler, alongside the LLM/VLM auto-labeling system I own there.',
+    'ML Research Engineer working on robust learning under imperfect supervision — seven papers, five first- or co-first-author, including GAPO accepted to NeurIPS 2026, work published at ICML 2023 and AAAI 2024, and SUTURE on video temporal grounding. Currently on RL post-training for MLLMs at Pyler, alongside the LLM/VLM auto-labeling system I own there.',
   researchInterests: 'Robust and data-efficient machine learning, with an emphasis on preference optimization, active learning, Bayesian adaptation, and multimodal learning.',
   resume: '/resume',
   links: {

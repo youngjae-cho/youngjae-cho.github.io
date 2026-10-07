@@ -1,4 +1,4 @@
-// Publications. /publications shows the four I led; the résumé lists all.
+// Publications. /publications shows the papers I led; the résumé lists all.
 //
 // Metadata rule — keep these three in lockstep everywhere they surface:
 //   venue   the canonical venue string, e.g. "ICML 2023", "arXiv 2026"
@@ -18,20 +18,36 @@ export interface Pub {
   role?: string; // "First author" | "Co-first author" | "Author"
   roleFirst?: boolean; // gold highlight on the role tag
   /** The lever this paper pulls on data efficiency, as "lever · condition".
-   *  Four papers share one question, so the tags are deliberately parallel —
+   *  The papers share one question, so the tags are deliberately parallel —
    *  that parallelism is what makes them read as one body of work rather than
-   *  four unrelated results. */
+   *  unrelated results. */
   angle?: string;
   summary: string;
   url?: string;
   /** Kept for the résumé, held back from /publications: co-authored workshop
-   *  and conference papers that aren't part of the four-paper throughline. */
+   *  and conference papers that aren't part of the main research throughline. */
   minor?: boolean;
   featured?: boolean; // full-width feature card
   chips?: string[]; // HTML strings, feature card only
 }
 
 export const publications: Pub[] = [
+  {
+    key: 'suture',
+    title: 'Beyond Scalar IoU: Structured Verification from Rollout Groups for Video Temporal Grounding',
+    acronym: 'SUTURE',
+    authors: '**Youngjae Cho**, Won Young Jhoo, Jongsuk Kim',
+    venue: 'arXiv 2026',
+    status: 'Preprint',
+    venueAlt: true,
+    date: '2026-10',
+    role: 'First author',
+    roleFirst: true,
+    angle: 'Verification · video understanding',
+    summary:
+      'Uses <b>rollout-group structure</b> to verify video temporal grounding: disagreement across responses controls target reweighting, while position-wise coverage redistributes reward within the target. The verifier decomposes into standard IoU plus a group-dependent covariance correction, improving grounding at every reported IoU threshold across five benchmarks.',
+    url: 'https://arxiv.org/abs/2610.07601',
+  },
   {
     key: 'gapo',
     title: 'Learning Where It Matters: Geometric Anchoring for Robust Preference Alignment',
@@ -141,11 +157,6 @@ export interface Wip {
 }
 
 export const inProgress: Wip[] = [
-  {
-    key: 'vtg',
-    topic: 'Video temporal grounding',
-    question: 'Locating the moment inside a long video that a description actually refers to.',
-  },
   {
     key: 'safediff',
     topic: 'Safe diffusion',
