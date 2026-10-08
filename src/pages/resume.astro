@@ -6,7 +6,7 @@ import { publications } from '../data/publications';
 // The HTML CV uses the site's shared data. The downloadable PDF is separately
 // typeset for predictable fonts, margins, and page breaks.
 // Both document actions use this PDF so printed and downloaded pages match.
-const cvPDF = '/cv/Youngjae_Cho_CV.pdf?v=20261007';
+const cvPDF = '/cv/Youngjae_Cho_CV.pdf?v=20261008';
 const pubs = [...publications].sort((a, b) => b.date.localeCompare(a.date));
 const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 ---
@@ -24,7 +24,7 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
     <article class="sheet">
       <header class="sheet-head">
         <h1>{basics.name}</h1>
-        <p class="role">Machine Learning Researcher</p>
+        <p class="role">{basics.label}</p>
         <p class="contact">
           <a href={`mailto:${basics.email}`}>{basics.email}</a> · {basics.location} ·
           <a href={basics.links.github}>github.com/youngjae-cho</a> ·

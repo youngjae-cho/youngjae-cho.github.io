@@ -1,5 +1,5 @@
 // CV content — drives /resume and the home page timeline.
-// Umbrella identity is "ML Research Engineer"; company titles stay as issued.
+// Use "ML Research Engineer" consistently for identity and company roles.
 export const basics = {
   name: 'Youngjae Cho',
   label: 'ML Research Engineer',
@@ -36,7 +36,7 @@ export interface Job {
 export const work: Job[] = [
   {
     org: 'Pyler',
-    role: 'Research Scientist',
+    role: 'ML Research Engineer',
     note: 'alternative military service',
     start: '2025.10',
     end: 'present',
@@ -56,7 +56,7 @@ export const work: Job[] = [
   },
   {
     org: 'Aiv Co.',
-    role: 'ML Research Scientist',
+    role: 'ML Research Engineer',
     note: 'alternative military service',
     start: '2024.03',
     end: '2025.10',
