@@ -124,7 +124,7 @@ c.setFont('SerifBold', 29)
 c.setFillColor(colors.black)
 c.drawString(LEFT, y - 29, data['basics']['name'])
 y -= 42
-y = draw('Machine Learning Researcher', style='body') - 10
+y = draw(data['basics']['label'], style='body') - 10
 b = data['basics']
 y = draw(f'{escape(b["location"])} &nbsp; | &nbsp; {linked(b["email"], "mailto:" + b["email"])}', style='meta', html=True) - 4
 y = draw(' &nbsp; | &nbsp; '.join([
@@ -158,13 +158,14 @@ y = H - 48
 
 # Page 2: research experience, the complete remaining record, and service.
 heading('Research Experience', first=True)
+company_roles = {job['org']: job['role'] for job in data['researchExperience']}
 experience = [
-    ('Pyler', 'Research Scientist', 'Oct 2025 - Present', [
+    ('Pyler', company_roles['Pyler'], 'Oct 2025 - Present', [
         ('Preference optimization', 'Developed GAPO (NeurIPS 2026, accepted) and multimodal preference-optimization methods for Nemotron-Nano-12B-v2-VL using SimPO and Megatron-Bridge.'),
         ('Video understanding', 'Developed SUTURE, a rollout-group verifier for video temporal grounding (arXiv 2026; first author).'),
         ('Auditable supervision', 'Recovered decision trees from 299K LLM/VLM reasoning traces; improved content-safety macro F1 from **0.777 to 0.857**.'),
     ]),
-    ('Aiv Co.', 'ML Research Scientist', 'Mar 2024 - Oct 2025', [
+    ('Aiv Co.', company_roles['Aiv Co.'], 'Mar 2024 - Oct 2025', [
         ('Generative modeling', 'Led background-aware diffusion research for industrial anomaly detection. Evaluated on MVTec-AD and LOCO and deployed defect synthesis to improve production detector precision and recall.'),
     ]),
     ('KAIST', 'Graduate Research', 'Mar 2022 - Feb 2024', [
