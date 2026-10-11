@@ -2,14 +2,12 @@
 import Base from '../layouts/Base.astro';
 import PubCard from '../components/PubCard.astro';
 import PageHead from '../components/PageHead.astro';
-import { publications, inProgress } from '../data/publications';
+import { academicPublications, inProgress } from '../data/publications';
 import { academicService, awards } from '../data/cv';
 
 // Led papers form the main research record. The résumé also includes the
 // co-authored workshop and conference publications kept in the shared data.
-const pubs = publications
-  .filter((p) => !p.minor)
-  .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || b.date.localeCompare(a.date));
+const pubs = academicPublications.filter((p) => !p.minor);
 ---
 <Base title="Publications — Youngjae Cho" active="publications">
   <main class="wrap">

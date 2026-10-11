@@ -13,7 +13,7 @@ export const basics = {
   // Longer form, for the resume header.
   summaryLong:
     'ML Research Engineer working on robust learning under imperfect supervision — seven papers, five first- or co-first-author, including GAPO accepted to NeurIPS 2026, work published at ICML 2023 and AAAI 2024, and SUTURE on video temporal grounding. Currently on RL post-training for MLLMs at Pyler, alongside the LLM/VLM auto-labeling system I own there.',
-  researchInterests: 'Robust and data-efficient machine learning, with an emphasis on preference optimization, active learning, Bayesian adaptation, and multimodal learning.',
+  researchInterests: 'I study robust and data-efficient learning from imperfect supervision: preference optimization, active learning, Bayesian adaptation, and reinforcement learning.',
   resume: '/resume',
   links: {
     github: 'https://github.com/youngjae-cho',
@@ -41,10 +41,10 @@ export const work: Job[] = [
     start: '2025.10',
     end: 'present',
     researchHighlights: [
-      'Developed GAPO, a geometric anchoring method for robust preference optimization under noisy supervision (NeurIPS 2026, accepted; first author). Improved AlpacaEval 2.0 length-controlled win rate by 3.6 percentage points over SimPO.',
-      'Developed SUTURE, a rollout-group verifier for video temporal grounding (arXiv 2026; first author), improving performance across five temporal grounding benchmarks.',
-      'Built multimodal preference-optimization methods and training infrastructure for Nemotron-Nano-12B-v2-VL using SimPO and Megatron-Bridge; designed preference data for video temporal localization and content safety.',
-      'Developed auditable LLM/VLM supervision by recovering decision trees from 299K reasoning traces, improving content-safety macro F1 from 0.777 to 0.857.',
+      '**Preference learning.** First-author GAPO research on local margin degradation under parameter perturbations; evaluated robustness to random and structured preference noise.',
+      '**Structured verification.** First-author SUTURE research on group-conditioned rewards; analyzed verifier structure and trained temporal-grounding policies with GRPO.',
+      '**Multimodal post-training.** Implemented rollout, preference loss, and training loop on Megatron-Bridge for Nemotron-Nano-12B-VL; designed SimPO preference data for video localization and content safety.',
+      '**Auditable supervision.** Recovered decision trees from 299K reasoning traces; improved content-safety macro F1 from **0.777 to 0.857**.',
     ],
     highlights: [
       'Own the LLM/VLM auto-labeling system for content-safety scoring (5 categories × severity): mined the implicit decision tree from 299K VLM reasoning traces and turned it into auditable, tree-structured prompts — macro F1 0.777 → 0.857 (precision +0.103, recall +0.050) and over 4× the labeling throughput of the process it replaced, retiring logic that lived unwritten in each labeler\'s head',
@@ -61,8 +61,7 @@ export const work: Job[] = [
     start: '2024.03',
     end: '2025.10',
     researchHighlights: [
-      'Led research on background-aware diffusion for industrial anomaly detection (arXiv 2024; first author), using defect/background disentanglement to synthesize scarce anomalies.',
-      'Evaluated generation quality on MVTec-AD and LOCO against DFMGAN and AnomalyDiffusion, then deployed the method to improve detector precision and recall on production data.',
+      '**Generative modeling.** Led background-aware diffusion research for scarce industrial anomalies; evaluated defect synthesis on MVTec-AD and LOCO and deployed it to improve production detector precision and recall.',
     ],
     highlights: [
       'Diffusion-based defect synthesis for industrial anomaly detection — background-aware disentanglement; best FID/LPIPS over DFMGAN and AnomalyDiffusion on MVTec-AD and LOCO, and higher detector precision/recall on the production line',
@@ -108,8 +107,7 @@ export const researchExperience: Job[] = [
     start: education[0].start,
     end: education[0].end,
     highlights: [
-      'Developed Bayesian vision-language prompt learning with data-dependent priors for input-adaptive prompts under limited data and distribution shift (APP, AAAI 2024; first author).',
-      'Developed a sharpness-aware acquisition strategy for active learning to improve generalization under a limited labeling budget (SAAL, ICML 2023; co-first author).',
+      '**Statistical learning.** First-author APP and co-first-author SAAL research combining Bayesian inference, optimization, and active learning; evaluated adaptation under distribution shift and acquisition across classification, detection, and segmentation.',
     ],
   },
 ];

@@ -1,13 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
 import { basics, researchExperience, education, awards, academicService } from '../data/cv';
-import { publications } from '../data/publications';
+import { selectedPublications, additionalPublications } from '../data/publications';
 
 // The HTML CV uses the site's shared data. The downloadable PDF is separately
 // typeset for predictable fonts, margins, and page breaks.
 // Both document actions use this PDF so printed and downloaded pages match.
-const cvPDF = '/cv/Youngjae_Cho_CV.pdf?v=20261008';
-const pubs = [...publications].sort((a, b) => b.date.localeCompare(a.date));
+const cvPDF = '/cv/Youngjae_Cho_CV.pdf?v=20261011';
+const publicationSections = [
+  { title: 'Selected Publications', pubs: selectedPublications, descriptions: true },
+  { title: 'Additional Publications', pubs: additionalPublications, descriptions: false },
+];
 const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 ---
 <Base title="Academic CV — Youngjae Cho" active="resume">
@@ -30,7 +33,7 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
           <a href={basics.links.github}>github.com/youngjae-cho</a> ·
           <a href={basics.links.scholar}>Google Scholar</a>
         </p>
-        <p class="summary"><b>Research interests.</b> {basics.researchInterests}</p>
+        <p class="summary">{basics.researchInterests}</p>
       </header>
 
       <section class="rs">
@@ -47,19 +50,24 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
         ))}
       </section>
 
-      <section class="rs">
-        <h2>Publications</h2>
-        <p class="rs-note">* Equal contribution.</p>
+      {publicationSections.map(({ title, pubs, descriptions }) => <section class="rs">
+        <h2>{title}</h2>
+        {descriptions && <p class="rs-note">* Equal contribution.</p>}
         <ul class="rs-pubs">
           {pubs.map((p) => (
             <li>
               <span class="rs-pub-title">{p.title}</span>
               <span class="rs-authors" set:html={bold(p.authors)}></span>
               <span class="rs-venue">{p.venue} · {p.status}{p.role ? ` · ${p.role}` : ''}</span>
+              {descriptions && <p class="rs-detail" set:html={bold(p.summary)}></p>}
+              <span class="rs-pub-links">
+                {p.url && <a href={p.url}>[Paper]</a>}
+                {p.codeUrl && <a href={p.codeUrl}>[Code]</a>}
+              </span>
             </li>
           ))}
         </ul>
-      </section>
+      </section>)}
 
       <section class="rs">
         <h2>Research Experience</h2>
@@ -70,7 +78,7 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
               <span class="rs-when">{j.start} — {j.end}</span>
             </div>
 
-            <ul>{j.highlights.map((h) => <li>{h}</li>)}</ul>
+            <ul>{j.highlights.map((h) => <li set:html={bold(h)}></li>)}</ul>
           </div>
         ))}
       </section>
@@ -153,6 +161,8 @@ const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   .rs-authors{font-size:.82rem;color:var(--ink-2);line-height:1.4}
   .rs-authors b{color:var(--ink);font-weight:700}
   .rs-venue{font-family:var(--mono);font-size:.74rem;color:var(--accent-ink);letter-spacing:.02em}
+  .rs-pub-links{display:flex;gap:12px;font-family:var(--mono);font-size:.74rem;color:var(--accent-ink);margin-top:3px}
+  .rs-pub-links a:hover{text-decoration:underline}
 
   .rs-skills{margin:0;display:grid;grid-template-columns:210px 1fr;gap:8px 20px}
   @media(max-width:620px){.rs-skills{grid-template-columns:1fr;gap:2px 0}}

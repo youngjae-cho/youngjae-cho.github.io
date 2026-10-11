@@ -27,8 +27,8 @@ node = os.environ.get('CODEX_PRIMARY_RUNTIME_NODE', 'node')
 data = json.loads(subprocess.check_output([
     node, '--experimental-strip-types', '--input-type=module', '-e',
     'import { basics, education, researchExperience, academicService, awards } from "./src/data/cv.ts";'
-    'import { publications } from "./src/data/publications.ts";'
-    'console.log(JSON.stringify({ basics, education, researchExperience, academicService, awards, publications }));'
+    'import { selectedPublications, additionalPublications } from "./src/data/publications.ts";'
+    'console.log(JSON.stringify({ basics, education, researchExperience, academicService, awards, selectedPublications, additionalPublications }));'
 ], cwd=ROOT, text=True))
 
 font_dir = Path(os.environ.get('CV_FONT_DIR', '/usr/share/fonts/truetype/dejavu'))
@@ -46,7 +46,7 @@ WIDTH = RIGHT - LEFT
 INK = colors.HexColor('#171b20')
 MUTED = colors.HexColor('#505963')
 styles = {
-    'body': ParagraphStyle('body', fontName='Serif', fontSize=10.7, leading=14.7, textColor=INK),
+    'body': ParagraphStyle('body', fontName='Serif', fontSize=10.4, leading=13.5, textColor=INK),
     'title': ParagraphStyle('title', fontName='SerifBold', fontSize=11.2, leading=14.5, textColor=INK),
     'meta': ParagraphStyle('meta', fontName='Sans', fontSize=8.5, leading=11.7, textColor=MUTED),
     'rail': ParagraphStyle('rail', fontName='SansBold', fontSize=8.8, leading=12.5, textColor=INK),
@@ -74,11 +74,11 @@ def draw(text, x=LEFT, top=None, width=WIDTH, style='body', html=False):
 
 def heading(label, first=False):
     global y
-    y -= 20 if not first else 0
+    y -= 15 if not first else 0
     c.setFillColor(colors.black)
     c.setFont('SansBold', 11)
     c.drawString(LEFT, y - 11, label.upper())
-    y -= 27
+    y -= 25
 
 def dated(title, date, subtitle=None):
     global y
@@ -90,12 +90,12 @@ def dated(title, date, subtitle=None):
     y = bottom
     if subtitle:
         y = draw(subtitle, top=y - 3, style='meta')
-    y -= 10
+    y -= 6
 
 def linked(label, url):
     return f'<a href="{escape(url, {chr(34): "&quot;"})}" color="#171b20">{escape(label)}</a>'
 
-def publication(pub, contribution=None):
+def publication(pub, describe=False):
     global y
     x, width = LEFT + 94, WIDTH - 94
     # The venue rail makes year and publication status scannable independently.
@@ -105,13 +105,18 @@ def publication(pub, contribution=None):
         rail_bottom = draw(status, top=rail_bottom - 3, width=81, style='small')
     if pub.get('role') in ('First author', 'Co-first author'):
         rail_bottom = draw(pub['role'], top=rail_bottom - 4, width=81, style='small')
+    links = [linked('[Paper]', pub['url'])] if pub.get('url') else []
+    if pub.get('codeUrl'):
+        links.append(linked('[Code]', pub['codeUrl']))
+    if links:
+        rail_bottom = draw(' &nbsp; '.join(links), top=rail_bottom - 5, width=81, style='small', html=True)
     bottom = draw(linked(pub['title'], pub['url']), x=x, width=width, style='title', html=True)
     bottom = draw(pub['authors'], x=x, top=bottom - 4, width=width, style='meta')
-    if contribution:
-        bottom = draw(contribution, x=x, top=bottom - 6, width=width)
+    if describe:
+        bottom = draw(pub['summary'], x=x, top=bottom - 6, width=width)
     if pub['key'] == 'group':
         bottom = draw('Workshop on Spurious Correlations, Invariance and Stability', x=x, top=bottom - 3, width=width, style='small')
-    y = min(bottom, rail_bottom) - 14
+    y = min(bottom, rail_bottom) - 9
 
 def footer(page):
     c.setFillColor(MUTED)
@@ -130,27 +135,23 @@ y = draw(f'{escape(b["location"])} &nbsp; | &nbsp; {linked(b["email"], "mailto:"
 y = draw(' &nbsp; | &nbsp; '.join([
     linked('youngjae-cho.github.io', 'https://youngjae-cho.github.io/'),
     linked('GitHub', b['links']['github']), linked('Google Scholar', b['links']['scholar'])
-]), style='meta', html=True) - 17
-y = draw('I study **robust and data-efficient machine learning**, with a focus on preference optimization, active learning, Bayesian adaptation, and video understanding.')
+]), style='meta', html=True) - 12
+y = draw(b['researchInterests'])
 
 heading('Education')
+def date(v):
+    if v == 'present':
+        return 'Present'
+    year, month = v.split('.')
+    return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][int(month)-1] + ' ' + year
+
 for e in data['education']:
-    def date(v):
-        year, month = v.split('.')
-        return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][int(month)-1] + ' ' + year
     dated(f'{e["org"]}  |  {e["degree"]}', f'{date(e["start"])} - {date(e["end"])}',
-          'Advisor: Il-Chul Moon' if 'note' in e else None)
+          e.get('note', '').replace('advised by ', 'Advisor: ') or None)
 
 heading('Selected Publications')
-pubs = {p['key']: p for p in data['publications']}
-selected = [
-    ('gapo', 'Geometric anchoring for robust preference optimization; **+3.6 percentage points** in AlpacaEval 2.0 LC win rate over SimPO.'),
-    ('suture', '**SUTURE:** Rollout-group verification for video temporal grounding, improving performance across five benchmarks.'),
-    ('app', 'Bayesian prompt adaptation under scarce data and distribution shift.'),
-    ('saal', 'Sharpness-aware acquisition for label-efficient learning.'),
-]
-for key, contribution in selected:
-    publication(pubs[key], contribution)
+for pub in data['selectedPublications']:
+    publication(pub, describe=True)
 y = draw('* Equal contribution. Additional publications appear on page 2.', style='small')
 footer(1)
 c.showPage()
@@ -158,36 +159,19 @@ y = H - 48
 
 # Page 2: research experience, the complete remaining record, and service.
 heading('Research Experience', first=True)
-company_roles = {job['org']: job['role'] for job in data['researchExperience']}
-experience = [
-    ('Pyler', company_roles['Pyler'], 'Oct 2025 - Present', [
-        ('Preference optimization', 'Developed GAPO (NeurIPS 2026, accepted) and multimodal preference-optimization methods for Nemotron-Nano-12B-v2-VL using SimPO and Megatron-Bridge.'),
-        ('Video understanding', 'Developed SUTURE, a rollout-group verifier for video temporal grounding (arXiv 2026; first author).'),
-        ('Auditable supervision', 'Recovered decision trees from 299K LLM/VLM reasoning traces; improved content-safety macro F1 from **0.777 to 0.857**.'),
-    ]),
-    ('Aiv Co.', company_roles['Aiv Co.'], 'Mar 2024 - Oct 2025', [
-        ('Generative modeling', 'Led background-aware diffusion research for industrial anomaly detection. Evaluated on MVTec-AD and LOCO and deployed defect synthesis to improve production detector precision and recall.'),
-    ]),
-    ('KAIST', 'Graduate Research', 'Mar 2022 - Feb 2024', [
-        ('Data-efficient learning', 'Developed Bayesian vision-language prompt adaptation (APP, AAAI 2024; first author) and sharpness-aware active learning (SAAL, ICML 2023; co-first author).'),
-    ]),
-]
-for org, role, period, projects in experience:
-    dated(org, period, role)
-    for label, text in projects:
-        y = draw(f'**{label}.** {text}') - 7
-    y -= 7
+for job in data['researchExperience']:
+    dated(job['org'], f'{date(job["start"])} - {date(job["end"])}', job['role'])
+    for text in job['highlights']:
+        y = draw(text) - 5
+    y -= 5
 
 heading('Additional Publications')
-selected_keys = {key for key, _ in selected}
-# Include every remaining paper rather than silently omitting new entries.
-additional = sorted((p for p in data['publications'] if p['key'] not in selected_keys),
-                    key=lambda p: p['date'], reverse=True)
-for pub in additional:
+# The shared list includes every paper outside the selected record.
+for pub in data['additionalPublications']:
     publication(pub)
 
 # Short parallel records share the last band without interrupting the reading flow.
-band_top = y - 8
+band_top = y - 6
 award_x = LEFT + 227
 c.setFillColor(colors.black)
 c.setFont('SansBold', 11)
@@ -196,9 +180,12 @@ c.drawString(award_x, band_top - 11, 'AWARDS')
 service_y = band_top - 27
 for service in data['academicService']:
     service_y = draw(f'**{service["venue"]} {service["date"]}** | {service["role"]}', top=service_y, width=205) - 10
-award_y = draw('NVIDIA Nemotron Hackathon', x=award_x, top=band_top - 27, width=WIDTH - 227, style='title')
-award_y = draw('Track B Winner  |  2026', x=award_x, top=award_y - 4, width=WIDTH - 227, style='meta')
-draw('Team winner, Domain-Specialized Model track.', x=award_x, top=award_y - 6, width=WIDTH - 227, style='meta')
+award_y = band_top - 27
+for award in data['awards']:
+    name, _, distinction = award['name'].partition(' — ')
+    award_y = draw(name, x=award_x, top=award_y, width=WIDTH - 227, style='title')
+    award_y = draw(f'{distinction} | {award["date"]}', x=award_x, top=award_y - 4, width=WIDTH - 227, style='meta')
+    award_y = draw(award['detail'].split('. ')[0] + '.', x=award_x, top=award_y - 6, width=WIDTH - 227, style='meta') - 10
 footer(2)
 c.save()
 print(OUT)

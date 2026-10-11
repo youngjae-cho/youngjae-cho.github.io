@@ -24,6 +24,7 @@ export interface Pub {
   angle?: string;
   summary: string;
   url?: string;
+  codeUrl?: string;
   /** Kept for the résumé, held back from /publications: co-authored workshop
    *  and conference papers that aren't part of the main research throughline. */
   minor?: boolean;
@@ -45,7 +46,7 @@ export const publications: Pub[] = [
     roleFirst: true,
     angle: 'Verification · video understanding',
     summary:
-      'Uses <b>rollout-group structure</b> to verify video temporal grounding: disagreement across responses controls target reweighting, while position-wise coverage redistributes reward within the target. The verifier decomposes into standard IoU plus a group-dependent covariance correction, improving grounding at every reported IoU threshold across five benchmarks.',
+      'Introduced a group-conditioned verifier with an **exact decomposition into IoU and a covariance correction**; improved temporal grounding at every reported IoU threshold across five benchmarks.',
     url: 'https://arxiv.org/abs/2610.07601',
   },
   {
@@ -61,7 +62,7 @@ export const publications: Pub[] = [
     featured: true,
     angle: 'Stability · noisy preferences',
     summary:
-      "Reads preference optimization as <b>learning dynamics</b>, and puts the stability problem in the reference: DPO's frozen anchor becomes a geometrically perturbed one — a worst-case local perturbation of the current policy — with each pair reweighted by its geometric brittleness. A steadier objective, which is what holds up under noisy labels and on less data.",
+      'Proposed a batch-conditioned adversarial anchor and **anchor-gap reweighting** for brittle preferences; improved AlpacaEval 2.0 LC win rate by **3.6 percentage points** over SimPO (Mistral-7B).',
     url: 'https://arxiv.org/abs/2602.04909',
     chips: [
       'AlpacaEval 2.0 LC&nbsp;<b>+3.6pp</b> vs SimPO',
@@ -80,8 +81,9 @@ export const publications: Pub[] = [
     roleFirst: true,
     angle: 'Adaptation · scarce data',
     summary:
-      'Bayesian, data-dependent priors that let vision-language prompts adapt per input instead of staying fixed — so a VLM holds up when there is little data to tune on, and stays calibrated when the input shifts.',
+      'Developed Bayesian prompt adaptation with **data-dependent priors** and **Wasserstein gradient flow** for posterior inference, improving few-shot generalization under distribution shift.',
     url: 'https://arxiv.org/abs/2401.06799',
+    codeUrl: 'https://github.com/youngjae-cho/APP',
   },
   {
     key: 'saal',
@@ -95,8 +97,9 @@ export const publications: Pub[] = [
     roleFirst: true,
     angle: 'Acquisition · scarce labels',
     summary:
-      'An acquisition function that bridges sharpness-aware minimization and active learning — select the samples that flatten the loss landscape, and a fixed labeling budget buys more generalization per label.',
+      'Co-developed sharpness-aware acquisition through **pseudo-label-based perturbed-loss estimation**, with a theoretical optimization bound; evaluated classification, detection, and domain-adaptive segmentation.',
     url: 'https://proceedings.mlr.press/v202/kim23c.html',
+    codeUrl: 'https://github.com/YoonyeongKim/SAAL',
   },
   {
     key: 'defect',
@@ -143,6 +146,20 @@ export const publications: Pub[] = [
     url: 'https://ieeexplore.ieee.org/document/9659039',
   },
 ];
+
+// The academic CV leads with the three main-conference papers, then SUTURE.
+// Both HTML and PDF consume these arrays; presentation order is independent
+// of the preprint's original posting date and does not change its status.
+const selectedKeys = ['gapo', 'app', 'saal', 'suture'];
+export const selectedPublications = selectedKeys.map((key) => {
+  const pub = publications.find((p) => p.key === key);
+  if (!pub) throw new Error(`Missing selected publication: ${key}`);
+  return pub;
+});
+export const additionalPublications = publications
+  .filter((p) => !selectedKeys.includes(p.key))
+  .sort((a, b) => b.date.localeCompare(a.date));
+export const academicPublications = [...selectedPublications, ...additionalPublications];
 
 /** Work under way with no result to report yet — the topic and the question,
  *  nothing else. The redaction on the page is literal, not a flourish standing
