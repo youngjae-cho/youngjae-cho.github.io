@@ -8,6 +8,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 // Author lists are stored with **markers** around my name — render them bold.
 const authorsHtml = pub.authors.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+const summaryHtml = pub.summary.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 ---
 <article class={pub.featured ? 'card feature ticked' : 'card ticked'}>
   {pub.featured && (
@@ -28,11 +29,12 @@ const authorsHtml = pub.authors.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   <h3>{pub.acronym && <span class="acro">{pub.acronym}</span>}{pub.acronym ? ' — ' : ''}{pub.title}</h3>
   {!compact && <p class="authors" set:html={authorsHtml}></p>}
   {pub.angle && <span class="angle">{pub.angle}</span>}
-  <p set:html={pub.summary}></p>
+  <p set:html={summaryHtml}></p>
   {pub.chips && (
     <div class="chips">{pub.chips.map((c) => <span class="chip" set:html={c}></span>)}</div>
   )}
   {pub.url && (
     <a class="more" href={pub.url}>Read the paper <span class="arr">→</span></a>
   )}
+  {pub.codeUrl && <a class="more" href={pub.codeUrl}>Code <span class="arr">→</span></a>}
 </article>
