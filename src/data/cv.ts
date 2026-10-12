@@ -125,7 +125,7 @@ export interface Service { venue: string; role: string; date: string; }
 
 export const academicService: Service[] = [
   { venue: 'ICML', role: 'Gold Reviewer', date: '2026' },
-  { venue: 'NeurIPS', role: 'Reviewer', date: '2026' },
+  { venue: 'NeurIPS', role: 'Top Reviewer', date: '2026' },
 ];
 
 export const awards: Award[] = [
