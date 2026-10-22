@@ -1,10 +1,10 @@
-"""Build the downloadable academic CV from the site's shared data.
+"""Typeset the two-page academic CV from the shared website data.
 
-Requires Python 3, reportlab, Node.js 22.18+ (native TypeScript imports),
-and DejaVu Serif/Sans TTF fonts. Run from any directory:
+Requires ReportLab, Node.js 22.18+, and DejaVu Sans fonts. Latin Modern
+(Type 1 AFM/PFB files, e.g. fonts-lmodern) supplies the academic serif face;
+DejaVu Serif is the fallback. Set CV_TEX_FONT_DIR / CV_FONT_DIR if needed.
+The checked-in PDF is rebuilt manually with:
   python3 scripts/build-academic-cv.py
-Set CV_FONT_DIR to a directory containing the DejaVu TTF files if needed.
-The PDF is committed; this is a manual authoring step, not part of Astro build.
 """
 import json
 import os
@@ -32,160 +32,203 @@ data = json.loads(subprocess.check_output([
 ], cwd=ROOT, text=True))
 
 font_dir = Path(os.environ.get('CV_FONT_DIR', '/usr/share/fonts/truetype/dejavu'))
-for name, filename in [('Serif', 'DejaVuSerif.ttf'), ('SerifBold', 'DejaVuSerif-Bold.ttf'),
-                       ('Sans', 'DejaVuSans.ttf'), ('SansBold', 'DejaVuSans-Bold.ttf')]:
-    pdfmetrics.registerFont(TTFont(name, str(font_dir / filename)))
-pdfmetrics.registerFontFamily('Serif', normal='Serif', bold='SerifBold', italic='Serif', boldItalic='SerifBold')
-pdfmetrics.registerFontFamily('Sans', normal='Sans', bold='SansBold', italic='Sans', boldItalic='SansBold')
+tex_dir = Path(os.environ.get('CV_TEX_FONT_DIR', '/usr/share/texmf/fonts'))
+serif_faces = [('Serif', 'lmr10', 'DejaVuSerif.ttf'),
+               ('SerifBold', 'lmbx10', 'DejaVuSerif-Bold.ttf'),
+               ('SerifItalic', 'lmri10', 'DejaVuSerif.ttf')]
+for name, stem, fallback in serif_faces:
+    afm = tex_dir / f'afm/public/lm/{stem}.afm'
+    pfb = tex_dir / f'type1/public/lm/{stem}.pfb'
+    if afm.exists() and pfb.exists():
+        face = pdfmetrics.EmbeddedType1Face(str(afm), str(pfb))
+        # Some ReportLab versions retain AFM vertical metrics as strings.
+        face.ascent, face.descent = float(face.ascent), float(face.descent)
+        pdfmetrics.registerTypeFace(face)
+        pdfmetrics.registerFont(pdfmetrics.Font(name, face.name, 'WinAnsiEncoding'))
+    else:
+        pdfmetrics.registerFont(TTFont(name, str(font_dir / fallback)))
+for name, file in [('Sans', 'DejaVuSans.ttf'), ('SansBold', 'DejaVuSans-Bold.ttf')]:
+    pdfmetrics.registerFont(TTFont(name, str(font_dir / file)))
+pdfmetrics.registerFontFamily('Serif', normal='Serif', bold='SerifBold',
+                              italic='SerifItalic', boldItalic='SerifBold')
+pdfmetrics.registerFontFamily('Sans', normal='Sans', bold='SansBold')
 
 OUT = ROOT / 'public/cv/Youngjae_Cho_CV.pdf'
 OUT.parent.mkdir(parents=True, exist_ok=True)
 W, H = letter
-LEFT, RIGHT = 48, W - 48
+LEFT, RIGHT = 49, W - 49
 WIDTH = RIGHT - LEFT
-INK = colors.HexColor('#171b20')
-MUTED = colors.HexColor('#505963')
+INK = colors.HexColor('#20252b')
+MUTED = colors.HexColor('#50565e')
+LINK = '#244d70'
+RULE = colors.HexColor('#c8cdd2')
 styles = {
-    'body': ParagraphStyle('body', fontName='Serif', fontSize=10.4, leading=13.5, textColor=INK),
-    'title': ParagraphStyle('title', fontName='SerifBold', fontSize=11.2, leading=14.5, textColor=INK),
-    'meta': ParagraphStyle('meta', fontName='Sans', fontSize=8.5, leading=11.7, textColor=MUTED),
-    'rail': ParagraphStyle('rail', fontName='SansBold', fontSize=8.8, leading=12.5, textColor=INK),
-    'small': ParagraphStyle('small', fontName='Sans', fontSize=8.3, leading=11.5, textColor=MUTED),
+    'body': ParagraphStyle('body', fontName='Serif', fontSize=10.8, leading=13.6, textColor=INK),
+    'title': ParagraphStyle('title', fontName='SerifBold', fontSize=11.2, leading=13.9, textColor=INK),
+    'authors': ParagraphStyle('authors', fontName='Serif', fontSize=9.6, leading=11.8, textColor=MUTED),
+    'contribution': ParagraphStyle('contribution', fontName='Serif', fontSize=10.1, leading=12.9, textColor=MUTED),
+    'meta': ParagraphStyle('meta', fontName='Sans', fontSize=8.1, leading=11.2, textColor=MUTED),
+    'small': ParagraphStyle('small', fontName='SerifItalic', fontSize=9, leading=11.5, textColor=MUTED),
 }
+styles['right'] = ParagraphStyle('right', parent=styles['meta'], alignment=TA_RIGHT)
 c = Canvas(str(OUT), pagesize=letter, invariant=1, pageCompression=1)
-c.setTitle('Youngjae Cho Academic CV')
+c.setTitle('Youngjae Cho - Academic CV')
 c.setAuthor('Youngjae Cho')
 c.setSubject('Machine learning research, publications, and academic service')
-y = H - 48
+y = H - 49
+layout = []
+
+def clean(text):
+    return text.replace('\u2014', '-').replace('\u2013', '-').replace('\u2011', '-')
 
 def rich(text):
-    parts = re.split(r'\*\*(.*?)\*\*', text)
-    return ''.join(('<b>' + escape(t) + '</b>') if i % 2 else escape(t) for i, t in enumerate(parts))
+    parts = re.split(r'\*\*(.*?)\*\*', clean(text))
+    return ''.join('<b>' + escape(t) + '</b>' if i % 2 else escape(t)
+                   for i, t in enumerate(parts))
 
 def draw(text, x=LEFT, top=None, width=WIDTH, style='body', html=False):
-    global y
     top = y if top is None else top
     p = Paragraph(text if html else rich(text), styles[style])
     _, height = p.wrap(width, H)
-    if top - height < 47:
-        raise ValueError(f'CV content overflows page {c.getPageNumber()}: {text[:70]}')
+    if top - height < 48:
+        raise ValueError(f'CV overflows page {c.getPageNumber()} at {top-height:.1f}: {text[:70]}')
     p.drawOn(c, x, top - height)
     return top - height
 
-def heading(label, first=False):
+def heading(label, first=False, x=LEFT, width=WIDTH):
     global y
-    y -= 15 if not first else 0
-    c.setFillColor(colors.black)
-    c.setFont('SansBold', 11)
-    c.drawString(LEFT, y - 11, label.upper())
+    if not first:
+        y -= 21
+    c.setFillColor(INK)
+    c.setFont('SansBold', 9.8)
+    label = label.upper()
+    c.drawString(x, y - 10, label)
+    line_x = x + pdfmetrics.stringWidth(label, 'SansBold', 9.8) + 12
+    c.setStrokeColor(RULE)
+    c.setLineWidth(.5)
+    c.line(line_x, y - 6.5, x + width, y - 6.5)
     y -= 25
 
-def dated(title, date, subtitle=None):
+def dated(title, period, subtitle=None):
     global y
-    bottom = draw(title, width=WIDTH - 157, style='title')
-    st = ParagraphStyle('date', parent=styles['meta'], alignment=TA_RIGHT)
-    p = Paragraph(escape(date), st)
-    _, height = p.wrap(151, 50)
-    p.drawOn(c, RIGHT - 151, y - height - 1)
-    y = bottom
+    top = y
+    bottom = draw(title, width=WIDTH - 143)
+    draw(period, x=RIGHT - 139, top=top + .5, width=139, style='right')
     if subtitle:
-        y = draw(subtitle, top=y - 3, style='meta')
-    y -= 6
+        bottom = draw(subtitle, top=bottom - 3, style='meta')
+    y = bottom - 10
 
-def linked(label, url):
-    return f'<a href="{escape(url, {chr(34): "&quot;"})}" color="#171b20">{escape(label)}</a>'
+def date(value):
+    if value == 'present':
+        return 'Present'
+    year, month = value.split('.')
+    return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][int(month)-1] + ' ' + year
 
-def publication(pub, describe=False):
+def linked(label, url, color=LINK):
+    return f'<a href="{escape(url, {chr(34): "&quot;"})}" color="{color}">{escape(clean(label))}</a>'
+
+def publication(pub, number, describe=False):
     global y
-    x, width = LEFT + 94, WIDTH - 94
-    # The venue rail makes year and publication status scannable independently.
-    rail_bottom = draw(pub['venue'], width=81, style='rail')
-    status = 'Accepted' if pub['status'] == 'Accepted' else ('Preprint' if pub['status'] == 'Preprint' else '')
-    if status:
-        rail_bottom = draw(status, top=rail_bottom - 3, width=81, style='small')
+    x, width = LEFT + 23, WIDTH - 23
+    draw(f'[{number}]', top=y - 1, width=19, style='meta')
+    bottom = draw(linked(pub['title'], pub['url'], '#20252b'),
+                  x=x, width=width, style='title', html=True)
+    bottom = draw(pub['authors'], x=x, top=bottom - 3, width=width, style='authors')
+    record = '<b>' + escape(pub['venue']) + '</b>'
+    if pub['status'] in ('Accepted', 'Preprint'):
+        record += ' &nbsp; | &nbsp; ' + pub['status']
     if pub.get('role') in ('First author', 'Co-first author'):
-        rail_bottom = draw(pub['role'], top=rail_bottom - 4, width=81, style='small')
-    links = [linked('[Paper]', pub['url'])] if pub.get('url') else []
+        record += ' &nbsp; | &nbsp; ' + pub['role']
+    record += ' &nbsp; &nbsp; ' + linked('[Paper]', pub['url'])
     if pub.get('codeUrl'):
-        links.append(linked('[Code]', pub['codeUrl']))
-    if links:
-        rail_bottom = draw(' &nbsp; '.join(links), top=rail_bottom - 5, width=81, style='small', html=True)
-    bottom = draw(linked(pub['title'], pub['url']), x=x, width=width, style='title', html=True)
-    bottom = draw(pub['authors'], x=x, top=bottom - 4, width=width, style='meta')
-    if describe:
-        bottom = draw(pub['summary'], x=x, top=bottom - 6, width=width)
+        record += ' &nbsp; ' + linked('[Code]', pub['codeUrl'])
+    bottom = draw(record, x=x, top=bottom - 3, width=width, style='meta', html=True)
     if pub['key'] == 'group':
-        bottom = draw('Workshop on Spurious Correlations, Invariance and Stability', x=x, top=bottom - 3, width=width, style='small')
-    y = min(bottom, rail_bottom) - 9
+        bottom = draw('Workshop on Spurious Correlations, Invariance and Stability',
+                      x=x, top=bottom - 3, width=width, style='small')
+    if describe:
+        bottom = draw(pub['summary'].replace('**', ''), x=x, top=bottom - 6,
+                      width=width, style='contribution')
+    y = bottom - 15
+    layout.append((c.getPageNumber(), pub['key'], round(y, 1)))
 
 def footer(page):
+    c.setStrokeColor(RULE)
+    c.setLineWidth(.4)
+    c.line(LEFT, 39, RIGHT, 39)
+    c.setFont('Sans', 7.4)
     c.setFillColor(MUTED)
-    c.setFont('Sans', 8)
-    c.drawString(LEFT, 28, 'Youngjae Cho  /  Academic CV')
-    c.drawRightString(RIGHT, 28, f'{page} / 2')
+    c.drawString(LEFT, 25, 'Youngjae Cho  |  Academic CV')
+    c.drawRightString(RIGHT, 25, f'{page} / 2')
 
-# Page 1: research identity and the central publication record.
-c.setFont('SerifBold', 29)
-c.setFillColor(colors.black)
-c.drawString(LEFT, y - 29, data['basics']['name'])
-y -= 42
-y = draw(data['basics']['label'], style='body') - 10
+# Page 1: identity, education, and the four central research contributions.
 b = data['basics']
-y = draw(f'{escape(b["location"])} &nbsp; | &nbsp; {linked(b["email"], "mailto:" + b["email"])}', style='meta', html=True) - 4
-y = draw(' &nbsp; | &nbsp; '.join([
+c.setFillColor(INK)
+c.setFont('SerifBold', 31)
+c.drawString(LEFT, y - 31, b['name'])
+contact_y = y - 3
+for contact in [
+    linked(b['email'], 'mailto:' + b['email']),
     linked('youngjae-cho.github.io', 'https://youngjae-cho.github.io/'),
-    linked('GitHub', b['links']['github']), linked('Google Scholar', b['links']['scholar'])
-]), style='meta', html=True) - 12
+    linked('GitHub', b['links']['github']) + ' &nbsp; | &nbsp; ' + linked('Google Scholar', b['links']['scholar']),
+]:
+    contact_y = draw(contact, x=RIGHT - 177, top=contact_y, width=177, style='right', html=True) - 4
+y -= 43
+y = draw(b['label']) - 4
+y = draw(b['location'], style='meta') - 20
 y = draw(b['researchInterests'])
 
 heading('Education')
-def date(v):
-    if v == 'present':
-        return 'Present'
-    year, month = v.split('.')
-    return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][int(month)-1] + ' ' + year
-
 for e in data['education']:
-    dated(f'{e["org"]}  |  {e["degree"]}', f'{date(e["start"])} - {date(e["end"])}',
+    dated(f'**{e["org"]}**  |  {e["degree"]}',
+          f'{date(e["start"])} - {date(e["end"])}',
           e.get('note', '').replace('advised by ', 'Advisor: ') or None)
 
 heading('Selected Publications')
-for pub in data['selectedPublications']:
-    publication(pub, describe=True)
-y = draw('* Equal contribution. Additional publications appear on page 2.', style='small')
+y = draw('* Equal contribution.', style='small') - 9
+for i, pub in enumerate(data['selectedPublications'], 1):
+    publication(pub, i, describe=True)
 footer(1)
 c.showPage()
-y = H - 48
+y = H - 49
 
-# Page 2: research experience, the complete remaining record, and service.
+# Page 2: research experience, the remaining complete record, and recognition.
 heading('Research Experience', first=True)
 for job in data['researchExperience']:
-    dated(job['org'], f'{date(job["start"])} - {date(job["end"])}', job['role'])
+    dated('**' + job['org'] + '**  |  ' + job['role'],
+          f'{date(job["start"])} - {date(job["end"])}')
     for text in job['highlights']:
-        y = draw(text) - 5
-    y -= 5
+        c.setFillColor(MUTED)
+        c.circle(LEFT + 2.2, y - 5.8, .9, fill=1, stroke=0)
+        y = draw(text, x=LEFT + 11, width=WIDTH - 11) - 4
+    y -= 8
 
 heading('Additional Publications')
-# The shared list includes every paper outside the selected record.
-for pub in data['additionalPublications']:
-    publication(pub)
+for i, pub in enumerate(data['additionalPublications'], len(data['selectedPublications']) + 1):
+    publication(pub, i)
 
-# Short parallel records share the last band without interrupting the reading flow.
-band_top = y - 6
-award_x = LEFT + 227
-c.setFillColor(colors.black)
-c.setFont('SansBold', 11)
-c.drawString(LEFT, band_top - 11, 'ACADEMIC SERVICE')
-c.drawString(award_x, band_top - 11, 'AWARDS')
-service_y = band_top - 27
+# Two compact, aligned sections finish the document.
+y -= 6
+band_y = y
+award_x = LEFT + 235
+heading('Academic Service', first=True, width=207)
+service_y = y
 for service in data['academicService']:
-    service_y = draw(f'**{service["venue"]} {service["date"]}** | {service["role"]}', top=service_y, width=205) - 10
-award_y = band_top - 27
+    service_y = draw(f'**{service["venue"]} {service["date"]}**',
+                     top=service_y, width=207) - 2
+    service_y = draw(service['role'], top=service_y, width=207, style='meta') - 10
+y = band_y
+heading('Awards', first=True, x=award_x, width=WIDTH - 235)
+award_y = y
 for award in data['awards']:
     name, _, distinction = award['name'].partition(' — ')
-    award_y = draw(name, x=award_x, top=award_y, width=WIDTH - 227, style='title')
-    award_y = draw(f'{distinction} | {award["date"]}', x=award_x, top=award_y - 4, width=WIDTH - 227, style='meta')
-    award_y = draw(award['detail'].split('. ')[0] + '.', x=award_x, top=award_y - 6, width=WIDTH - 227, style='meta') - 10
+    award_y = draw(name, x=award_x, top=award_y, width=WIDTH - 235, style='title') - 3
+    award_y = draw(f'{distinction} | {award["date"]}', x=award_x, top=award_y,
+                   width=WIDTH - 235, style='meta') - 5
+    award_y = draw(award['detail'].split('. ')[0] + '.', x=award_x, top=award_y,
+                   width=WIDTH - 235, style='contribution') - 8
 footer(2)
 c.save()
 print(OUT)
+print(json.dumps({'publication_positions': layout,
+                  'recognition_bottom': round(min(service_y, award_y), 1)}))

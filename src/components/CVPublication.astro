@@ -1,0 +1,49 @@
+---
+import type { Pub } from '../data/publications';
+interface Props { pub: Pub; number: number; describe?: boolean; }
+const { pub, number, describe = false } = Astro.props;
+const authors = pub.authors.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+const contribution = pub.summary.replace(/\*\*/g, '');
+const status = pub.status === 'Accepted' ? 'Accepted' : pub.status === 'Preprint' ? 'Preprint' : '';
+const role = pub.role === 'First author' || pub.role === 'Co-first author' ? pub.role : '';
+---
+<li class="cv-publication">
+  <span class="cv-pub-number" aria-hidden="true">{'[' + number + ']'}</span>
+  <div>
+    <h3 class="cv-pub-title"><a href={pub.url}>{pub.title}</a></h3>
+    <p class="cv-pub-authors" set:html={authors}></p>
+    <p class="cv-pub-record">
+      <span><strong>{pub.venue}</strong>{status && ' · ' + status}{role && ' · ' + role}</span>
+      <span class="cv-pub-links">{pub.url && <a href={pub.url}>[Paper]</a>}{pub.codeUrl && <a href={pub.codeUrl}>[Code]</a>}</span>
+    </p>
+    {pub.key === 'group' && <p class="cv-pub-workshop">Workshop on Spurious Correlations, Invariance and Stability</p>}
+    {describe && <p class="cv-pub-contribution">{contribution}</p>}
+  </div>
+</li>
+
+<style is:global>
+  .academic-cv .cv-publication{display:grid;grid-template-columns:23px minmax(0,1fr);gap:5px}
+  .cv-pub-number{font-family:var(--sans);font-size:11px;color:#737b82;padding-top:4px;font-variant-numeric:tabular-nums}
+  .academic-cv .cv-pub-title{font-size:16.5px;line-height:1.45}
+  .academic-cv .cv-pub-title a{color:var(--cv-ink)}
+  .academic-cv .cv-pub-authors{font-size:13.5px;line-height:1.5;color:var(--cv-secondary);margin-top:4px}
+  .academic-cv .cv-pub-record{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 13px;font-family:var(--sans);font-size:11px;line-height:1.6;color:var(--cv-secondary);margin-top:4px}
+  .cv-pub-record strong{font-weight:650;color:var(--cv-ink)}
+  .cv-pub-links{display:inline-flex;gap:9px;white-space:nowrap}
+  .academic-cv .cv-pub-contribution{font-size:14px;line-height:1.6;color:var(--cv-secondary);margin-top:7px}
+  .academic-cv .cv-pub-workshop{font-size:12px;font-style:italic;color:var(--cv-secondary);margin-top:3px}
+  @media(max-width:620px){
+    .academic-cv .cv-publication{grid-template-columns:18px minmax(0,1fr);gap:3px}
+    .academic-cv .cv-pub-title{font-size:15.5px}
+    .academic-cv .cv-pub-authors{font-size:13px}
+    .academic-cv .cv-pub-record{font-size:10.5px}
+    .academic-cv .cv-pub-contribution{font-size:13.5px}
+    .cv-pub-number{font-size:10px}
+  }
+  @media print{
+    .academic-cv .cv-pub-title{font-size:10.5pt}
+    .academic-cv .cv-pub-authors{font-size:8.5pt}
+    .academic-cv .cv-pub-record,.cv-pub-number{font-size:8pt}
+    .academic-cv .cv-pub-contribution{font-size:9pt;line-height:1.4}
+  }
+</style>
