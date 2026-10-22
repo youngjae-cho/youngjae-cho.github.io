@@ -1,211 +1,205 @@
 ---
 import Base from '../layouts/Base.astro';
+import CVPublication from '../components/CVPublication.astro';
 import { basics, researchExperience, education, awards, academicService } from '../data/cv';
 import { selectedPublications, additionalPublications } from '../data/publications';
 
-// The HTML CV uses the site's shared data. The downloadable PDF is separately
-// typeset for predictable fonts, margins, and page breaks.
-// Both document actions use this PDF so printed and downloaded pages match.
-const cvPDF = '/cv/Youngjae_Cho_CV.pdf?v=20261012';
-const publicationSections = [
-  { title: 'Selected Publications', pubs: selectedPublications, descriptions: true },
-  { title: 'Additional Publications', pubs: additionalPublications, descriptions: false },
-];
+// Download and Print deliberately share the same typeset, two-page document.
+const cvPDF = '/cv/Youngjae_Cho_CV.pdf?v=20261022';
 const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+const date = (value: string) => {
+  if (value === 'present') return 'Present';
+  const [year, month] = value.split('.');
+  return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Number(month) - 1] + ' ' + year;
+};
 ---
-<Base title="Academic CV — Youngjae Cho" active="resume">
-  <main class="wrap resume">
+<Base title="Academic CV — Youngjae Cho" active="resume" pageClass="cv-page">
+  <main class="resume-shell">
     <div class="resume-actions">
-      <div class="eyebrow">Academic CV</div>
+      <span class="eyebrow">Academic CV</span>
       <div class="ra-links">
         <a class="ra-btn" href={cvPDF} download="Youngjae_Cho_CV.pdf">Download PDF</a>
         <a class="ra-btn alt" href={cvPDF} target="_blank" rel="noopener" title="Open the PDF and use the viewer's Print button" aria-label="Print CV (opens PDF in a new tab)">Print CV</a>
-        <a class="ra-btn alt" href="/publications">All publications →</a>
       </div>
     </div>
 
-    <article class="sheet">
-      <header class="sheet-head">
-        <h1>{basics.name}</h1>
-        <p class="role">{basics.label}</p>
-        <p class="contact">
-          <a href={`mailto:${basics.email}`}>{basics.email}</a> · {basics.location} ·
-          <a href={basics.links.github}>github.com/youngjae-cho</a> ·
-          <a href={basics.links.scholar}>Google Scholar</a>
-        </p>
-        <p class="summary">{basics.researchInterests}</p>
+    <article class="academic-cv" aria-label="Youngjae Cho academic curriculum vitae">
+      <header class="cv-header">
+        <div class="cv-identity">
+          <h1>{basics.name}</h1>
+          <p class="cv-role">{basics.label}</p>
+          <p class="cv-location">{basics.location}</p>
+        </div>
+        <address class="cv-contact">
+          <a href={'mailto:' + basics.email}>{basics.email}</a>
+          <a href="https://youngjae-cho.github.io/">youngjae-cho.github.io</a>
+          <span><a href={basics.links.github}>GitHub</a><i aria-hidden="true"> · </i><a href={basics.links.scholar}>Google Scholar</a></span>
+        </address>
       </header>
 
-      <section class="rs">
-        <h2>Education</h2>
+      <p class="cv-focus">{basics.researchInterests}</p>
+
+      <section class="cv-section" aria-labelledby="cv-education">
+        <h2 id="cv-education">Education</h2>
         {education.map((e) => (
-          <div class="rs-item">
-            <div class="rs-line">
-              <span class="rs-title">{e.degree} · {e.org}</span>
-              <span class="rs-when">{e.start} — {e.end}</span>
+          <div class="cv-entry">
+            <div class="cv-entry-heading">
+              <h3><b>{e.org}</b><span class="cv-separator"> · </span><span class="cv-degree">{e.degree}</span></h3>
+              <span class="cv-date">{date(e.start)} – {date(e.end)}</span>
             </div>
-            {e.note && <p class="rs-note">{e.note}</p>}
-
+            {e.note && <p class="cv-meta">{e.note.replace('advised by ', 'Advisor: ')}</p>}
           </div>
         ))}
       </section>
 
-      {publicationSections.map(({ title, pubs, descriptions }) => <section class="rs">
-        <h2>{title}</h2>
-        {descriptions && <p class="rs-note">* Equal contribution.</p>}
-        <ul class="rs-pubs">
-          {pubs.map((p) => (
-            <li>
-              <span class="rs-pub-title">{p.title}</span>
-              <span class="rs-authors" set:html={bold(p.authors)}></span>
-              <span class="rs-venue">{p.venue} · {p.status}{p.role ? ` · ${p.role}` : ''}</span>
-              {descriptions && <p class="rs-detail" set:html={bold(p.summary)}></p>}
-              <span class="rs-pub-links">
-                {p.url && <a href={p.url}>[Paper]</a>}
-                {p.codeUrl && <a href={p.codeUrl}>[Code]</a>}
-              </span>
-            </li>
+      <section class="cv-section" aria-labelledby="cv-selected">
+        <h2 id="cv-selected">Selected Publications</h2>
+        <p class="cv-section-note">* Equal contribution.</p>
+        <ol class="cv-publications">
+          {selectedPublications.map((pub, i) => <CVPublication pub={pub} number={i + 1} describe />)}
+        </ol>
+      </section>
+
+      <section class="cv-section" aria-labelledby="cv-experience">
+        <h2 id="cv-experience">Research Experience</h2>
+        {researchExperience.map((job) => (
+          <div class="cv-entry cv-job">
+            <div class="cv-entry-heading">
+              <h3>{job.org}</h3>
+              <span class="cv-date">{date(job.start)} – {date(job.end)}</span>
+            </div>
+            <p class="cv-meta">{job.role}</p>
+            <ul class="cv-contributions">
+              {job.highlights.map((text) => <li set:html={bold(text)}></li>)}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      <section class="cv-section" aria-labelledby="cv-additional">
+        <h2 id="cv-additional">Additional Publications</h2>
+        <ol class="cv-publications">
+          {additionalPublications.map((pub, i) => <CVPublication pub={pub} number={selectedPublications.length + i + 1} />)}
+        </ol>
+      </section>
+
+      <div class="cv-end-grid">
+        <section class="cv-section" aria-labelledby="cv-service">
+          <h2 id="cv-service">Academic Service</h2>
+          <dl class="cv-service-list">
+            {academicService.map((service) => (
+              <div><dt>{service.venue} {service.date}</dt><dd>{service.role}</dd></div>
+            ))}
+          </dl>
+        </section>
+        <section class="cv-section" aria-labelledby="cv-awards">
+          <h2 id="cv-awards">Awards</h2>
+          {awards.map((award) => (
+            <div class="cv-award">
+              <div class="cv-entry-heading">
+                <h3>{award.name.split(' — ')[0]}</h3>
+                <span class="cv-date">{award.date}</span>
+              </div>
+              <p class="cv-meta">{award.name.split(' — ')[1]}</p>
+              <p class="cv-award-detail">{award.detail}</p>
+            </div>
           ))}
-        </ul>
-      </section>)}
-
-      <section class="rs">
-        <h2>Research Experience</h2>
-        {researchExperience.map((j) => (
-          <div class="rs-item">
-            <div class="rs-line">
-              <span class="rs-title">{j.role} · {j.org}</span>
-              <span class="rs-when">{j.start} — {j.end}</span>
-            </div>
-
-            <ul>{j.highlights.map((h) => <li set:html={bold(h)}></li>)}</ul>
-          </div>
-        ))}
-      </section>
-
-      <section class="rs">
-        <h2>Academic Service</h2>
-        {academicService.map((s) => (
-          <div class="rs-item rs-line">
-            <span class="rs-title">{s.venue} {s.date} · {s.role}</span>
-          </div>
-        ))}
-      </section>
-
-      <section class="rs">
-        <h2>Awards</h2>
-        {awards.map((a) => (
-          <div class="rs-item">
-            <div class="rs-line">
-              <span class="rs-title">{a.name}</span>
-              <span class="rs-when">{a.date}</span>
-            </div>
-            <p class="rs-detail">{a.detail}</p>
-          </div>
-        ))}
-      </section>
-
+        </section>
+      </div>
     </article>
   </main>
 </Base>
 
 <style is:global>
-  /* ---- screen ---- */
-  .resume{padding-bottom:60px}
-  .resume-actions{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:76px 0 26px}
+  .cv-page .crt{display:none}
+  .resume-shell{max-width:1000px;margin:0 auto;padding:64px 28px 76px}
+  .resume-actions{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;margin-bottom:24px}
   .ra-links{display:flex;flex-wrap:wrap;gap:9px}
-  .ra-btn{
-    font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
-    border:1.5px solid var(--accent);padding:8px 15px;
-    background:var(--accent-soft);color:var(--accent);cursor:pointer;
-    transition:background .2s,color .2s;
-    clip-path:polygon(0 0,100% 0,100% 64%,92% 100%,0 100%);
+  .ra-btn{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--accent);padding:9px 14px;color:var(--accent-ink);transition:background .15s,color .15s}
+  .ra-btn:hover{background:var(--accent);color:#000}
+  .ra-btn.alt{color:var(--ink-2);border-color:#3b3b3b}
+  .ra-btn.alt:hover{border-color:var(--accent);color:#000}
+
+  .academic-cv{
+    --cv-ink:#20252b;--cv-secondary:#50565e;--cv-link:#244d70;--cv-rule:#d0d4d8;
+    background:#fff;color:var(--cv-ink);color-scheme:light;
+    padding:62px 64px 64px;
+    font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;
   }
-  .ra-btn:hover{background:var(--accent);color:#06080b}
-  .ra-btn.alt{border-color:var(--line);color:var(--ink-2);background:transparent;text-decoration:none;display:inline-flex;align-items:center}
-  .ra-btn.alt:hover{border-color:var(--accent);color:var(--accent-ink);background:transparent}
-
-  .sheet{position:relative;background:var(--card);border:1px solid var(--line);padding:44px 46px}
-  .sheet::before,.sheet::after{
-    content:"";position:absolute;width:11px;height:11px;pointer-events:none;
-    border-color:var(--accent);opacity:.7;
+  .academic-cv p,.academic-cv h1,.academic-cv h2,.academic-cv h3{margin:0}
+  .academic-cv b{font-weight:700;color:var(--cv-ink)}
+  .academic-cv a{color:var(--cv-link);text-decoration:none;overflow-wrap:anywhere}
+  .academic-cv a:hover{text-decoration:underline;text-underline-offset:3px}
+  .academic-cv a:focus-visible{outline:2px solid var(--cv-link);outline-offset:3px}
+  .cv-header{display:flex;align-items:flex-start;justify-content:space-between;gap:28px}
+  .academic-cv h1{font-family:Georgia,'Times New Roman',serif;font-size:43px;line-height:1.12;font-weight:700;letter-spacing:-.035em}
+  .academic-cv .cv-role{font-size:16px;margin-top:7px}
+  .academic-cv .cv-location{font-family:var(--sans);font-size:12px;color:var(--cv-secondary);margin-top:6px}
+  .cv-contact{display:flex;flex-direction:column;gap:4px;text-align:right;font-style:normal;font-family:var(--sans);font-size:12px;line-height:1.7;padding-top:5px}
+  .cv-contact i{font-style:normal;color:#8b9095;padding:0 5px}
+  .academic-cv .cv-focus{margin-top:24px;font-size:16px;line-height:1.6;max-width:76ch}
+  .cv-section{margin-top:30px}
+  .academic-cv h2{display:flex;align-items:center;gap:14px;font-family:var(--sans);font-size:11px;font-weight:650;line-height:1.4;letter-spacing:.13em;text-transform:uppercase;margin-bottom:15px;color:var(--cv-ink)}
+  .academic-cv h2::after{content:"";flex:1;border-top:1px solid var(--cv-rule)}
+  .cv-entry+.cv-entry{margin-top:15px}
+  .cv-entry-heading{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+  .academic-cv h3{font:700 16px/1.45 Georgia,'Times New Roman',serif;letter-spacing:0}
+  .academic-cv .cv-degree{font-weight:400}
+  .cv-separator{font-weight:400;color:#8b9095}
+  .cv-date{flex:none;font-family:var(--sans);font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--cv-secondary);white-space:nowrap}
+  .academic-cv .cv-meta{font-family:var(--sans);font-size:12px;color:var(--cv-secondary);line-height:1.5;margin-top:3px}
+  .academic-cv .cv-section-note{font-size:12px;font-style:italic;color:var(--cv-secondary);margin:-7px 0 13px}
+  .cv-publications{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:21px}
+  .cv-job+.cv-job{margin-top:22px}
+  .cv-contributions{margin:9px 0 0;padding-left:17px;font-size:14.5px;line-height:1.65;color:var(--cv-secondary)}
+  .cv-contributions li{padding-left:3px}
+  .cv-contributions li+li{margin-top:5px}
+  .cv-contributions li::marker{font-size:9px;color:#747b82}
+  .cv-end-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:32px}
+  .cv-service-list{margin:0;font-size:14px;line-height:1.6}
+  .cv-service-list div+div{margin-top:10px}
+  .cv-service-list dt{font-weight:700}
+  .cv-service-list dd{margin:0;color:var(--cv-secondary)}
+  .academic-cv .cv-award-detail{font-size:13px;line-height:1.6;color:var(--cv-secondary);margin-top:8px}
+  .cv-entry,.cv-publication,.cv-award{break-inside:avoid}
+  @media(max-width:850px){
+    .academic-cv{padding:46px 38px}
+    .cv-header{gap:20px}
+    .academic-cv h1{font-size:37px}
+    .cv-end-grid{gap:25px}
   }
-  .sheet::before{top:-1px;left:-1px;border-top:1.5px solid;border-left:1.5px solid}
-  .sheet::after{bottom:-1px;right:-1px;border-bottom:1.5px solid;border-right:1.5px solid}
-  @media(max-width:620px){.sheet{padding:28px 22px}}
-  .sheet-head h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;margin:0;line-height:1.1}
-  .sheet-head .role{margin:4px 0 0;font-family:var(--mono);font-size:.84rem;color:var(--accent-ink);letter-spacing:.04em}
-  .sheet-head .contact{margin:10px 0 0;font-family:var(--mono);font-size:.76rem;color:var(--ink-2);line-height:1.7}
-  .sheet-head .contact a{border-bottom:1px solid var(--line)}
-  .sheet-head .summary{margin:14px 0 0;font-size:.98rem;color:var(--ink);max-width:70ch;line-height:1.55}
-
-  .rs{margin-top:26px;padding-top:18px;border-top:1px solid var(--line-2)}
-  .rs h2{
-    font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--ink-3);font-weight:600;margin:0 0 14px;
+  @media(max-width:620px){
+    .resume-shell{padding:38px 14px 42px}
+    .resume-actions{align-items:flex-start;gap:14px}
+    .ra-btn{font-size:.63rem;padding:9px 11px}
+    .academic-cv{padding:31px 23px 36px}
+    .cv-header{display:block}
+    .academic-cv h1{font-size:35px}
+    .cv-contact{text-align:left;gap:2px;margin-top:16px}
+    .academic-cv .cv-focus{font-size:15px;margin-top:21px}
+    .cv-entry-heading{flex-wrap:wrap;gap:3px}
+    .cv-date{display:block;width:100%}
+    .academic-cv h3{font-size:15px}
+    .cv-section{margin-top:27px}
+    .academic-cv h2{font-size:10.5px}
+    .cv-end-grid{display:block}
+    .cv-contributions{font-size:14px}
   }
-  .rs-item{margin-bottom:16px;break-inside:avoid}
-  .rs-item:last-child{margin-bottom:0}
-  .rs-line{display:flex;gap:16px;align-items:baseline;justify-content:space-between;flex-wrap:wrap}
-  .rs-title{font-size:1rem;font-weight:700;letter-spacing:-.01em}
-  .rs-when{font-family:var(--mono);font-size:.76rem;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
-  .rs-note{margin:2px 0 0;font-family:var(--mono);font-size:.74rem;color:var(--accent-ink)}
-  .rs-detail{margin:5px 0 0;font-size:.9rem;color:var(--ink-2);line-height:1.5;max-width:74ch}
-  .rs-item ul{margin:7px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px}
-  .rs-item ul li{position:relative;padding-left:16px;font-size:.9rem;color:var(--ink-2);line-height:1.5;max-width:80ch}
-  .rs-item ul li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:1.5px;background:var(--accent)}
-
-  .rs-pubs{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px}
-  .rs-pubs li{display:flex;flex-direction:column;gap:2px;break-inside:avoid}
-  .rs-pub-title{font-size:.94rem;font-weight:650;line-height:1.35}
-  .rs-authors{font-size:.82rem;color:var(--ink-2);line-height:1.4}
-  .rs-authors b{color:var(--ink);font-weight:700}
-  .rs-venue{font-family:var(--mono);font-size:.74rem;color:var(--accent-ink);letter-spacing:.02em}
-  .rs-pub-links{display:flex;gap:12px;font-family:var(--mono);font-size:.74rem;color:var(--accent-ink);margin-top:3px}
-  .rs-pub-links a:hover{text-decoration:underline}
-
-  .rs-skills{margin:0;display:grid;grid-template-columns:210px 1fr;gap:8px 20px}
-  @media(max-width:620px){.rs-skills{grid-template-columns:1fr;gap:2px 0}}
-  .rs-skills dt{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;color:var(--ink-3);text-transform:uppercase}
-  .rs-skills dd{margin:0;font-size:.9rem;color:var(--ink-2);line-height:1.5}
-
-  /* ---- print: the sheet is the page ----
-     The site theme is a dark console; paper is the opposite. Everything that
-     makes the screen version work — near-white ink, the CRT scanline overlay,
-     amber-on-black — has to be inverted or removed here, or the printout is
-     blank white-on-white with scanlines over it. */
   @media print{
-    @page{size:A4;margin:13mm 14mm}
-    html,body{background:#fff !important;color:#14181d !important}
-    .crt{display:none !important}
-    nav,footer,.resume-actions{display:none !important}
-    .resume{padding:0}
-    .wrap{max-width:none;padding:0}
-    .sheet{border:0;padding:0;background:#fff}
-    .sheet::before,.sheet::after{display:none}
-    /* Re-ink for paper: near-black body, mid-grey secondary, dark amber accent. */
-    .sheet,.sheet *{color:#14181d !important}
-    .sheet-head .contact,.rs-detail,.rs-item ul li,.rs-authors,.rs-skills dd{color:#3d444d !important}
-    .rs h2,.rs-when,.rs-skills dt{color:#6b7480 !important}
-    .sheet-head .role,.rs-note,.rs-venue{color:#8a5a08 !important}
-    .rs-authors b{color:#14181d !important}
-    .rs-item ul li::before{background:#8a5a08 !important}
-    .rs,.sheet-head{border-color:#d5dae0 !important}
-    .sheet-head h1{font-size:20pt}
-    .sheet-head .role{font-size:9pt}
-    .sheet-head .contact{font-size:8pt}
-    .sheet-head .summary{font-size:9.2pt;margin-top:9px}
-    .rs{margin-top:13px;padding-top:9px}
-    .rs h2{font-size:7.5pt;margin-bottom:8px}
-    .rs-item{margin-bottom:10px}
-    .rs-title{font-size:10pt}
-    .rs-when,.rs-note{font-size:8pt}
-    .rs-detail,.rs-item ul li{font-size:9pt;line-height:1.4}
-    .rs-pub-title{font-size:9pt}
-    .rs-authors{font-size:8pt}
-    .rs-venue{font-size:7.8pt}
-    .rs-skills dt{font-size:8pt}
-    .rs-skills dd{font-size:9pt}
-    a{color:inherit !important;border:0 !important;text-decoration:none !important}
+    @page{size:letter;margin:16mm 17mm}
+    html.cv-page,.cv-page body{background:#fff!important;color:#20252b!important}
+    .cv-page nav,.cv-page footer,.cv-page .resume-actions{display:none!important}
+    .resume-shell{max-width:none;padding:0}
+    .academic-cv{padding:0;font-size:10pt}
+    .academic-cv h1{font-size:27pt}
+    .academic-cv .cv-focus{font-size:10pt}
+    .cv-section{margin-top:15pt}
+    .academic-cv h2{font-size:9pt;margin-bottom:9pt}
+    .academic-cv h3{font-size:10.5pt}
+    .cv-contributions{font-size:9pt;line-height:1.45}
+    .cv-contact,.cv-date,.academic-cv .cv-meta{font-size:8pt}
+    .cv-publications{gap:12pt}
+    .academic-cv a{color:#244d70}
   }
 </style>
