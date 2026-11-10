@@ -41,10 +41,8 @@ export const work: Job[] = [
     start: '2025.10',
     end: 'present',
     researchHighlights: [
-      '**Preference learning.** First-author GAPO research on local margin degradation under parameter perturbations; evaluated robustness to random and structured preference noise.',
-      '**Structured verification.** First-author SUTURE research on group-conditioned rewards; analyzed verifier structure and trained temporal-grounding policies with GRPO.',
-      '**Multimodal post-training.** Implemented rollout, preference loss, and training loop on Megatron-Bridge for Nemotron-Nano-12B-VL; designed SimPO preference data for video localization and content safety.',
-      '**Auditable supervision.** Recovered decision trees from 299K reasoning traces; improved content-safety macro F1 from **0.777 to 0.857**.',
+      'Research on preference optimization and reinforcement learning for video temporal grounding.',
+      'Multimodal model post-training and LLM/VLM-based content-safety supervision.',
     ],
     highlights: [
       'Own the LLM/VLM auto-labeling system for content-safety scoring (5 categories × severity): mined the implicit decision tree from 299K VLM reasoning traces and turned it into auditable, tree-structured prompts — macro F1 0.777 → 0.857 (precision +0.103, recall +0.050) and over 4× the labeling throughput of the process it replaced, retiring logic that lived unwritten in each labeler\'s head',
@@ -61,7 +59,7 @@ export const work: Job[] = [
     start: '2024.03',
     end: '2025.10',
     researchHighlights: [
-      '**Generative modeling.** Led background-aware diffusion research for scarce industrial anomalies; evaluated defect synthesis on MVTec-AD and LOCO and deployed it to improve production detector precision and recall.',
+      'Diffusion-based defect synthesis for industrial anomaly detection.',
     ],
     highlights: [
       'Diffusion-based defect synthesis for industrial anomaly detection — background-aware disentanglement; best FID/LPIPS over DFMGAN and AnomalyDiffusion on MVTec-AD and LOCO, and higher detector precision/recall on the production line',
@@ -107,7 +105,7 @@ export const researchExperience: Job[] = [
     start: education[0].start,
     end: education[0].end,
     highlights: [
-      '**Statistical learning.** First-author APP and co-first-author SAAL research combining Bayesian inference, optimization, and active learning; evaluated adaptation under distribution shift and acquisition across classification, detection, and segmentation.',
+      'Bayesian vision-language prompt learning and sharpness-aware active learning.',
     ],
   },
 ];

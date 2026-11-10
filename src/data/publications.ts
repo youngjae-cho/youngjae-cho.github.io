@@ -1,4 +1,4 @@
-// Publications. /publications shows the papers I led; the résumé lists all.
+// Publications. The research page and CV show the papers I led.
 //
 // Metadata rule — keep these three in lockstep everywhere they surface:
 //   venue   the canonical venue string, e.g. "ICML 2023", "arXiv 2026"
@@ -16,7 +16,7 @@ export interface Pub {
   venueAlt?: boolean; // muted badge (preprint / workshop / earlier)
   date: string; // YYYY-MM, used for ordering
   role?: string; // "First author" | "Co-first author" | "Author"
-  roleFirst?: boolean; // gold highlight on the role tag
+  roleFirst?: boolean; // first or co-first author; used to select led papers
   /** The lever this paper pulls on data efficiency, as "lever · condition".
    *  The papers share one question, so the tags are deliberately parallel —
    *  that parallelism is what makes them read as one body of work rather than
@@ -25,8 +25,7 @@ export interface Pub {
   summary: string;
   url?: string;
   codeUrl?: string;
-  /** Kept for the résumé, held back from /publications: co-authored workshop
-   *  and conference papers that aren't part of the main research throughline. */
+  /** Co-authored papers retained in the archive, outside the selected CV. */
   minor?: boolean;
   featured?: boolean; // full-width feature card
   chips?: string[]; // HTML strings, feature card only
@@ -157,7 +156,7 @@ export const selectedPublications = selectedKeys.map((key) => {
   return pub;
 });
 export const additionalPublications = publications
-  .filter((p) => !selectedKeys.includes(p.key))
+  .filter((p) => !selectedKeys.includes(p.key) && p.roleFirst)
   .sort((a, b) => b.date.localeCompare(a.date));
 export const academicPublications = [...selectedPublications, ...additionalPublications];
 

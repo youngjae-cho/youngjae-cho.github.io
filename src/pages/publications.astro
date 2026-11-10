@@ -5,14 +5,13 @@ import PageHead from '../components/PageHead.astro';
 import { academicPublications, inProgress } from '../data/publications';
 import { academicService, awards } from '../data/cv';
 
-// Led papers form the main research record. The résumé also includes the
-// co-authored workshop and conference publications kept in the shared data.
+// Led papers form the main research record shared with the CV.
 const pubs = academicPublications.filter((p) => !p.minor);
 ---
 <Base title="Publications — Youngjae Cho" active="publications">
   <main class="wrap">
     <PageHead section="Research" count={`${pubs.length} papers`} eyebrow="Research" title="Publications">
-      <p class="intro">Five papers on learning under imperfect supervision — selecting useful samples, adapting with scarce data, synthesizing missing examples, stabilizing preference optimization, and verifying temporal predictions in video. First or co-first author on all five: GAPO accepted to NeurIPS 2026, work published at ICML 2023 and AAAI 2024, and two preprints, including SUTURE on video temporal grounding.</p>
+      <p class="intro">Five papers on learning under imperfect supervision — selecting useful samples, adapting with scarce data, synthesizing missing examples, stabilizing preference optimization, and verifying temporal predictions in video. GAPO accepted to NeurIPS 2026, work published at ICML 2023 and AAAI 2024, and two preprints, including SUTURE on video temporal grounding.</p>
     </PageHead>
     <section class="block">
       <div class="grid">
