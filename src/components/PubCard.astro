@@ -22,9 +22,6 @@ const summaryHtml = pub.summary.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
     {index && total && <span class="idx">Ref {pad(index)}/{pad(total)}</span>}
     <span class={pub.venueAlt ? 'badge alt' : 'badge'}>{pub.venue}</span>
     <span class="status">{pub.status}</span>
-    {pub.role && (
-      <span class={pub.roleFirst ? 'role-tag first' : 'role-tag'}>{pub.roleFirst ? '★ ' : ''}{pub.role}</span>
-    )}
   </div>
   <h3>{pub.acronym && <span class="acro">{pub.acronym}</span>}{pub.acronym ? ' — ' : ''}{pub.title}</h3>
   {!compact && <p class="authors" set:html={authorsHtml}></p>}

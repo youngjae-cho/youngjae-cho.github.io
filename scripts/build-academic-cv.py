@@ -127,7 +127,7 @@ def date(value):
 def linked(label, url, color=LINK):
     return f'<a href="{escape(url, {chr(34): "&quot;"})}" color="{color}">{escape(clean(label))}</a>'
 
-def publication(pub, number, describe=False):
+def publication(pub, number):
     global y
     x, width = LEFT + 23, WIDTH - 23
     draw(f'[{number}]', top=y - 1, width=19, style='meta')
@@ -137,8 +137,6 @@ def publication(pub, number, describe=False):
     record = '<b>' + escape(pub['venue']) + '</b>'
     if pub['status'] in ('Accepted', 'Preprint'):
         record += ' &nbsp; | &nbsp; ' + pub['status']
-    if pub.get('role') in ('First author', 'Co-first author'):
-        record += ' &nbsp; | &nbsp; ' + pub['role']
     record += ' &nbsp; &nbsp; ' + linked('[Paper]', pub['url'])
     if pub.get('codeUrl'):
         record += ' &nbsp; ' + linked('[Code]', pub['codeUrl'])
@@ -146,9 +144,6 @@ def publication(pub, number, describe=False):
     if pub['key'] == 'group':
         bottom = draw('Workshop on Spurious Correlations, Invariance and Stability',
                       x=x, top=bottom - 3, width=width, style='small')
-    if describe:
-        bottom = draw(pub['summary'].replace('**', ''), x=x, top=bottom - 6,
-                      width=width, style='contribution')
     y = bottom - 15
     layout.append((c.getPageNumber(), pub['key'], round(y, 1)))
 
@@ -161,7 +156,7 @@ def footer(page):
     c.drawString(LEFT, 25, 'Youngjae Cho  |  Academic CV')
     c.drawRightString(RIGHT, 25, f'{page} / 2')
 
-# Page 1: identity, education, and the four central research contributions.
+# Page 1: identity, education, selected publications, service, and awards.
 b = data['basics']
 c.setFillColor(INK)
 c.setFont('SerifBold', 31)
@@ -187,27 +182,8 @@ for e in data['education']:
 heading('Selected Publications')
 y = draw('* Equal contribution.', style='small') - 9
 for i, pub in enumerate(data['selectedPublications'], 1):
-    publication(pub, i, describe=True)
-footer(1)
-c.showPage()
-y = H - 49
-
-# Page 2: research experience, the remaining complete record, and recognition.
-heading('Research Experience', first=True)
-for job in data['researchExperience']:
-    dated('**' + job['org'] + '**  |  ' + job['role'],
-          f'{date(job["start"])} - {date(job["end"])}')
-    for text in job['highlights']:
-        c.setFillColor(MUTED)
-        c.circle(LEFT + 2.2, y - 5.8, .9, fill=1, stroke=0)
-        y = draw(text, x=LEFT + 11, width=WIDTH - 11) - 4
-    y -= 8
-
-heading('Additional Publications')
-for i, pub in enumerate(data['additionalPublications'], len(data['selectedPublications']) + 1):
     publication(pub, i)
-
-# Two compact, aligned sections finish the document.
+# Recognition is grouped on the first page.
 y -= 6
 band_y = y
 award_x = LEFT + 235
@@ -227,6 +203,25 @@ for award in data['awards']:
                    width=WIDTH - 235, style='meta') - 5
     award_y = draw(award['detail'].split('. ')[0] + '.', x=award_x, top=award_y,
                    width=WIDTH - 235, style='contribution') - 8
+footer(1)
+c.showPage()
+y = H - 49
+
+# Page 2: concise research experience and additional led publications.
+heading('Research Experience', first=True)
+for job in data['researchExperience']:
+    dated('**' + job['org'] + '**  |  ' + job['role'],
+          f'{date(job["start"])} - {date(job["end"])}')
+    for text in job['highlights']:
+        c.setFillColor(MUTED)
+        c.circle(LEFT + 2.2, y - 5.8, .9, fill=1, stroke=0)
+        y = draw(text, x=LEFT + 11, width=WIDTH - 11) - 4
+    y -= 8
+
+heading('Additional Publications')
+for i, pub in enumerate(data['additionalPublications'], len(data['selectedPublications']) + 1):
+    publication(pub, i)
+
 footer(2)
 c.save()
 print(OUT)

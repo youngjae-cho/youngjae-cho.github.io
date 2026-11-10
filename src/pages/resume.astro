@@ -5,7 +5,7 @@ import { basics, researchExperience, education, awards, academicService } from '
 import { selectedPublications, additionalPublications } from '../data/publications';
 
 // Download and Print deliberately share the same typeset, two-page document.
-const cvPDF = '/cv/Youngjae_Cho_CV.pdf?v=20261022';
+const cvPDF = '/cv/Youngjae_Cho_CV.pdf?v=20261111';
 const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 const date = (value: string) => {
   if (value === 'present') return 'Present';
@@ -56,9 +56,33 @@ const date = (value: string) => {
         <h2 id="cv-selected">Selected Publications</h2>
         <p class="cv-section-note">* Equal contribution.</p>
         <ol class="cv-publications">
-          {selectedPublications.map((pub, i) => <CVPublication pub={pub} number={i + 1} describe />)}
+          {selectedPublications.map((pub, i) => <CVPublication pub={pub} number={i + 1} />)}
         </ol>
       </section>
+
+      <div class="cv-end-grid">
+        <section class="cv-section" aria-labelledby="cv-service">
+          <h2 id="cv-service">Academic Service</h2>
+          <dl class="cv-service-list">
+            {academicService.map((service) => (
+              <div><dt>{service.venue} {service.date}</dt><dd>{service.role}</dd></div>
+            ))}
+          </dl>
+        </section>
+        <section class="cv-section" aria-labelledby="cv-awards">
+          <h2 id="cv-awards">Awards</h2>
+          {awards.map((award) => (
+            <div class="cv-award">
+              <div class="cv-entry-heading">
+                <h3>{award.name.split(' — ')[0]}</h3>
+                <span class="cv-date">{award.date}</span>
+              </div>
+              <p class="cv-meta">{award.name.split(' — ')[1]}</p>
+              <p class="cv-award-detail">{award.detail.split('. ')[0] + '.'}</p>
+            </div>
+          ))}
+        </section>
+      </div>
 
       <section class="cv-section" aria-labelledby="cv-experience">
         <h2 id="cv-experience">Research Experience</h2>
@@ -83,29 +107,6 @@ const date = (value: string) => {
         </ol>
       </section>
 
-      <div class="cv-end-grid">
-        <section class="cv-section" aria-labelledby="cv-service">
-          <h2 id="cv-service">Academic Service</h2>
-          <dl class="cv-service-list">
-            {academicService.map((service) => (
-              <div><dt>{service.venue} {service.date}</dt><dd>{service.role}</dd></div>
-            ))}
-          </dl>
-        </section>
-        <section class="cv-section" aria-labelledby="cv-awards">
-          <h2 id="cv-awards">Awards</h2>
-          {awards.map((award) => (
-            <div class="cv-award">
-              <div class="cv-entry-heading">
-                <h3>{award.name.split(' — ')[0]}</h3>
-                <span class="cv-date">{award.date}</span>
-              </div>
-              <p class="cv-meta">{award.name.split(' — ')[1]}</p>
-              <p class="cv-award-detail">{award.detail}</p>
-            </div>
-          ))}
-        </section>
-      </div>
     </article>
   </main>
 </Base>
