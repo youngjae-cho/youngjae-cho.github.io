@@ -2,10 +2,10 @@
 import Base from '../layouts/Base.astro';
 import CVPublication from '../components/CVPublication.astro';
 import { basics, researchExperience, education, awards, academicService } from '../data/cv';
-import { selectedPublications, additionalPublications } from '../data/publications';
+import { academicPublications } from '../data/publications';
 
 // Download and Print deliberately share the same typeset, two-page document.
-const cvPDF = '/cv/Youngjae_Cho_CV.pdf?v=20261111';
+const cvPDF = '/cv/Youngjae_Cho_CV.pdf?v=20261111b';
 const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 const date = (value: string) => {
   if (value === 'present') return 'Present';
@@ -52,11 +52,11 @@ const date = (value: string) => {
         ))}
       </section>
 
-      <section class="cv-section" aria-labelledby="cv-selected">
-        <h2 id="cv-selected">Selected Publications</h2>
+      <section class="cv-section" aria-labelledby="cv-publications">
+        <h2 id="cv-publications">Publications</h2>
         <p class="cv-section-note">* Equal contribution.</p>
         <ol class="cv-publications">
-          {selectedPublications.map((pub, i) => <CVPublication pub={pub} number={i + 1} />)}
+          {academicPublications.map((pub, i) => <CVPublication pub={pub} number={i + 1} />)}
         </ol>
       </section>
 
@@ -98,13 +98,6 @@ const date = (value: string) => {
             </ul>
           </div>
         ))}
-      </section>
-
-      <section class="cv-section" aria-labelledby="cv-additional">
-        <h2 id="cv-additional">Additional Publications</h2>
-        <ol class="cv-publications">
-          {additionalPublications.map((pub, i) => <CVPublication pub={pub} number={selectedPublications.length + i + 1} />)}
-        </ol>
       </section>
 
     </article>

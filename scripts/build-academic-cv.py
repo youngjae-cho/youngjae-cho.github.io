@@ -27,8 +27,8 @@ node = os.environ.get('CODEX_PRIMARY_RUNTIME_NODE', 'node')
 data = json.loads(subprocess.check_output([
     node, '--experimental-strip-types', '--input-type=module', '-e',
     'import { basics, education, researchExperience, academicService, awards } from "./src/data/cv.ts";'
-    'import { selectedPublications, additionalPublications } from "./src/data/publications.ts";'
-    'console.log(JSON.stringify({ basics, education, researchExperience, academicService, awards, selectedPublications, additionalPublications }));'
+    'import { academicPublications } from "./src/data/publications.ts";'
+    'console.log(JSON.stringify({ basics, education, researchExperience, academicService, awards, academicPublications }));'
 ], cwd=ROOT, text=True))
 
 font_dir = Path(os.environ.get('CV_FONT_DIR', '/usr/share/fonts/truetype/dejavu'))
@@ -98,7 +98,7 @@ def draw(text, x=LEFT, top=None, width=WIDTH, style='body', html=False):
 def heading(label, first=False, x=LEFT, width=WIDTH):
     global y
     if not first:
-        y -= 21
+        y -= 19
     c.setFillColor(INK)
     c.setFont('SansBold', 9.8)
     label = label.upper()
@@ -116,7 +116,7 @@ def dated(title, period, subtitle=None):
     draw(period, x=RIGHT - 139, top=top + .5, width=139, style='right')
     if subtitle:
         bottom = draw(subtitle, top=bottom - 3, style='meta')
-    y = bottom - 10
+    y = bottom - 8
 
 def date(value):
     if value == 'present':
@@ -144,7 +144,7 @@ def publication(pub, number):
     if pub['key'] == 'group':
         bottom = draw('Workshop on Spurious Correlations, Invariance and Stability',
                       x=x, top=bottom - 3, width=width, style='small')
-    y = bottom - 15
+    y = bottom - 11
     layout.append((c.getPageNumber(), pub['key'], round(y, 1)))
 
 def footer(page):
@@ -156,7 +156,7 @@ def footer(page):
     c.drawString(LEFT, 25, 'Youngjae Cho  |  Academic CV')
     c.drawRightString(RIGHT, 25, f'{page} / 2')
 
-# Page 1: identity, education, selected publications, service, and awards.
+# Page 1: identity, education, publications, service, and awards.
 b = data['basics']
 c.setFillColor(INK)
 c.setFont('SerifBold', 31)
@@ -170,7 +170,7 @@ for contact in [
     contact_y = draw(contact, x=RIGHT - 177, top=contact_y, width=177, style='right', html=True) - 4
 y -= 43
 y = draw(b['label']) - 4
-y = draw(b['location'], style='meta') - 20
+y = draw(b['location'], style='meta') - 16
 y = draw(b['researchInterests'])
 
 heading('Education')
@@ -179,12 +179,12 @@ for e in data['education']:
           f'{date(e["start"])} - {date(e["end"])}',
           e.get('note', '').replace('advised by ', 'Advisor: ') or None)
 
-heading('Selected Publications')
+heading('Publications')
 y = draw('* Equal contribution.', style='small') - 9
-for i, pub in enumerate(data['selectedPublications'], 1):
+for i, pub in enumerate(data['academicPublications'], 1):
     publication(pub, i)
 # Recognition is grouped on the first page.
-y -= 6
+y -= 4
 band_y = y
 award_x = LEFT + 235
 heading('Academic Service', first=True, width=207)
@@ -207,7 +207,7 @@ footer(1)
 c.showPage()
 y = H - 49
 
-# Page 2: concise research experience and additional led publications.
+# Page 2: concise research experience.
 heading('Research Experience', first=True)
 for job in data['researchExperience']:
     dated('**' + job['org'] + '**  |  ' + job['role'],
@@ -217,10 +217,6 @@ for job in data['researchExperience']:
         c.circle(LEFT + 2.2, y - 5.8, .9, fill=1, stroke=0)
         y = draw(text, x=LEFT + 11, width=WIDTH - 11) - 4
     y -= 8
-
-heading('Additional Publications')
-for i, pub in enumerate(data['additionalPublications'], len(data['selectedPublications']) + 1):
-    publication(pub, i)
 
 footer(2)
 c.save()
